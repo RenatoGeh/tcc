@@ -97,3 +97,50 @@ b {
   color: #096ea0;
   display: inline;
 }
+
+/* Tables */
+
+table {
+  border: 1px solid #bbb;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 40px;
+  margin-bottom: 40px;
+  max-width: 700px;
+  width: 75%;
+  text-align: center;
+  border-spacing: 0;
+  border-collapse: separate;
+  background-color: #fff;
+}
+
+th {
+  padding: 7px;
+  color: #053d77;
+}
+
+tr:nth-child(even) {
+  background-color: #c8b7a769;
+}
+
+tr:hover {
+  background-color: #6c81ae69;
+}
+
+tr:hover:nth-child(1) {
+  background-color: #fff;
+}
+
+td {
+  padding: 7px;
+}
+
+/* Lists */
+
+ol {
+  margin-left: 20px;
+}
+
+ol li {
+  padding: 3px;
+}
