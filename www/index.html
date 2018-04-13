@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+	<meta charset="utf-8">
+
+  <!-- Main CSS Stylesheet -->
+  <link rel="stylesheet" href="main.css">
+  <!-- Roboto Font -->
+  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+
+  <!-- MathJax -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+	<title>TCC - Renato Lui Geh</title>
+</head>
+
+
+<body onload="javascript:select_language(parseParam('lang', 'pt'))">
+
+<!-- NavBar -->
+<ul class="navbar">
+  <li class="navitem">
+    <a class="active" href="index.html?lang=en" lang="en">Proposal</a>
+    <a class="active" href="index.html?lang=pt" lang="pt">Proposta</a>
+  </li>
+  <li class="navitem">
+    <a href="thesis.html?lang=en" lang="en">Thesis</a>
+    <a href="thesis.html?lang=pt" lang="pt">Monografia</a>
+  </li>
+  <li class="navitem">
+    <a href="code.html?lang=en" lang="en">Code</a>
+    <a href="code.html?lang=pt" lang="pt">Código</a>
+  </li>
+  <li class="navitem">
+    <a href="poster.html?lang=en" lang="en">Poster</a>
+    <a href="poster.html?lang=pt" lang="pt">Pôster</a>
+  </li>
+  <li class="navitem">
+    <a href="presentation.html?lang=en" lang="en">Presentation</a>
+    <a href="presentation.html?lang=pt" lang="pt">Apresentação</a>
+  </li>
+</ul>
+
+<div class="body">
+
+<!-- Language flags -->
+<div class="localization">
+  <label>
+    <input type="radio" name="radios" onchange="select_language(this.value)" value="en"/>
+    <img src="imgs/en.png">
+  </label>
+  <label>
+    <input type="radio" name="radios" onchange="select_language(this.value)" value="pt"/>
+    <img src="imgs/pt.png">
+  </label>
+</div>
+
+<h1 lang="pt">Trabalho de Conclusão de Curso</h1>
+<h1 lang="en">Undergraduate Thesis</h1>
+
+<h2 lang="pt">Direção Autônoma de Robôs Móveis por Classificação de Imagens Através de Aprendizado Discriminativo de Redes Soma-Produto</h2>
+<h2 lang="en">Autonomous Micro Robot Driving Through Image Classification Using Discriminative Learning of Sum-Product Networks</h2>
+
+<b lang="pt">Aluno:</b><b lang="en">Student:</b> Renato Lui Geh
+</br>
+<b lang="pt">Orientador:</b><b lang="en">Advisor:</b> <a href="https://www.ime.usp.br/~ddm">Denis Deratani Mauá</a>
+</br>
+
+<div lang="pt">
+  <h3>Resumo</h3>
+
+  <p>
+    Redes soma-produto (SPN, de \textit{Sum-Product Network}) são modelos probabilísticos baseados
+    em grafo que representam uma distribuição de probabilidade tratável. Proposto em 2011, SPNs
+    computam inferência exata em tempo linear ao número de arestas de seu grafo se sua estrutura
+    obedecer a certas propriedades [1].  SPNs apresentam uma série de características
+    interessantes, como sua arquitetura profunda que permite representar funções de forma mais
+    eficiente quanto mais profundo seu grafo [2]. Outras interessantes propriedades teóricas
+    incluem uma generalização de SPNs para qualquer semianel em que o produto tenha escopo disjunto
+    [3]. Com relação a aplicações, SPNs tiveram resultados impressionantes em diversas áreas, como
+    enovelamento de proteínas [4], modelagem de sinais [5], classificação e reconstrução de imagens
+    [1,6,7], reconhecimento de atividade [8] e linguagem natural [9].
+  </p>
+
+  <p>
+    Aprendizado discriminativo busca otimizar a \(P(\mathbf{Y}|\mathbf{X})\), ao invés de modelos
+    generativos que aprendem a probabilidade conjunta \(P(\mathbf{Y},\mathbf{X})\). Resultados de
+    modelos discriminativos tendem a apresentar melhor desempenho do que generativos. Até agora,
+    existem vários algoritmos de aprendizado generativo de SPNs. No entanto, atualmente existem
+    apenas dois artigos de aprendizado discriminativo em SPNs publicados. Parte do trabalho será
+    estudar o artigo seminal de aprendizado discriminativo de SPNs [10]. Serão implementadas as
+    versões <i>soft</i> e <i>hard</i> do algoritmo de aprendizado por método de otimização de
+    gradiente.
+  </p>
+
+  <p>
+    Após o estudo da teoria e da implementação, o modelo será aplicado à tarefa de direção autônoma
+    de robôs móveis, baseando-se em [11]. O robô móvel usado será o <a
+      href="https://en.wikipedia.org/wiki/Lego_Mindstorms">Lego Mindstorms</a>. Devido ao baixo
+    poder de processamento e memória limitada, também será usado em conjunto um <a
+      href="https://en.wikipedia.org/wiki/Raspberry_Pi">Raspberry Pi</a>. Será computada a decisão
+    por inferência da SPN no Raspberry Pi, deixando apenas o controle do robô para o Lego
+    Mindstorms. O treinamento da SPN será feito num computador separado.
+  </p>
+
+  <h3>Objetivos</h3>
+
+  Os objetivos esperados neste trabalho são:
+
+  <ol>
+    <li>
+      Estudo do algoritmo de aprendizado discriminativo por método de otimização de
+      gradiente.
+    </li>
+    <li>
+      Implementação do algoritmo de aprendizado discriminativo <i>soft</i> e <i>hard</i>.
+    </li>
+    <li>
+      Teste do modelo na tarefa de classificação de imagens, comparando com outros algoritmos de
+      aprendizados generativos.
+    </li>
+    <li>
+      Aplicação do modelo para direção autônoma de robôs móveis.
+    </li>
+  </ol>
+
+  <h3>Metodologia</h3>
+
+  <p>
+    O trabalho terá seu início com a coleta de imagens a serem usadas como <i>dataset</i>. Em
+    seguida, serão feitos testes de <i>baselines</i> com modelos mais simples (e.g. regressão
+    linear, modelo por regras e SVM), implementando-se os algoritmos no robô. Como o robô tem baixo
+    poder de processamento e pouca memória, será usado um Raspberry Pi para computar as decisões
+    dos modelos.  O mini-computador então enviará os comandos de direção para o processador do
+    robô. Desta forma, o robô apenas cuidará do controle da direção. Estas tarefas serão feitas em
+    conjunto com a disciplina MAC0318 - Introdução a Programação de Robôs Móveis.
+  </p>
+
+  <p>
+    Após o final das tarefas de coleta de imagens e de teste de baseline, será estudado o artigo
+    [10]. A implementação do código será livre e aberto, e fará parte da biblioteca de inferência a
+    aprendizado de SPNs <a href="https://github.com/RenatoGeh/gospn">GoSPN</a>. O código será
+    escrito em Go.  Em seguida, o algoritmo será comparado com outros algoritmos generativos
+    presentes na biblioteca na tarefa de classificação de imagens.
+  </p>
+
+  <p>
+    Com o código implementado e o conjunto de dados coletado, será iniciada a implementação do
+    modelo no robô. Após feita esta integração, serão feitos testes comparando com a baseline e com
+    outras SPNs generativas.
+  </p>
+
+  <h3>Cronograma</h3>
+
+  <h3>Referências</h3>
+</div>
+
+<div lang="en">
+  <h3>Abstract</h3>
+</div>
+
+<ol>
+  <li>
+    Hoifung Poon, Pedro Domingos. "Sum-Product Networks: A New Deep Architecture". 2011.
+    Uncertainty in Artificial Intelligence (UAI 2011). Ed. 27.
+  </li>
+  <li>
+    Olivier Delalleaum, Yoshua Bengio. "Shallow vs. Deep Sum-Product Networks". 2011. Advances in
+    Neural Information Processing Systems (NIPS 2011). Ed. 24.
+  </li>
+  <li>
+    Abram L. Friesen, Pedro Domingos. "The Sum-Product Theorem: A Foundation for Learning Tractable
+    Models". 2016. International Conference on Machine Learning (ICML 2016). Ed. 33.
+  </li>
+  <li>
+    Abram L. Friesen, Pedro Domingos. "Recursive Decomposition for Non-convex Optimization". 2015.
+    International Conference on Artificial Intelligence (IJCAI 2015). Ed. 24.
+  </li>
+  <li>
+    Robert Peharz, Georg Kapeller, Pejman Mowlaee, Franz Pernkopf. "Modeling Speech with
+    Sum-Product Networks: Application to Bandwidth Extension". IEEE International Conference on
+    Acoustics, Speech, and Signal Processing (ICAASSP 2014). Ed. 39.
+  </li>
+  <li>
+    Robert Gens, Pedro Domingos. "Learning the Structure of Sum-Product Networks". International
+    Conference on Machine Learning (ICML 2013). Ed. 30.
+  </li>
+  <li>
+    Aaron Dennis, Dan Ventura. "Learning the Architecture of Sum-Product Networks Using Clustering
+    on Variables". Advances in Neural Information Processing Systems (NIPS 2012). Ed. 25.
+  </li>
+  <li>
+    Mohamed R. Amer, Sinisa Todorovic. "Sum-Product Networks for Activity Recognition". IEEE
+    Transactions on Pattern Recognition and Machine Intelligence (TPAMI 2015).
+  </li>
+  <li>
+    Wei-Chen Cheng, Stanley Kok, Hoai Vu Pham, Hai Leong Chieu, Kian Ming Chai. "Language Modelling
+    with Sum-Product Networks". Annual Conference of the Speech Communication Association
+    (INTERSPEECH 2014). Ed. 15.
+  </li>
+  <li>
+    Robert Gens, Pedro Domingos. "Discriminative Learning of Sum-Product Networks". Advances in
+    Neural Information Processing Systems (NIPS 2012). Ed. 25.
+  </li>
+  <li>
+    Bruno Massoni Sguerra, Fabio G. Cozman. "Image Classification Using Sum-Product Networks for
+    Autonomous Flight of Micro Aerial Vehicles". Brazilian Conference on Intelligent Systems
+    (BRACIS 2016). Ed. 5.
+  </li>
+</ol>
+
+<p>
+</p>
+
+</div>
+
+</body>
+
+<!-- Language Localization JavaScript -->
+<script src="./locale/lang_sel.js"></script>
+
+</html>

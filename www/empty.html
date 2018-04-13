@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+	<meta charset="utf-8">
+
+  <!-- Main CSS Stylesheet -->
+  <link rel="stylesheet" href="main.css">
+  <!-- Roboto Font -->
+  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+
+	<title>TCC - Renato Lui Geh</title>
+</head>
+
+
+<body onload="javascript:select_language(parseParam('lang', 'pt'))">
+
+<!-- NavBar -->
+<ul class="navbar">
+  <li class="navitem">
+    <a class="active" href="index.html?lang=en" lang="en">Proposal</a>
+    <a class="active" href="index.html?lang=pt" lang="pt">Proposta</a>
+  </li>
+  <li class="navitem">
+    <a href="thesis.html?lang=en" lang="en">Thesis</a>
+    <a href="thesis.html?lang=pt" lang="pt">Monografia</a>
+  </li>
+  <li class="navitem">
+    <a href="code.html?lang=en" lang="en">Code</a>
+    <a href="code.html?lang=pt" lang="pt">Código</a>
+  </li>
+  <li class="navitem">
+    <a href="poster.html?lang=en" lang="en">Poster</a>
+    <a href="poster.html?lang=pt" lang="pt">Pôster</a>
+  </li>
+  <li class="navitem">
+    <a href="presentation.html?lang=en" lang="en">Presentation</a>
+    <a href="presentation.html?lang=pt" lang="pt">Apresentação</a>
+  </li>
+</ul>
+
+<div class="body">
+
+<!-- Language flags -->
+<div class="localization">
+  <label>
+    <input type="radio" name="radios" onchange="select_language(this.value)" value="en"/>
+    <img src="imgs/en.png">
+  </label>
+  <label>
+    <input type="radio" name="radios" onchange="select_language(this.value)" value="pt"/>
+    <img src="imgs/pt.png">
+  </label>
+</div>
+
+
+</div>
+
+</body>
+
+<!-- Language Localization JavaScript -->
+<script src="./locale/lang_sel.js"></script>
+
+</html>
