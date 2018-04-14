@@ -60,7 +60,7 @@
 <h1 lang="en">Undergraduate Thesis</h1>
 
 <h2 lang="pt">Direção Autônoma de Robôs Móveis por Classificação de Imagens Através de Aprendizado Discriminativo de Redes Soma-Produto</h2>
-<h2 lang="en">Autonomous Micro Robot Driving Through Image Classification Using Discriminative Learning of Sum-Product Networks</h2>
+<h2 lang="en">Autonomous Mobile Robot Driving Through Image Classification Using Discriminative Learning of Sum-Product Networks</h2>
 
 <b lang="pt">Aluno:</b><b lang="en">Student:</b> Renato Lui Geh
 </br>
@@ -249,7 +249,7 @@
         href="http://yann.lecun.com/exdb/mnist/">MNIST</a> e <a
         href="https://github.com/RenatoGeh/gospn/tree/dev/data/digits">Digits</a>).</li>
     <li>Implementação do modelo discriminativo no robô.</li>
-    <li>Avaliação e comparação da SPN com <i>baselines</i>.</li>
+    <li>Avaliação e comparação da SPN discriminativa com <i>baselines</i> e com SPNs generativas.</li>
     <li>Finalização do pôster, monografia e apresentação.</li>
   </ol>
 
@@ -259,11 +259,166 @@
 <div lang="en">
   <h3>Abstract</h3>
 
+  Sum-product networks (SPNs) are probabilistic graphical models that model a tractable probability
+  distribution. Proposed in 2011, SPNs compute exact inference in linear time in the number of
+  edges of its graph if certain criteria are met [1]. SPNs have shown many interesting properties,
+  such as a higher representability of functions the deeper its architecture whilst maintaining its
+  efficiency [2]. Other interesting theoretical properties include a generalization of SPNs to any
+  semiring with disjoint product [3]. With regards to applications, SPNs have shown impressive
+  results in various tasks, such as protein folding [4], modeling speech [5], image classification
+  and completion [1,6,7], activity recognition [8] and modeling natural language [9].
+
+  Discriminative learning seeks to optimize the probability \(P(\mathbf{Y}|\mathbf{X})\), in
+  contrast to generative models, that attempt to learn the joint probability
+  \(P(\mathbf{Y},\mathbf{X}\). Discriminative models tend to achieve better scores compared to
+  generatives. There are many published generative learning algorithms for SPNs. However, up until
+  now, only two articles on discriminative learning of SPNs have been published so far. Part of
+  this undergrad thesis is to study the seminal article on discriminative SPNs [1]. Once finished,
+  an implementation of both "soft" and "hard" gradient descent versions of the learning algorithm
+  will be written.
+
+  Once both theoretical studies and the implementation are complete, the learning algorithm will be
+  applied to the task of autonomous driving of mobile robots. This portion of the work will be
+  based on the [11] article. We will use the <a
+    href="https://en.wikipedia.org/wiki/Lego_Mindstorms">Lego Mindstorms</a> platform as our mobile
+  robot. Due to its low processing power and restricted memory size, a <a
+    href="https://en.wikipedia.org/wiki/Raspberry_Pi">Raspberry Pi</a> will also be used. A camera
+  attached to the robot will send images to the Raspberry Pi, which will, in turn, return a certain
+  decision depending on the output of the SPN's classification. Only the actual driving of the
+  robot will be delegated to the Lego Mindstorms. The SPN's training will be done in a separate
+  computer.
+
   <h3>Objectives</h3>
+
+  The expected objectives in this undergraduate thesis are:
+
+  <ol>
+    <li>To study the discriminative learning algorithm of SPNs by gradient descent.</li>
+    <li>To implement both the "soft" and "hard" learning algorithms.</li>
+    <li>To test and validate the model in image classification taks, comparing its performance with
+      other generative learning algorithms.</li>
+    <li>To apply the model to the task of autonomous driving of mobile robots.</li>
+  </ol>
 
   <h3>Methodology</h3>
 
+  A sum-product network can be defined as a DAG whose nodes are either weighted sums, products, a
+  univariate probability distribution or an indicator variable. Exact inference in SPNs is linear
+  in the number of edges. Classic probabilistic models, such as bayesian networks and markov
+  networks, are very expressive. However, they depend heavily on approximate algorithms to compute
+  inference tractably. Mobile robots, such as the Lego Mindstorms, are usually resource constrained,
+  meaning decision making has to be done fast. The presence of environment error in sensors is also
+  very common in mobile robots, which means a probabilistic model that captures uncertainty in
+  decision making can be very advantageous.
+
+  Work will start with the extraction of images for the dataset. The dataset will contain images of
+  tracks to be driven on. Each image should have a label indicating which drive command would be
+  most appropriate to the situation. Once the dataset is complete, baseline tests will be done with
+  simpler models (e.g. linear regression, rule-based model, SVM) for comparison. Due to the robot's
+  low processing power and limited memory, a Raspberry Pi will be used to compute the model's
+  decisions. A camera attached to the robot will send captured images to the Raspberry Pi. These
+  images will then be used to decide which command should be executed. The mini-computer will then
+  send these commands to the robot's processor. The robot will then only be responsible for the
+  driving controls. These tasks will be done concurrently with the course MAC0318 - Introduction to
+  Mobile Robot Programming.
+
+  After the completion of both the dataset extraction and baseline tests, theoretical study on the
+  discriminative learning algorithm [10] will begin. The code implementation will be free and
+  open-sourced, and will be part of the SPN inference and learning framework <a
+    href="https://github.com/RenatoGeh/gospn">GoSPN</a>. The code will be written in Go. Next, an
+  image classification performance comparison between the implemented algorithm and other SPN
+  generative learning methods present in the framework will be done.
+
+  Once the above is completed, we shall begin the implementation on the robot. After this
+  integration is completed, we will compare the model with both the baseline and other generative
+  SPNs.
+
   <h3>Schedule</h3>
+
+  The planned schedule for all proposed tasks for the year 2018 is shown below. Tasks marked with
+  &#10007; are ongoing or not yet begun activities. Ones marked with &#10003; indicate a concluded
+  task.
+
+  <!-- &#10003; checkmark | &#10007; crossmark -->
+  <table>
+    <tr>
+      <th> Task / Month </th>
+      <th> May </th>
+      <th> Jun </th>
+      <th> Jul </th>
+      <th> Aug </th>
+      <th> Sep </th>
+      <th> Oct </th>
+      <th> Nov </th>
+      <th> Dec </th>
+    </tr>
+    <tr>
+      <td> a </td>
+      <td> &#10007; </td>
+      <td colspan="7"></td>
+    </tr>
+      <td> b </td>
+      <td colspan="1"></td>
+      <td> &#10007; </td>
+      <td colspan="6"></td>
+    </tr>
+      <td> c </td>
+      <td colspan="2"></td>
+      <td> &#10007; </td>
+      <td colspan="5"></td>
+    </tr>
+    <tr>
+      <td> d </td>
+      <td colspan="3"></td>
+      <td> &#10007; </td>
+      <td colspan="4"></td>
+    </tr>
+    <tr>
+      <td> e </td>
+      <td colspan="4"></td>
+      <td> &#10007; </td>
+      <td colspan="3"></td>
+    </tr>
+    <tr>
+      <td> f </td>
+      <td colspan="5"></td>
+      <td> &#10007; </td>
+      <td colspan="2"</td>
+    </tr>
+    <tr>
+      <td> g </td>
+      <td colspan="6"></td>
+      <td> &#10007; </td>
+      <td colspan="1"></td>
+    </tr>
+    <tr>
+      <td> h </td>
+      <td colspan="6"></td>
+      <td> &#10007; </td>
+      <td colspan="1"></td>
+    </tr>
+    <tr>
+      <td> i </td>
+      <td colspan="7"></td>
+      <td> &#10007; </td>
+    </tr>
+  </table>
+
+  <ol type="a">
+    <li>Dataset image extraction.</li>
+    <li>Baseline tests.</li>
+    <li>Theretical study on Gens-Domingos' discriminative learning algorithm [10].</li>
+    <li>Code implementation on the GoSPN framework.</li>
+    <li>Debugging and test comparisons against other generative learning methods.</li>
+    <li>Performance tests on image classification datasets (e.g. <a
+        href="http://www.vision.caltech.edu/Image_Datasets/Caltech101/">Caltech-101</a>, <a
+        href="http://yann.lecun.com/exdb/mnist/">MNIST</a> and <a
+        href="https://github.com/RenatoGeh/gospn/tree/dev/data/digits">Digits</a>).</li>
+    <li>Code implementation of the discriminative model on the robot.</li>
+    <li>Comparison tests between discriminative SPNs, baseline models and other generative
+      SPNs.</li>
+    <li>Poster, thesis and presentation slides.</li>
+  </ol>
 
   <h3>References</h3>
 </div>
