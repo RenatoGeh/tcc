@@ -107,7 +107,9 @@
 
   <h3>Objetivos</h3>
 
-  Os objetivos esperados neste trabalho são:
+  <p>
+    Os objetivos esperados neste trabalho são:
+  </p>
 
   <ol>
     <li>
@@ -259,38 +261,47 @@
 <div lang="en">
   <h3>Abstract</h3>
 
-  Sum-product networks (SPNs) are probabilistic graphical models that model a tractable probability
-  distribution. Proposed in 2011, SPNs compute exact inference in linear time in the number of
-  edges of its graph if certain criteria are met [1]. SPNs have shown many interesting properties,
-  such as a higher representability of functions the deeper its architecture whilst maintaining its
-  efficiency [2]. Other interesting theoretical properties include a generalization of SPNs to any
-  semiring with disjoint product [3]. With regards to applications, SPNs have shown impressive
-  results in various tasks, such as protein folding [4], modeling speech [5], image classification
-  and completion [1,6,7], activity recognition [8] and modeling natural language [9].
+  <p>
+    Sum-product networks (SPNs) are probabilistic graphical models that model a tractable
+    probability distribution. Proposed in 2011, SPNs compute exact inference in linear time in the
+    number of edges of its graph if certain criteria are met [1]. SPNs have shown many interesting
+    properties, such as a higher representability of functions the deeper its architecture whilst
+    maintaining its efficiency [2]. Other interesting theoretical properties include a
+    generalization of SPNs to any semiring with disjoint product [3]. With regards to applications,
+    SPNs have shown impressive results in various tasks, such as protein folding [4], modeling
+    speech [5], image classification and completion [1,6,7], activity recognition [8] and modeling
+    natural language [9].
+  </p>
 
-  Discriminative learning seeks to optimize the probability \(P(\mathbf{Y}|\mathbf{X})\), in
-  contrast to generative models, that attempt to learn the joint probability
-  \(P(\mathbf{Y},\mathbf{X}\). Discriminative models tend to achieve better scores compared to
-  generatives. There are many published generative learning algorithms for SPNs. However, up until
-  now, only two articles on discriminative learning of SPNs have been published so far. Part of
-  this undergrad thesis is to study the seminal article on discriminative SPNs [1]. Once finished,
-  an implementation of both "soft" and "hard" gradient descent versions of the learning algorithm
-  will be written.
+  <p>
+    Discriminative learning seeks to optimize the probability \(P(\mathbf{Y}|\mathbf{X})\), in
+    contrast to generative models, that attempt to learn the joint probability
+    \(P(\mathbf{Y},\mathbf{X})\). Discriminative models tend to achieve better scores compared to
+    generatives. There are many published generative learning algorithms for SPNs. However, up
+    until now, only two articles on discriminative learning of SPNs have been published so far.
+    Part of this undergrad thesis is to study the seminal article on discriminative SPNs [1]. Once
+    finished, an implementation of both "soft" and "hard" gradient descent versions of the learning
+    algorithm will be written.
+  </p>
 
-  Once both theoretical studies and the implementation are complete, the learning algorithm will be
-  applied to the task of autonomous driving of mobile robots. This portion of the work will be
-  based on the [11] article. We will use the <a
-    href="https://en.wikipedia.org/wiki/Lego_Mindstorms">Lego Mindstorms</a> platform as our mobile
-  robot. Due to its low processing power and restricted memory size, a <a
-    href="https://en.wikipedia.org/wiki/Raspberry_Pi">Raspberry Pi</a> will also be used. A camera
-  attached to the robot will send images to the Raspberry Pi, which will, in turn, return a certain
-  decision depending on the output of the SPN's classification. Only the actual driving of the
-  robot will be delegated to the Lego Mindstorms. The SPN's training will be done in a separate
-  computer.
+  <p>
+    Once both theoretical studies and the implementation are complete, the learning algorithm will
+    be applied to the task of autonomous driving of mobile robots. This portion of the work will be
+    based on the [11] article. We will use the <a
+      href="https://en.wikipedia.org/wiki/Lego_Mindstorms">Lego Mindstorms</a> platform as our
+    mobile robot. Due to its low processing power and restricted memory size, a <a
+      href="https://en.wikipedia.org/wiki/Raspberry_Pi">Raspberry Pi</a> will also be used. A
+    camera attached to the robot will send images to the Raspberry Pi, which will, in turn, return
+    a certain decision depending on the output of the SPN's classification. Only the actual driving
+    of the robot will be delegated to the Lego Mindstorms. The SPN's training will be done in a
+    separate computer.
+  </p>
 
   <h3>Objectives</h3>
 
-  The expected objectives in this undergraduate thesis are:
+  <p>
+    The expected objectives in this undergraduate thesis are:
+  </p>
 
   <ol>
     <li>To study the discriminative learning algorithm of SPNs by gradient descent.</li>
@@ -302,42 +313,52 @@
 
   <h3>Methodology</h3>
 
-  A sum-product network can be defined as a DAG whose nodes are either weighted sums, products, a
-  univariate probability distribution or an indicator variable. Exact inference in SPNs is linear
-  in the number of edges. Classic probabilistic models, such as bayesian networks and markov
-  networks, are very expressive. However, they depend heavily on approximate algorithms to compute
-  inference tractably. Mobile robots, such as the Lego Mindstorms, are usually resource constrained,
-  meaning decision making has to be done fast. The presence of environment error in sensors is also
-  very common in mobile robots, which means a probabilistic model that captures uncertainty in
-  decision making can be very advantageous.
+  <p>
+    A sum-product network can be defined as a DAG whose nodes are either weighted sums, products, a
+    univariate probability distribution or an indicator variable. Exact inference in SPNs is linear
+    in the number of edges. Classic probabilistic models, such as bayesian networks and markov
+    networks, are very expressive. However, they depend heavily on approximate algorithms to
+    compute inference tractably. Mobile robots, such as the Lego Mindstorms, are usually resource
+    constrained, meaning decision making has to be done fast. The presence of environment error in
+    sensors is also very common in mobile robots, which means a probabilistic model that captures
+    uncertainty in decision making can be very advantageous.
+  </p>
 
-  Work will start with the extraction of images for the dataset. The dataset will contain images of
-  tracks to be driven on. Each image should have a label indicating which drive command would be
-  most appropriate to the situation. Once the dataset is complete, baseline tests will be done with
-  simpler models (e.g. linear regression, rule-based model, SVM) for comparison. Due to the robot's
-  low processing power and limited memory, a Raspberry Pi will be used to compute the model's
-  decisions. A camera attached to the robot will send captured images to the Raspberry Pi. These
-  images will then be used to decide which command should be executed. The mini-computer will then
-  send these commands to the robot's processor. The robot will then only be responsible for the
-  driving controls. These tasks will be done concurrently with the course MAC0318 - Introduction to
-  Mobile Robot Programming.
+  <p>
+    Work will start with the extraction of images for the dataset. The dataset will contain images
+    of tracks to be driven on. Each image should have a label indicating which drive command would
+    be most appropriate to the situation. Once the dataset is complete, baseline tests will be done
+    with simpler models (e.g. linear regression, rule-based model, SVM) for comparison. Due to the
+    robot's low processing power and limited memory, a Raspberry Pi will be used to compute the
+    model's decisions. A camera attached to the robot will send captured images to the Raspberry
+    Pi. These images will then be used to decide which command should be executed. The
+    mini-computer will then send these commands to the robot's processor. The robot will then only
+    be responsible for the driving controls. These tasks will be done concurrently with the course
+    MAC0318 - Introduction to Mobile Robot Programming.
+  </p>
 
-  After the completion of both the dataset extraction and baseline tests, theoretical study on the
-  discriminative learning algorithm [10] will begin. The code implementation will be free and
-  open-sourced, and will be part of the SPN inference and learning framework <a
-    href="https://github.com/RenatoGeh/gospn">GoSPN</a>. The code will be written in Go. Next, an
-  image classification performance comparison between the implemented algorithm and other SPN
-  generative learning methods present in the framework will be done.
+  <p>
+    After the completion of both the dataset extraction and baseline tests, theoretical study on
+    the discriminative learning algorithm [10] will begin. The code implementation will be free and
+    open-sourced, and will be part of the SPN inference and learning framework <a
+      href="https://github.com/RenatoGeh/gospn">GoSPN</a>. The code will be written in Go. Next, an
+    image classification performance comparison between the implemented algorithm and other SPN
+    generative learning methods present in the framework will be done.
+  </p>
 
-  Once the above is completed, we shall begin the implementation on the robot. After this
-  integration is completed, we will compare the model with both the baseline and other generative
-  SPNs.
+  <p>
+    Once the above is completed, we shall begin the implementation on the robot. After this
+    integration is completed, we will compare the model with both the baseline and other generative
+    SPNs.
+  </p>
 
   <h3>Schedule</h3>
 
-  The planned schedule for all proposed tasks for the year 2018 is shown below. Tasks marked with
-  &#10007; are ongoing or not yet begun activities. Ones marked with &#10003; indicate a concluded
-  task.
+  <p>
+    The planned schedule for all proposed tasks for the year 2018 is shown below. Tasks marked with
+    &#10007; are ongoing or not yet begun activities. Ones marked with &#10003; indicate a concluded
+    task.
+  </p>
 
   <!-- &#10003; checkmark | &#10007; crossmark -->
   <table>
