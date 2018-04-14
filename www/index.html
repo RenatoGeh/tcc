@@ -84,14 +84,14 @@
   </p>
 
   <p>
-    Aprendizado discriminativo busca otimizar a \(P(\mathbf{Y}|\mathbf{X})\), ao invés de modelos
-    generativos que aprendem a probabilidade conjunta \(P(\mathbf{Y},\mathbf{X})\). Resultados de
-    modelos discriminativos tendem a apresentar melhor desempenho do que generativos. Até agora,
-    existem vários algoritmos de aprendizado generativo de SPNs. No entanto, atualmente existem
-    apenas dois artigos de aprendizado discriminativo em SPNs publicados. Parte do trabalho será
-    estudar o artigo seminal de aprendizado discriminativo de SPNs [10]. Serão implementadas as
-    versões <i>soft</i> e <i>hard</i> do algoritmo de aprendizado por método de otimização de
-    gradiente.
+    Aprendizado discriminativo busca otimizar a probabilidade \(P(\mathbf{Y}|\mathbf{X})\), ao
+    invés de modelos generativos que aprendem a probabilidade conjunta
+    \(P(\mathbf{Y},\mathbf{X})\). Resultados de modelos discriminativos tendem a apresentar melhor
+    desempenho do que generativos. Até agora, existem vários algoritmos de aprendizado generativo
+    de SPNs. No entanto, atualmente existem apenas dois artigos publicados de aprendizado
+    discriminativo em SPNs. Parte do trabalho será estudar o artigo seminal de SPNs discriminativas
+    [10]. Em seguida, serão implementadas as versões <i>soft</i> e <i>hard</i> do
+    algoritmo de aprendizado por método de otimização de gradiente.
   </p>
 
   <p>
@@ -99,9 +99,10 @@
     de robôs móveis, baseando-se em [11]. O robô móvel usado será o <a
       href="https://en.wikipedia.org/wiki/Lego_Mindstorms">Lego Mindstorms</a>. Devido ao baixo
     poder de processamento e memória limitada, também será usado em conjunto um <a
-      href="https://en.wikipedia.org/wiki/Raspberry_Pi">Raspberry Pi</a>. Será computada a decisão
-    por inferência da SPN no Raspberry Pi, deixando apenas o controle do robô para o Lego
-    Mindstorms. O treinamento da SPN será feito num computador separado.
+      href="https://en.wikipedia.org/wiki/Raspberry_Pi">Raspberry Pi</a>. Uma câmera embutida ao
+    robô enviará imagens ao Raspberry Pi, que tomará uma certa decisão dependendo do resultado da
+    classificação da SPN. Apenas o controle de movimento do robô será feito no Lego Mindstorms. O
+    treinamento da SPN será feito num computador separado.
   </p>
 
   <h3>Objetivos</h3>
@@ -128,21 +129,37 @@
   <h3>Metodologia</h3>
 
   <p>
-    O trabalho terá seu início com a coleta de imagens a serem usadas como <i>dataset</i>. Em
-    seguida, serão feitos testes de <i>baselines</i> com modelos mais simples (e.g. regressão
-    linear, modelo por regras e SVM), implementando-se os algoritmos no robô. Como o robô tem baixo
-    poder de processamento e pouca memória, será usado um Raspberry Pi para computar as decisões
-    dos modelos.  O mini-computador então enviará os comandos de direção para o processador do
-    robô. Desta forma, o robô apenas cuidará do controle da direção. Estas tarefas serão feitas em
-    conjunto com a disciplina MAC0318 - Introdução a Programação de Robôs Móveis.
+    Uma rede soma-produto pode ser definida como um DAG cujos nós podem ser somas ponderadas,
+    produtos, uma distribuição de probabilidade univariada ou uma variável indicadora. Inferência
+    exata em SPNs é linear no número de arestas. Modelos probabilísticos tradicionais, como redes
+    bayesianas e redes de markov possuem grande expressividade, porém dependem de algoritmos
+    aproximados para computar inferência de maneira tratável, o que implica em tanto aprendizado
+    quanto inferência aproximadas. Micro robôs móveis, como o Lego Mindstorms, geralmente possuem
+    recursos computacionais limitados, o que significa que decisões tomadas devem ser rápidas. Como
+    a presença de erros nos sensores é comum em robôs móveis, é vantajoso escolher um modelo
+    probabilístico que captura incerteza nas decisões tomadas.
+  </p>
+
+  <p>
+    O trabalho terá seu início com a coleta de imagens a serem usadas como <i>dataset</i>. O
+    conjunto de dados conterá imagens de pistas a serem percorridas. Cada imagem terá uma etiqueta
+    indicando o comando de direção apropriado a situação. Após a extração do <i>dataset</i>, serão
+    feitos testes de <i>baseline</i> com modelos mais simples (e.g. regressão linear, modelo por
+    regras e SVM), implementando-se os algoritmos no robô. Como o robô tem baixo poder de
+    processamento e pouca memória, será usado um Raspberry Pi para computar as decisões dos
+    modelos. Uma câmera afixada no robô enviará as imagens captadas ao Raspberry Pi. Estas imagens
+    serão usadas para decidir quais são os melhores comandos a serem tomados. O mini-computador
+    então enviará os comandos de direção para o processador do robô. Desta forma, o robô apenas
+    cuidará do controle da direção. Estas tarefas serão feitas em conjunto com a disciplina MAC0318
+    - Introdução a Programação de Robôs Móveis.
   </p>
 
   <p>
     Após o final das tarefas de coleta de imagens e de teste de baseline, será estudado o artigo
-    [10]. A implementação do código será livre e aberto, e fará parte da biblioteca de inferência a
+    [10]. A implementação do código será livre e aberto, e fará parte da biblioteca de inferência e
     aprendizado de SPNs <a href="https://github.com/RenatoGeh/gospn">GoSPN</a>. O código será
-    escrito em Go.  Em seguida, o algoritmo será comparado com outros algoritmos generativos
-    presentes na biblioteca na tarefa de classificação de imagens.
+    escrito na linguagem Go. Em seguida, o algoritmo será comparado com outros algoritmos
+    generativos presentes na biblioteca na tarefa de classificação de imagens.
   </p>
 
   <p>
