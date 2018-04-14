@@ -4,14 +4,34 @@
 
 [www](https://www.ime.usp.br/~renatolg/mac0499/)
 
-*Docs:*
+**Docs:**
 
  - Proposta [.html](https://www.ime.usp.br/~renatolg/mac0499/)
- - Monografia [.pdf](https://github.com/RenatoGeh/tcc/blob/master/docs/mono/mono.pdf)
- - Poster [.pdf](https://github.com/RenatoGeh/tcc/blob/master/docs/poster/poster.pdf)
+ - Monografia [.html](https://www.ime.usp.br/~renatolg/mac0499/thesis.html)
+ - Pôster [.html](https://www.ime.usp.br/~renatolg/mac0499/poster.html)
 
-*Links:*
+**Links:**
 
- - [www](https://www.ime.usp.br/~renatolg/mac0499/)
+ - [Code](https://github.com/RenatoGeh/GoBot)
+ - [GoSPN](https://github.com/RenatoGeh/GoSPN)
+
+</br>
+<hr>
+</br>
+
+# Undergraduate Thesis (MAC0499)
+
+## Autonomous Mobile Robot Driving Through Image Classification Using Discriminative Learning of Sum-Product Networks
+
+[www](https://www.ime.usp.br/~renatolg/mac0499/index.html?lang=en)
+
+**Docs:**
+
+ - Proposal [.html](https://www.ime.usp.br/~renatolg/mac0499/index.html?lang=en)
+ - Thesis [.html](https://www.ime.usp.br/~renatolg/mac0499/thesis.html?lang=en)
+ - Poster [.html](https://www.ime.usp.br/~renatolg/mac0499/poster.html?lang=en)
+
+**Links:**
+
  - [Code](https://github.com/RenatoGeh/GoBot)
  - [GoSPN](https://github.com/RenatoGeh/GoSPN)
