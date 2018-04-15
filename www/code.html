@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+	<meta charset="utf-8">
+
+  <!-- Main CSS Stylesheet -->
+  <link rel="stylesheet" href="main.css">
+  <!-- Roboto Font -->
+  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+
+  <!-- MathJax -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+	<title>TCC - Renato Lui Geh</title>
+</head>
+
+
+<body onload="javascript:select_language(parseParam('lang', 'pt'))">
+
+<!-- NavBar -->
+<ul class="navbar">
+  <li class="navitem">
+    <a href="index.html?lang=en" lang="en">Proposal</a>
+    <a href="index.html?lang=pt" lang="pt">Proposta</a>
+  </li>
+  <li class="navitem">
+    <a href="thesis.html?lang=en" lang="en">Thesis</a>
+    <a href="thesis.html?lang=pt" lang="pt">Monografia</a>
+  </li>
+  <li class="navitem">
+    <a class="active" href="code.html?lang=en" lang="en">Code</a>
+    <a class="active" href="code.html?lang=pt" lang="pt">Código</a>
+  </li>
+  <li class="navitem">
+    <a href="poster.html?lang=en" lang="en">Poster</a>
+    <a href="poster.html?lang=pt" lang="pt">Pôster</a>
+  </li>
+  <li class="navitem">
+    <a href="presentation.html?lang=en" lang="en">Presentation</a>
+    <a href="presentation.html?lang=pt" lang="pt">Apresentação</a>
+  </li>
+</ul>
+
+<div class="body">
+
+<!-- Language flags -->
+<div class="localization">
+  <label>
+    <input type="radio" name="radios" onchange="select_language(this.value)" value="en"/>
+    <img src="imgs/en.png">
+  </label>
+  <label>
+    <input type="radio" name="radios" onchange="select_language(this.value)" value="pt"/>
+    <img src="imgs/pt.png">
+  </label>
+</div>
+
+<h1 lang="pt">Trabalho de Conclusão de Curso</h1>
+<h1 lang="en">Undergraduate Thesis</h1>
+
+<h2 lang="pt">Direção Autônoma de Robôs Móveis por Classificação de Imagens Através de Aprendizado Discriminativo de Redes Soma-Produto</h2>
+<h2 lang="en">Autonomous Mobile Robot Driving Through Image Classification Using Discriminative Learning of Sum-Product Networks</h2>
+
+<b lang="pt">Aluno:</b><b lang="en">Student:</b> Renato Lui Geh
+</br>
+<b lang="pt">Orientador:</b><b lang="en">Advisor:</b> <a href="https://www.ime.usp.br/~ddm">Denis Deratani Mauá</a>
+</br>
+
+<div lang="pt">
+  <h3>Código</h3>
+
+  <p>
+    Serão implementadas as versões <i>soft</i> e <i>hard</i> do algoritmo de aprendizado
+    discriminativo de Gens-Domingos. O código escrito para este TCC será dividido em duas partes. A
+    primeira será a implementação do algoritmo para classificação de imagem. A segunda será a
+    aplicação dele à tarefa de direção autônoma de robôs móveis. Todo o código escrito será livre e
+    aberto.
+  </p>
+
+  <h3>Aprendizado Discriminativo</h3>
+
+  <p>
+    O código se baseará no artigo:
+  </p>
+
+  <div class="cite">
+    Robert Gens, Pedro Domingos. "Discriminative Learning of Sum-Product Networks". Advances in
+    Neural Information Processing Systems (NIPS 2012). Ed. 25.
+  </div>
+
+  <p>
+    A implementação será disponibilizada em <a href="https://github.com/RenatoGeh/GoSPN">GoSPN</a>,
+    uma biblioteca de inferência e aprendizado de redes soma-produto. A implementação será escrita
+    em Go.
+  </p>
+
+  <h3>Aplicação em Robôs Móveis</h3>
+
+  <p>
+    A implementação será baseada no artigo:
+  </p>
+
+  <div class="cite">
+    Bruno Massoni Sguerra, Fabio G. Cozman. "Image Classification Using Sum-Product Networks for
+    Autonomous Flight of Micro Aerial Vehicles". Brazilian Conference on Intelligent Systems
+    (BRACIS 2016). Ed. 5.
+  </div>
+
+  <p>
+    O código para a aplicação em robôs móveis estará disponível em <a
+      href="https://github.com/RenatoGeh/GoBot">GoBot</a>. Serão usadas as linguagens Go para
+    inferência e classificação, e Java para a direção do robô móvel. Para os testes baseline, será
+    usado Python.
+  </p>
+</div>
+
+<div lang="en">
+  <h3>Code</h3>
+
+  <p>
+    Both "soft" and "hard" versions of Gens-Domingos' discriminative learning algorithm will be
+    implemented. We will divide our code into two parts. The first part refers to the implementation
+    of the discriminative learning algorithm for image classification. The second will be code
+    written for the autonomous driving of mobile robots task. All code will be free and open-source.
+  </p>
+
+  <h3>Discriminative Learning</h3>
+
+  <p>We will base our code on the following article:</p>
+
+  <div class="cite">
+    Robert Gens, Pedro Domingos. "Discriminative Learning of Sum-Product Networks". Advances in
+    Neural Information Processing Systems (NIPS 2012). Ed. 25.
+  </div>
+
+  <p>
+    The implementation will be part of the <a href="https://github.com/RenatoGeh/GoSPN">GoSPN</a>
+    framework for inference and learning of sum-product networks. It will be written in Go.
+  </p>
+
+  <h3>Application to Mobile Robots</h3>
+
+  <p>Our implementation will be based on the article:</p>
+
+  <div class="cite">
+    Bruno Massoni Sguerra, Fabio G. Cozman. "Image Classification Using Sum-Product Networks for
+    Autonomous Flight of Micro Aerial Vehicles". Brazilian Conference on Intelligent Systems
+    (BRACIS 2016). Ed. 5.
+  </div>
+
+  <p>
+    We will make our code available at <a href="https://github.com/RenatoGeh/GoBot">GoBot</a>. We
+    shall use Go for inference and classification and Java for the robot's driving functions.
+    Baseline tests will be written in Python.
+  </p>
+</div>
+
+</div>
+
+</body>
+
+<!-- Add some space at the end of the page. -->
+<footer>
+  <p>&nbsp;</p>
+</footer>
+
+<!-- Language Localization JavaScript -->
+<script src="./locale/lang_sel.js"></script>
+
+</html>
