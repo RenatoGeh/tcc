@@ -60,7 +60,7 @@
 <h1 lang="en">Undergraduate Thesis</h1>
 
 <h2 lang="pt">Direção Autônoma de Robôs Móveis por Classificação de Imagens Através de Aprendizado Discriminativo de Redes Soma-Produto</h2>
-<h2 lang="en">Autonomous Mobile Robot Driving Through Image Classification Using Discriminative Learning of Sum-Product Networks</h2>
+<h2 lang="en">Mobile Robot Self-Driving Through Image Classification Using Discriminative Learning of Sum-Product Networks</h2>
 
 <b lang="pt">Aluno:</b><b lang="en">Student:</b> Renato Lui Geh
 </br>
@@ -69,6 +69,19 @@
 
 <div lang="pt">
   <h3>Resumo</h3>
+
+  <p>
+    O problema de direção autônoma consiste em locomover um veículo através de uma pista de forma
+    autônoma (i.e. sem interação humana direta). Este problema é um desafio de visão computacional
+    que teve grandes avanços recentemente por meio de aprendizado de máquina. Neste TCC, busca-se
+    abordar direção autônoma no domínio de robôs móveis. Trataremos direção autônoma por meio de
+    aprendizado por imitação [12] usando classificação de imagens. Por meio de uma câmera embutida,
+    o robô deve percorrer uma pista pré-determinada a partir da classificação de imagens tiradas
+    durante o trajeto. As imagens de treino serão etiquetadas com os melhores comandos a serem
+    executados pelo robô. O objetivo do robô é então classificar as imagens durante o percurso,
+    usando o resultado da classificação como a decisão a ser tomada. A tarefa de classificação de
+    imagem será feita através de redes soma-produto aprendidas de forma discriminativa.
+  </p>
 
   <p>
     Redes soma-produto (SPN, de <i>Sum-Product Network</i>) são modelos probabilísticos baseados
@@ -84,24 +97,14 @@
   </p>
 
   <p>
-    Aprendizado discriminativo busca otimizar a probabilidade \(P(\mathbf{Y}|\mathbf{X})\), ao
-    invés de modelos generativos que aprendem a probabilidade conjunta
-    \(P(\mathbf{Y},\mathbf{X})\). Resultados de modelos discriminativos tendem a apresentar melhor
-    desempenho do que generativos em tarefas de classificação. Atualmente, existem vários
-    algoritmos de aprendizado generativo de SPNs. No entanto, até agora existem apenas dois artigos
-    publicados de aprendizado discriminativo em SPNs. Parte do trabalho será estudar o artigo
-    seminal de SPNs discriminativas [10]. Em seguida, serão implementadas as versões <i>soft</i> e
-    <i>hard</i> do algoritmo de aprendizado por método de otimização de gradiente.
-  </p>
-
-  <p>
-    Após o estudo da teoria e da implementação, o modelo será aplicado à tarefa de direção autônoma
-    de robôs móveis, baseando-se em [11]. O robô móvel usado será o <a
-      href="https://en.wikipedia.org/wiki/Lego_Mindstorms">Lego Mindstorms</a>. Devido ao baixo
-    poder de processamento e memória limitada, também será usado em conjunto um <a
+    Após o estudo da teoria e da implementação do algoritmo de aprendizagem, o modelo será aplicado
+    à tarefa de direção autônoma de robôs móveis baseando-se em [11,12,13]. O robô móvel usado será
+    ou o <a href="https://en.wikipedia.org/wiki/Lego_Mindstorms">Lego Mindstorms</a> ou um robô de
+    baixo custo construído. No caso do Lego Mindstorms, devido ao baixo poder de processamento e
+    memória limitada, também será usado em conjunto um <a
       href="https://en.wikipedia.org/wiki/Raspberry_Pi">Raspberry Pi</a>. Uma câmera embutida ao
     robô enviará imagens ao Raspberry Pi, que tomará uma certa decisão dependendo do resultado da
-    classificação da SPN. Apenas o controle de movimento do robô será feito no Lego Mindstorms. O
+    classificação. Apenas o controle de movimento do robô será feito no Lego Mindstorms. O
     treinamento da SPN será feito num computador separado.
   </p>
 
@@ -123,7 +126,7 @@
       aprendizados generativos.
     </li>
     <li>
-      Aplicação do modelo para direção autônoma de robôs móveis.
+      Desenvolvimento de um robô seguidor de pista baseado em classificação de imagens por SPNs.
     </li>
   </ol>
 
@@ -159,7 +162,15 @@
     Após o final das tarefas de coleta de imagens e de teste de baseline, será estudado o artigo
     [10]. A implementação do código será livre e aberto, e fará parte da biblioteca de inferência e
     aprendizado de SPNs <a href="https://github.com/RenatoGeh/gospn">GoSPN</a>. O código será
-    escrito na linguagem Go. Em seguida, o algoritmo será comparado com outros algoritmos
+    escrito na linguagem Go. Para este TCC, usaremos SPNs aprendidas de forma discriminativa.
+    Aprendizado discriminativo busca otimizar a probabilidade \(P(\mathbf{Y}|\mathbf{X})\), onde
+    \(\mathbf{Y}\) em nossa aplicação é a variável aleatória que representa a ação a ser tomada
+    (e.g. "virar a esquerda", "seguir reto", "virar a direita") e \(\mathbf{X}\) é a imagem a ser
+    classificada, ao invés de modelos generativos que aprendem a probabilidade conjunta
+    \(P(\mathbf{Y},\mathbf{X})\).  Resultados de modelos discriminativos tendem a apresentar melhor
+    desempenho do que generativos em tarefas de classificação. Serão implementadas as versões
+    <i>hard</i> e <i>soft</i> do algoritmo de aprendizado discriminativo por método de otimização
+    de gradiente descrito em [10]. Em seguida, os algoritmos serão comparados com outros algoritmos
     generativos presentes na biblioteca na tarefa de classificação de imagens.
   </p>
 
@@ -241,7 +252,7 @@
 
   <ol type="a">
     <li>Coleta de imagens para o <i>dataset</i> de treino.</li>
-    <li>Teste de <i>baseline</i>.</li>
+    <li>Testes de <i>baseline</i>.</li>
     <li>Estudo do algoritmo de aprendizado discriminativo de Gens-Domingos [10].</li>
     <li>Implementação do algoritmo na biblioteca GoSPN.</li>
     <li>Depuração e testes contra outros métodos de aprendizado generativo.</li>
@@ -490,6 +501,14 @@
     Bruno Massoni Sguerra, Fabio G. Cozman. "Image Classification Using Sum-Product Networks for
     Autonomous Flight of Micro Aerial Vehicles". Brazilian Conference on Intelligent Systems
     (BRACIS 2016). Ed. 5.
+  </li>
+  <li>
+    Ahmed Hussein et al. "Imitation Learning: A Survey of Learning Methods". ACM Computing Surveys
+    (CSUR 2017). Volume 50. Issue 2. Article 21.
+  </li>
+  <li>
+    Mariusz Bojarski et al. "End to End Learning of Self-Driving Cars". Computing Research
+    Repository (CoRR 2016). Volume 1604.07316.
   </li>
 </ol>
 
