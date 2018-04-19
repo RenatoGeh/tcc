@@ -77,10 +77,10 @@
     abordar direção autônoma no domínio de robôs móveis. Trataremos direção autônoma por meio de
     aprendizado por imitação [12] usando classificação de imagens. Por meio de uma câmera embutida,
     o robô deve percorrer uma pista pré-determinada a partir da classificação de imagens tiradas
-    durante o trajeto. As imagens de treino serão etiquetadas com os melhores comandos a serem
-    executados pelo robô. O objetivo do robô é então classificar as imagens durante o percurso,
-    usando o resultado da classificação como a decisão a ser tomada. A tarefa de classificação de
-    imagem será feita através de redes soma-produto aprendidas de forma discriminativa.
+    durante o trajeto. As imagens de treino serão etiquetadas com os comandos a serem executados
+    pelo robô. O objetivo do robô é então classificar as imagens durante o percurso, usando o
+    resultado da classificação como a decisão a ser tomada. A tarefa de classificação de imagem
+    será feita através de redes soma-produto aprendidas de forma discriminativa.
   </p>
 
   <p>
@@ -166,7 +166,7 @@
     Aprendizado discriminativo busca otimizar a probabilidade \(P(\mathbf{Y}|\mathbf{X})\), onde
     \(\mathbf{Y}\) em nossa aplicação é a variável aleatória que representa a ação a ser tomada
     (e.g. "virar a esquerda", "seguir reto", "virar a direita") e \(\mathbf{X}\) é a imagem a ser
-    classificada, ao invés de modelos generativos que aprendem a probabilidade conjunta
+    classificada. Em contrapartida, modelos generativos buscam aprender a probabilidade conjunta
     \(P(\mathbf{Y},\mathbf{X})\).  Resultados de modelos discriminativos tendem a apresentar melhor
     desempenho do que generativos em tarefas de classificação. Serão implementadas as versões
     <i>hard</i> e <i>soft</i> do algoritmo de aprendizado discriminativo por método de otimização
@@ -270,6 +270,19 @@
 
 <div lang="en">
   <h3>Abstract</h3>
+
+  <p>
+    The problem of self-driving consists of autonomously (i.e. without direct human interaction)
+    driving a vehicle through lanes or other pathways. This problem, that has proven to be a
+    challenge for computer vision, has recently had incredible results as a machine learning
+    application. In this undergraduate thesis, we show an application of self-driving in the mobile
+    robot domain by using imitation learning [12], more specifically through image classification.
+    By using a camera attached to its chassis, the robot should then traverse a pathway
+    autonomously through the use of image classification. The objective of the robot is to traverse
+    a certain pre-determined path, guiding itself through images taken by a camera attached to its
+    chassis. The training set is composed of a pair of image and a command as a label (e.g. "turn
+    left", "go straight", "turn right").
+  </p>
 
   <p>
     Sum-product networks (SPNs) are probabilistic graphical models that model a tractable
