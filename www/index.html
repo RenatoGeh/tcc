@@ -286,17 +286,25 @@
   <h3>Abstract</h3>
 
   <p>
-    The problem of self-driving consists of autonomously (i.e. without direct human interaction)
-    driving a vehicle through lanes or other pathways. This problem, that has proven to be a
-    challenge for computer vision, has recently had incredible results as a machine learning
+    The self-driving problem consists of autonomously (i.e. without direct human interaction)
+    driving a vehicle through lanes or other pathways. This problem has proven to be a
+    challenge for computer vision, and has recently had incredible results as a machine learning
     application. In this undergraduate thesis, we show an application of self-driving in the mobile
     robot domain by using imitation learning [12], more specifically through image classification.
-    By using a camera attached to its chassis, the robot should then traverse a pathway
-    autonomously through the use of image classification. The objective of the robot is to traverse
-    a certain pre-determined path, guiding itself through images taken by a camera attached to its
-    chassis. The training set is composed of a pair of image and a command as a label (e.g. "turn
-    left", "go straight", "turn right").
+    Our objective in this undergraduate thesis is to guide a low-cost mobile robot through a
+    pathway by using images taken from a conventional digital camera.
   </p>
+
+  <p>
+    The objective of imitation learning is to teach an agent (i.e. a machine) to mimic human
+    behavior in a particular task. In our case, we wish to make a mobile robot behave the same way
+    as a human would when driving through a pathway. By using real-time images collected during its
+    route, the robot must use image classification to stay inside the pathway. Each image is then
+    labeled as a certain prototypical action (e.g. "turn right", "straight ahead", "turn left").
+    The result of the classification is then used as a basis for a later refinement of the actions
+    to engine control signals. The training dataset follows the same label scheme, with images
+    collected by labelling images with human actions. For the task of image classification, we
+    shall use discriminative sum-productt networks.
 
   <p>
     Sum-product networks (SPNs) are probabilistic graphical models that model a tractable
@@ -311,10 +319,7 @@
   </p>
 
   <p>
-    Discriminative learning seeks to optimize the probability \(P(\mathbf{Y}|\mathbf{X})\), in
-    contrast to generative models, that attempt to learn the joint probability
-    \(P(\mathbf{Y},\mathbf{X})\). Discriminative models tend to achieve better scores compared to
-    generatives. There are many published generative learning algorithms for SPNs. However, up
+     There are many published generative learning algorithms for SPNs. However, up
     until now, only two articles on discriminative learning of SPNs have been published so far.
     Part of this undergrad thesis is to study the seminal article on discriminative SPNs [1]. Once
     finished, an implementation of both "soft" and "hard" gradient descent versions of the learning
@@ -324,14 +329,14 @@
   <p>
     Once both theoretical studies and the implementation are complete, the learning algorithm will
     be applied to the task of autonomous driving of mobile robots. This portion of the work will be
-    based on the [11] article. We will use the <a
-      href="https://en.wikipedia.org/wiki/Lego_Mindstorms">Lego Mindstorms</a> platform as our
-    mobile robot. Due to its low processing power and restricted memory size, a <a
-      href="https://en.wikipedia.org/wiki/Raspberry_Pi">Raspberry Pi</a> will also be used. A
-    camera attached to the robot will send images to the Raspberry Pi, which will, in turn, return
-    a certain decision depending on the output of the SPN's classification. Only the actual driving
-    of the robot will be delegated to the Lego Mindstorms. The SPN's training will be done in a
-    separate computer.
+    based on articles [11,12,13]. We will use the <a
+      href="https://en.wikipedia.org/wiki/Lego_Mindstorms">Lego Mindstorms</a> platform or another
+    low-cost built robot as our mobile robot. Due to Lego Mindstorms' low processing power and
+    restricted memory size, a <a href="https://en.wikipedia.org/wiki/Raspberry_Pi">Raspberry Pi</a>
+    will also be used to compute inference. A camera attached to the robot will send images to the
+    Raspberry Pi, which will, in turn, return a certain decision depending on the output of the
+    SPN's classification. Only the actual driving of the robot will be delegated to the Lego
+    Mindstorms. The SPN's training will be done in a separate computer.
   </p>
 
   <h3>Objectives</h3>
@@ -345,7 +350,7 @@
     <li>To implement both the "soft" and "hard" learning algorithms.</li>
     <li>To test and validate the model in image classification taks, comparing its performance with
       other generative learning algorithms.</li>
-    <li>To apply the model to the task of autonomous driving of mobile robots.</li>
+    <li>Development of a lane following mobile robot based on image classification through SPNs.</li>
   </ol>
 
   <h3>Methodology</h3>
@@ -358,7 +363,8 @@
     compute inference tractably. Mobile robots, such as the Lego Mindstorms, are usually resource
     constrained, meaning decision making has to be done fast. The presence of environment error in
     sensors is also very common in mobile robots, which means a probabilistic model that captures
-    uncertainty in decision making can be very advantageous.
+    uncertainty in decision making can be very advantageous. Furthermore, we are also interested in
+    extracting a good estimate of the probability of each action.
   </p>
 
   <p>
@@ -378,15 +384,23 @@
     After the completion of both the dataset extraction and baseline tests, theoretical study on
     the discriminative learning algorithm [10] will begin. The code implementation will be free and
     open-sourced, and will be part of the SPN inference and learning framework <a
-      href="https://github.com/RenatoGeh/gospn">GoSPN</a>. The code will be written in Go. Next, an
-    image classification performance comparison between the implemented algorithm and other SPN
-    generative learning methods present in the framework will be done.
+      href="https://github.com/RenatoGeh/gospn">GoSPN</a>. This library was developed earlier as
+    part of an undergraduate research project, and contains a base for SPN construction, inference
+    functions and other generative learning algorithms for SPNs. The code will be written in Go.
+    For this undergraduate thesis, we shall use discriminative SPNs. Discriminative learning seeks
+    to optimize the probability \(P(\mathbf{Y}|\mathbf{X})\), in contrast to generative models,
+    that attempt to learn the joint probability \(P(\mathbf{Y},\mathbf{X})\), where \(\mathbf{Y}\)
+    in our application is the random variable representing the action to be taken (e.g. "turn
+    left", "straight ahead", "turn right") and \(\mathbf{X}\) is the image to be classified.
+    Generative models, on the other hand, model the joint probability \(P(\mathbf{Y},\mathbf{X})\).
+    Discriminative models tend to achieve better scores compared to generatives. With the
+    implementation done, an image classification performance comparison between the implemented
+    algorithm and other SPN generative learning methods present in the framework will be done.
   </p>
 
   <p>
-    Once the above is completed, we shall begin the implementation on the robot. After this
-    integration is completed, we will compare the model with both the baseline and other generative
-    SPNs.
+    After the tasks above are completed, we will begin the implementation on the robot. Once this
+    is done, we will compare the model with both the baseline and other generative SPNs.
   </p>
 
   <h3>Schedule</h3>
