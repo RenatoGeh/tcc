@@ -1,0 +1,48 @@
+\usepackage[
+  hyperref=true,
+  natbib=true,
+  autolang=hyphen,
+  backref=true,
+  maxbibnames=5,
+  maxcitenames=2,
+  bibstyle=plainnat-ime,
+  citestyle=plainnat-ime,
+]{biblatex}
+
+\renewcommand{\mkbibnamefamily}[1]{\textsc{#1}}
+
+\DeclareNameAlias{sortname}{given-family}
+\DeclareNameAlias{default}{given-family}
+
+\setlength{\bibitemsep}{1em}
+\setlength{\bibhang}{2em}
+
+\AtBeginBibliography{
+  \renewcommand*{\makelabel}[1]{\hss#1}
+}
+
+\DefineBibliographyStrings{brazilian}{
+  backrefpage  = {citado na pg\adddot},
+  backrefpages = {citado nas pgs\adddot},
+  andothers    = {\textit{et\addabbrvspace al}\adddot},
+  page         = {pg\adddot},
+  pages        = {pgs\adddot},
+}
+
+\DefineBibliographyStrings{american}{
+  andothers    = {\textit{et\addabbrvspace al}\adddot},
+}
+
+\defbibheading{bibliography}[\bibname]{%
+  \chapter*{#1}%
+  \chaptermark{#1}%
+}
+
+\defbibheading{bibintoc}[\bibname]{%
+  \chapter*{#1}%
+  \addcontentsline{toc}{chapter}{#1}%
+  \chaptermark{#1}%
+}
+
+\DeclareCaseLangs{brazilian,brazil,portuges}
+\DeclareFieldFormat{titlecase}{\NoChangeOrSentenceCase{#1}}

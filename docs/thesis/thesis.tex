@@ -1,0 +1,61 @@
+\RequirePackage[l2tabu, orthodox]{nag}
+
+\documentclass[12pt,twoside,brazil,english]{book}
+
+\usepackage[a4paper]{geometry}
+\geometry{
+  top=32mm,
+  bottom=28mm,
+  left=24mm,
+  right=34mm,
+  headheight=25.4mm,
+  headsep=11mm,
+  footskip=10mm,
+  marginpar=20mm,
+  marginparsep=5mm,
+}
+
+\input{preamble}
+
+\input{bibconfig}
+\addbibresource{references.bib}
+
+
+\title{Título do trabalho}
+\author{Nome Completo}
+
+\hypersetup{
+  pdfkeywords={undergraduate thesis, pgm, spn, ime, usp, computer science},
+}
+
+%\input{metadados-tese}
+
+\begin{document}
+
+\frontmatter
+
+\input{cover}
+%\input{folhas-de-rosto}
+
+\par
+\mainmatter
+
+\input{chapters}
+\par
+
+
+\appendix
+\input{appendices}
+\par
+
+
+\backmatter
+\pagestyle{frontback}
+
+\singlespacing
+
+\printbibliography[
+  heading=bibintoc,
+]
+
+\end{document}

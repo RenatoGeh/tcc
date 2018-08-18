@@ -1,0 +1,346 @@
+\usepackage{etoolbox}
+
+\usepackage{ifxetex}
+\usepackage{ifluatex}
+\usepackage{ifpdf}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsthm}
+\usepackage{babel}
+\babeltags{br = brazil, en = english}
+
+\newcommand\microtypeopts{
+  protrusion=true,
+  tracking=false,
+  kerning=false,
+  spacing=false
+}
+
+\ifxetex
+  \usepackage[expansion=false,\microtypeopts]{microtype}
+\else
+  \usepackage[expansion=true,\microtypeopts]{microtype}
+\fi
+
+\tolerance=800
+\hyphenpenalty=800
+\setlength{\emergencystretch}{2.5em}
+
+\frenchspacing
+
+\usepackage[bottom]{footmisc}
+\usepackage{emptypage}
+\usepackage{setspace}
+
+\usepackage{indentfirst}
+\newlength\oldparindent
+\setlength\oldparindent\parindent
+\usepackage[parfill]{parskip}
+\setlength\parindent\oldparindent
+
+\usepackage[usenames,svgnames,dvipsnames]{xcolor}
+\usepackage[newcommands]{ragged2e}
+
+\makeatletter
+\g@addto@macro{\centering}{\hbadness=\@M}
+\g@addto@macro{\Centering}{\hbadness=\@M}
+\g@addto@macro{\raggedright}{\hbadness=\@M}
+\g@addto@macro{\RaggedRight}{\hbadness=\@M}
+\g@addto@macro{\raggedleft}{\hbadness=\@M}
+\g@addto@macro{\RaggedLeft}{\hbadness=\@M}
+\g@addto@macro{\center}{\hbadness=\@M}
+\g@addto@macro{\Center}{\hbadness=\@M}
+\g@addto@macro{\flushleft}{\hbadness=\@M}
+\g@addto@macro{\FlushLeft}{\hbadness=\@M}
+\g@addto@macro{\flushright}{\hbadness=\@M}
+\g@addto@macro{\FlushRight}{\hbadness=\@M}
+\makeatother
+
+\usepackage{textcase}
+\usepackage{lmodern}
+\usepackage{fix-cm}
+
+\fontencoding{TS1}\fontfamily{lmr}\selectfont
+\DeclareFontShape{TS1}{lmr}{b}{sc}{<->ssub * cmr/bx/n}{}
+\DeclareFontShape{TS1}{lmr}{bx}{sc}{<->ssub * cmr/bx/n}{}
+
+\fontencoding{T1}\fontfamily{lmr}\selectfont
+\DeclareFontShape{T1}{lmr}{b}{sc}{<->ssub * cmr/bx/sc}{}
+\DeclareFontShape{T1}{lmr}{bx}{sc}{<->ssub * cmr/bx/sc}{}
+
+\fontencoding{T1}\fontfamily{lmr}\selectfont % já feito acima, mas tudo bem
+\DeclareFontShape{T1}{lmr}{m}{scit}{<->ssub * lmr/m/scsl}{}
+\DeclareFontShape{T1}{lmr}{bx}{scit}{<->ssub * lmr/bx/scsl}{}
+
+\usepackage{inconsolata}
+\usepackage[mono=false,nofontspec]{libertine}
+\usepackage[libertine]{newtxmath}
+\usepackage{slantsc}
+\usepackage{fancyhdr}
+\renewcommand{\headrulewidth}{0pt}
+
+\setcounter{tocdepth}{2}
+
+\dimdef{\othermargin}{\paperwidth-1in-\hoffset-\oddsidemargin-\textwidth}
+\addtolength{\headwidth}{\othermargin}
+\addtolength{\headwidth}{-10mm}
+
+\newcommand{\formataNumPaginas}{
+  \fancyhead[RO]{\raisebox{8mm}{\footnotesize\bfseries\thepage}}
+  \fancyhead[LE]{\raisebox{8mm}{\footnotesize\bfseries\thepage}}
+}
+
+\newcommand{\formataCabecalhosDinamicos}{
+  \fancyhead[LO]{\scriptsize\MakeTextUppercase{\rightmark}}
+  \fancyhead[RE]{\scriptsize\MakeTextUppercase{\leftmark}}
+}
+
+\fancypagestyle{mainmatter}{
+  \renewcommand{\chaptermark}[1]{
+    \markboth
+      {\thechapter\hskip 0.3em |\hskip 0.3em ##1}
+      {\thechapter\hskip 0.3em |\hskip 0.3em ##1}
+  }
+
+  \renewcommand{\sectionmark}[1]{
+    \markright{\thesection\hskip 0.3em |\hskip 0.3em ##1}
+  }
+
+  \fancyhf{}
+  \formataNumPaginas{}
+  \formataCabecalhosDinamicos{}
+}
+
+\fancypagestyle{appendix}{
+  \renewcommand{\chaptermark}[1]{%
+    \markboth{%
+      \appendixname\ \thechapter%
+    }{%
+      \thechapter\hskip 0.3em |\hskip 0.3em ##1%
+    }
+  }
+
+  \fancyhf{}
+  \formataNumPaginas{}
+  \formataCabecalhosDinamicos{}
+}
+
+\fancypagestyle{frontback}{
+  \renewcommand{\chaptermark}[1]{\markboth{##1}{##1}}
+  \renewcommand{\sectionmark}[1]{\markboth{##1}{##1}}
+
+  \fancyhf{}
+  \formataNumPaginas{}
+  \formataCabecalhosDinamicos{}
+}
+
+\fancypagestyle{plain}{
+  \fancyhf{}
+  \formataNumPaginas{}
+}
+
+\usepackage{graphicx}
+
+\usepackage{float}
+\floatplacement{table}{htbp}
+\floatplacement{figure}{htbp}
+\usepackage{flafter}
+\usepackage[section,above,below]{placeins}
+
+\renewcommand{\topfraction}{.85}
+\renewcommand{\dbltopfraction}{.66}
+\renewcommand{\bottomfraction}{.7}
+\renewcommand{\textfraction}{.15}
+\renewcommand{\floatpagefraction}{.66}
+\renewcommand{\dblfloatpagefraction}{.66}
+\setcounter{topnumber}{9}
+\setcounter{dbltopnumber}{9}
+\setcounter{bottomnumber}{9}
+\setcounter{totalnumber}{20}
+
+\usepackage{pdflscape}
+\usepackage[figuresright,clockwise]{rotating}
+
+\usepackage[
+  font=small,
+  format=plain,
+  labelfont=bf,up,
+  textfont=it,up]{caption}
+
+\usepackage{subcaption}
+\usepackage{wrapfig}
+\usepackage{pdfpages}
+
+
+\usepackage{tablefootnote}
+\usepackage{array}
+
+\newcolumntype{M}[1]{>{\centering}m{#1\textwidth}}
+\newcolumntype{L}[1]{>{\RaggedRight}m{#1\textwidth}}
+\newcolumntype{R}[1]{>{\RaggedLeft}m{#1\textwidth}}
+\newcolumntype{J}[1]{m{#1\textwidth}}
+
+\usepackage{dcolumn}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{makecell}
+\renewcommand{\rothead}[2][60]{\makebox[11mm][l]{\rotatebox{#1}{\makecell[c]{#2}}}}
+
+\newlength\savedwidth
+\newcommand\thickhline{
+  \noalign{
+    \global\savedwidth\arrayrulewidth
+    \global\arrayrulewidth 1.5pt
+  }
+  \hline
+  \noalign{\global\arrayrulewidth\savedwidth}
+}
+
+\usepackage{booktabs}
+
+\usepackage[nottoc,notlot,notlof]{tocbibind}
+
+\begin{filecontents*}{hyperxindy.xdy}
+(define-attributes ("emph"))
+(markup-locref :open "\hyperpage{" :close "}" :attr "default")
+(markup-locref :open "\textbf{\hyperpage{" :close "}}" :attr "textbf")
+(markup-locref :open "\textit{\hyperpage{" :close "}}" :attr "textit")
+(markup-locref :open "\emph{\hyperpage{" :close "}}" :attr "emph")
+\end{filecontents*}
+
+\begin{filecontents*}{mkidxhead.ist}
+headings_flag 1
+heading_prefix "{\\bfseries "
+heading_suffix "}\\nopagebreak\n"
+\end{filecontents*}
+
+\usepackage{imakeidx}
+
+\indexsetup{
+  othercode={\chaptermark{\indexname}},
+}
+
+\makeindex[
+  noautomatic,
+  intoc,
+  options=-s mkidxhead.ist -l -L,
+]
+
+\usepackage{verbatim}
+
+\usepackage{latexsym}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+
+\usepackage{csquotes}
+
+\usepackage[
+  unicode=true,
+  plainpages=false,
+  pdfpagelabels,
+  colorlinks=true,
+  %citecolor=black,
+  %linkcolor=black,
+  %urlcolor=black,
+  %filecolor=black,
+  citecolor=DarkGreen,
+  linkcolor=NavyBlue,
+  urlcolor=DarkRed,
+  filecolor=green,
+  bookmarksopen=true,
+]{hyperref}
+
+\usepackage[all]{hypcap}
+\usepackage{hyperxmp}
+
+\usepackage{url}
+\urlstyle{sf}
+
+\usepackage{listings}
+
+\lstset{
+  basicstyle=\footnotesize\ttfamily,  % the font that is used for the code
+  numbers=left,                       % where to put the line-numbers
+  numberstyle=\footnotesize\ttfamily, % the font that is used for the line-numbers
+  stepnumber=1,                       % the step between two line-numbers. If it's 1 each line will be numbered
+  numbersep=20pt,                     % how far the line-numbers are from the code
+  commentstyle=\color{Brown}\upshape,
+  stringstyle=\color{black},
+  identifierstyle=\color{DarkBlue},
+  keywordstyle=\color{cyan},
+  showspaces=false,                   % show spaces adding particular underscores
+  showstringspaces=false,             % underline spaces within strings
+  showtabs=false,                     % show tabs within strings adding particular underscores
+  frame=single,                       % adds a frame around the code
+  framerule=0.6pt,
+  tabsize=2,                          % sets default tabsize to 2 spaces
+  captionpos=b,                       % sets the caption-position to bottom
+  breaklines=true,                    % sets automatic line breaking
+  breakatwhitespace=false,            % sets if automatic breaks should only happen at whitespace
+  escapeinside={\%*}{*},             % if you want to add a comment within your code
+  backgroundcolor=\color[rgb]{1.0,1.0,1.0}, % choose the background color.
+  rulecolor=\color{darkgray},
+  extendedchars=true,
+  inputencoding=utf8,
+  xleftmargin=30pt,
+  xrightmargin=10pt,
+  framexleftmargin=25pt,
+  framexrightmargin=5pt,
+  framesep=5pt,
+}
+
+\lstdefinestyle{wider} {
+  tabsize = 4,
+  numbersep=15pt,
+  xleftmargin=25pt,
+  framexleftmargin=20pt,
+}
+
+\lstdefinestyle{nocolor} {
+  commentstyle=\color{darkgray}\upshape,
+  stringstyle=\color{black},
+  identifierstyle=\color{black},
+  keywordstyle=\color{black},
+}
+
+\lstdefinelanguage{XML}{
+  morecomment=[s]{<!--}{-->},
+  morecomment=[s]{<!-- }{ -->},
+  morecomment=[n]{<!--}{-->},
+  morecomment=[n]{<!-- }{ -->},
+  morestring=[b],
+  morestring=[s]{>}{<},
+  morecomment=[s]{<?}{?>},
+  morekeywords={xmlns,version,type}% list your attributes here
+}
+
+\usepackage{textcomp}
+\usepackage{multicol}
+
+\usepackage{epigraph}
+\newcommand{\epigrafe}[2] {%
+  \setlength{\epigraphrule}{0pt}
+  \ifthenelse{\equal{}{#2}}{
+    \epigraph{\itshape\RaggedLeft #1}{}
+  }{
+    \epigraph{\itshape\RaggedLeft #1}{--- #2}
+  }
+}
+
+\newrobustcmd{\NoChangeOrSentenceCase}[1]{%
+  \ifthenelse{\ifcurrentfield{booktitle}\OR\ifcurrentfield{booksubtitle}%
+    \OR\ifcurrentfield{maintitle}\OR\ifcurrentfield{mainsubtitle}%
+    \OR\ifcurrentfield{journaltitle}\OR\ifcurrentfield{journalsubtitle}%
+    \OR\ifcurrentfield{issuetitle}\OR\ifcurrentfield{issuesubtitle}%
+    \OR\ifentrytype{book}\OR\ifentrytype{mvbook}\OR\ifentrytype{bookinbook}%
+    \OR\ifentrytype{booklet}\OR\ifentrytype{suppbook}%
+    \OR\ifentrytype{collection}\OR\ifentrytype{mvcollection}%
+    \OR\ifentrytype{suppcollection}\OR\ifentrytype{manual}%
+    \OR\ifentrytype{periodical}\OR\ifentrytype{suppperiodical}%
+    \OR\ifentrytype{proceedings}\OR\ifentrytype{mvproceedings}%
+    \OR\ifentrytype{reference}\OR\ifentrytype{mvreference}%
+    \OR\ifentrytype{report}\OR\ifentrytype{thesis}%
+    \OR\ifentrytype{online}\OR\ifentrytype{misc}}
+    {#1}
+    {\MakeSentenceCase*{#1}}}
