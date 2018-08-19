@@ -1,3 +1,88 @@
 \chapter{Sum-product networks}\label{chp:spn}
 
-Hello
+In this chapter we provide some background concepts needed for defining a sum-product network. Once
+this is covered, we formally define an SPN, list some interesting properties on their structure,
+and describe how to perform exact inference (i.e.\ extract the probability of evidence of some
+valuation) and how to find an approximation of the maximum a posteriori probability.
+
+We leave all proofs in~\autoref{app:proofs}.
+
+\section{Background}
+
+The objective of probabilistic modelling is to compactly represent a probability distribution, be
+able to find a good approximation to the real function and be able to efficiently compute both
+the marginals and modes. Probabilistic graphical models (PGMs) attempt to solve this through the
+use of graphs, representing distributions as a normalized product of factors (\cite{pearl-1988}).
+\begin{equation*}
+  P(X=x)=\frac{1}{Z}\prod_k \phi_k(x_{\{k\}})
+\end{equation*}
+
+Where $x\in\mathcal{X}$ is a $d$-dimensional vector valuation of RVs $\mathbf{X}$ on sample space
+$\mathcal{X}$, and factor (also called a potential) $\phi_k$ is a function mapping instantiations
+of $X$ to a non-negative number. $Z$ is the partition function $Z=\sum_{x\in\mathcal{X}} \prod_k
+\phi_k(x_{\{k\}})$ that sums out all variables and normalizes the term above it to the $[0,1]$
+range.
+
+A downside of this representation is that inference is exponential on the worst case, which makes
+learning also exponential, as it uses inference as a subroutine. To get around this problem,
+Darwiche proposed in~\cite{diff-approach-darwiche} the notion of \textit{network polynomial}.
+
+A network polynomial is a function over the probabilities of each instantiation. Let $\Phi(x)$ be a
+probability distribution. The network polynomial of $\Phi(x)$ is the function
+$f=\sum_{x\in\mathcal{X}}\Phi(x)\Pi(x)$, where $\Pi(x)$ is the product of the IVs of each variable
+on instantiation $x$, where each indicator variable $[Y=y]$ has a value of zero if $Y\neq y$ in $x$
+and a value of one otherwise (i.e.\ if $Y=y$ in $x$ or $Y\not\in x$).
+
+As an example, take the bayesian network $\mathcal{N}=A\to B$ with binary variables. Let
+$\lambda_a$, $\lambda_{\ov{a}}$, $\lambda_b$ and $\lambda_{\ov{b}}$ be the indicator variables for
+when $A=1$, $A=0$, $B=1$ and $B=0$ respectively. The network polynomial of $\mathcal{N}$ is the
+expression
+\begin{equation*}
+  f_{\mathcal{N}}=P(a)P(b|a)\lambda_a\lambda_b+P(a)P(\ov{b}|a)\lambda_a\lambda_{\ov{b}}+
+  P(\ov{a})P(b|\ov{a})\lambda_a\lambda_{\ov{b}}+P(\ov{a})P(\ov{b}|\ov{a})\lambda_{\ov{a}}
+  \lambda_{\ov{b}}.
+\end{equation*}
+
+The main advantage of this representation is to avoid recomputing terms. For instance, take an
+instantiation of $x=\{A=0\}$. Then, the network polynomial will be as follows.
+\begin{align*}
+  f_{\mathcal{N}}(x)&=P(a)P(b|a)\cdot 0\cdot 1+P(a)P(\ov{b}|a)\cdot 0\cdot
+  1+P(\ov{a})P(b|\ov{a})\cdot 1\cdot 1+P(\ov{a})P(\ov{b}|\ov{a})\cdot 1\cdot 1=\\
+  &=P(\ov{a})P(b|\ov{a})+P(\ov{a})P(\ov{b}|\ov{a})
+\end{align*}
+
+Which means we can avoid computing values from the two first terms. We can also compute the network
+polynomial of some unnormalized probability distribution as long as we divide by the partition
+function, defined as the network polynomial with all indicators set to one. Although the network
+polynomial has exponential size in terms of variables, computing the probability of evidence is
+linear in its size. By representing the network polynomial as an arithmetic circuit of sums and
+products, one can prove that the cost of inference is indeed polynomial.
+
+\section{Definition}
+
+Sum-product networks borrow many concepts from network polynomials and arithmetic circuits. There
+are many definitions of SPNs and in this thesis we present two. The first definition is given by
+the seminal article~\cite{poon-domingos}, and can be seen as a more low-level approach to defining
+the network\@. The second, based on~\cite{gens-domingos}, is a stronger definition, but one which
+we will use more throughout this thesis, as it lends itself better to continous data.
+
+Let $\mathbf{X}=\{X_1,X_2,\ldots,X_n\}$ be the set of all variables. We shall call this set the
+root scope. Let $G$ be a graph $G$. The sets of vertices and edges of $G$ will be denoted by $V(G)$
+and $E(G)$. We will call $\Ch(n)$ and $\Pa(n)$ the sets of children and parents of node $n\in
+V(G)$.\\
+
+\begin{definition}[Sum-product network;~\cite{poon-domingos}]
+  A sum-product network (SPN) over variables $X_1,X_2,\ldots,X_n$ is a DAG whose leaves are
+  indicator variables $[X_1=x_1^1],[X_2=x_2^1],\ldots,[X_n=x_n^1],\ldots,[X_1=x_1^d],[X_2=x_2^d],
+  \ldots,[X_n=x_n^d]$. Its internal nodes are weighted sums or products. Each edge coming out from
+  a sum node $n$ to another node $j$ has a non-negative weight associated with it. We denote such
+  weight by $w_{n,j}$. The value of a sum node $n$ is $v_n=\sum_{j\in\Ch(n)}w_{n,j}v_j$, where
+  $v_j$ is the value of node $j$. The value of a product node $n$ is $v_n=\prod_{j\in\Ch(n)}v_j$.
+  The value of a leaf node is the value of the indicator variable. The value of the SPN is the
+  value of its root node.
+\end{definition}
+
+Throughout this thesis, we denote by $S(X=x)$ the value of an SPN $S$ given evidence $x$. A sub-SPN
+$S_n$ of $S$ is the subgraph of $S$ rooted at $n$. The partition function of $S$ is when all
+indicator variables are set to one, and is denoted by $S(\ast)$. The scope of an SPN $S$ is the
+union set of all scopes of its children. A leaf's scope is the scope of its IV\@.
