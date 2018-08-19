@@ -1,2 +1,77 @@
+\chapter{Introduction}\label{chp:introduction}
 
-saldkjasl
+% Too flairy?
+%To most humans, driving a car may seem like a trivial task. The main idea behind it, disregarding
+%the problem of finding a route to your destination, is simple: to stay in between lane markings and
+%not run over anything (or anyone). However, this simplicity doesn't translate well to machines. The
+%complexity and variability of input for lane markings depend not only on the location and
+%background of the pathway, but also the general conditions of the road itself. Coupled with the
+%necessity of real-time decision making on a high-speed heavy-weight vehicle, a wrong
+%prediction could prove fatal. However, there have been many promising results the past few years
+%on autonomous driving, mainly thanks to advances in computer vision and machine learning, and
+%although state-of-the-art models are extremely complex, they still rely on the same principle of
+%following a lane through visual cues.
+
+In this chapter we first describe the motivations and objectives of this thesis. Next, we describe
+the structure of this document.
+
+\section{Motivation and objectives}
+
+Self-driving is a challenging computer vision task, mainly due to its inherent complexity and the
+necessity for real-time decision making. Although there have been many promising results the past
+few years on autonomous driving, the task still relies on the underlying problem of following a
+pathway through visual cues (usually road markings). A possible approach to this task is through
+imitation learning by means of image classification. That is, the agent tasked with driving should
+be able to reliably mimic human behavior by correctly classifying whether to turn, stop or go
+straight given an image captured in front of the car.
+
+Mobile robots are low cost machines capable of movement. These robots are usually small, and
+because of their size and cost, often don't have the same performance capabilities as a desktop
+computer. However, these domain traits make mobile robot self-driving a very similar analogue to
+real-world autonomous cars. Processing power and memory constraints play a big role in this case,
+and translate well to embedded systems present in a self-driving car.
+
+Sum-product networks (SPNs) are probabilistic graphical models that are able to represent a wide
+range of tractable probability distributions of many variables. SPNs have shown impressive results
+in several domains, and particularly that of image classification. Their deep architecture seems to
+capture features and contexts well, and since inference is computed in time linear to the network's
+edges, SPNs are promising models for fast inference in self-driving.
+
+In this work, we attempt to model self-driving of mobile robots through image classification. For
+the task of classification our objective is to use sum-product networks learned discriminatively,
+though we also give results for generative SPNs, comparing not only generative and discriminative
+learning, but also different SPN architectures.
+
+\section{Thesis structure}
+
+This thesis is structured as follows. In~\autoref{chp:spn}, we first provide background on
+sum-product networks, where we formally define an SPN, present key properties on their structure,
+explain how to compute exact inference and find an approximation of the maximum a posteriori
+probability (MAP).
+
+In~\autoref{chp:parameter}, we show how to compute the partial derivatives with respect to a
+sub-SPN and to its weights, leading on how to perform gradient descent and then on learning the
+weights of the network through gradient descent both generatively and discriminatively.
+
+\autoref{chp:structure} is dedicated to algorithms for learning the structure of an SPN\@. We
+explain the two structural learning algorithms that were used in the experiments.
+
+For~\autoref{chp:robot}, we first show how we model self-driving as an image classification
+problem. We then specify the architecture of the robot used in the experiments, giving
+specifications on the hardware and software used. Furthermore, we describe some concepts of control
+we use for navigation.
+
+In~\autoref{chp:results}, we provide classification results on many image classification datasets
+from various domains with different learning algorithms. We then describe the self-driving dataset
+used for training, and give in-dataset accuracies as well as real-world empirical results on the
+mobile robot itself.
+
+Finally, in~\autoref{chp:conclusion} we give our conclusions and provide some discussion of the
+results.
+
+There is an additional section of this thesis in which we give a brief subjective insight on the
+work done for this thesis. We also list subjects we deemed important for the work done in this
+thesis.
+
+Furthermore, \autoref{app:proofs} contains all proofs done in this thesis.
+
