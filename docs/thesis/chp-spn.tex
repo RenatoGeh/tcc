@@ -216,4 +216,20 @@ referring to the usual max-product algorithm.
   \caption{Computing the approximate MAP of an SPN through its MPN.\label{fig:sample_mpn_prob}}
 \end{figure}
 
+Once the MPN values are computed, we can find the most probable explanation (MPE) of the
+distribution given an evidence. This is done through a top-down forward pass, where we take a
+maximum sub-circuit path of the MPN by always taking the max path at a max node and taking all
+paths on a product node. The MPE are the maximum sub-circuit leaves' instantiations.
+
+\autoref{fig:sample_mpn_prob} shows the MPN of the SPN shown in \autoref{fig:sample_spn} given
+$X=\{X_1=0\}$, where the numbers in blue represent the MPN values at each node, green arrows
+indicate the sub-circuit of maximum value and red boxes indicate the most probable valuations given
+evidence. The resulting MPE $\argmax_{y\in\mathcal{Y}} P(X=\{X_1=0\},Y=y)$ is the valuation
+$\{X_1=0, X_2=0\}$.
+
+Therefore, computing the probability of evidence, which is also called \textit{soft} inference, of
+an SPN is done through a single bottom-up pass. Similarly, computing the MAP probability, refered
+to as \textit{hard} inference, is done through a bottom-up pass on the SPN's MPN\@.  On the other
+hand, finding the MPE valuations requires a bottom-up pass to first compute the MAP, and then a
+top-down search to find the most probable instantiations.
 
