@@ -12,8 +12,8 @@
 
 **Links:**
 
- - [Code](https://github.com/RenatoGeh/GoBot)
- - [GoSPN](https://github.com/RenatoGeh/GoSPN)
+ - [Code](https://github.com/RenatoGeh/godrive)
+ - [GoSPN](https://github.com/RenatoGeh/gospn)
 
 </br>
 <hr>
@@ -33,5 +33,5 @@
 
 **Links:**
 
- - [Code](https://github.com/RenatoGeh/GoBot)
- - [GoSPN](https://github.com/RenatoGeh/GoSPN)
+ - [Code](https://github.com/RenatoGeh/godrive)
+ - [GoSPN](https://github.com/RenatoGeh/gospn)

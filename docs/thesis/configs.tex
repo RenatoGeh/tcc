@@ -7,7 +7,17 @@
 \newcommand{\ov}{\overline}
 \newcommand{\tsup}{\textsuperscript}
 
-\theoremstyle{plain}
+\newtheoremstyle{thesisstyle}
+  {5pt}
+  {1pt}
+  {\itshape}
+  {}
+  {\bfseries}
+  {.}
+  {.5em}
+  {}
+
+\theoremstyle{thesisstyle}
 
 \newcounter{dummy-def}\numberwithin{dummy-def}{chapter}
 \newtheorem{definition}[dummy-def]{Definition}

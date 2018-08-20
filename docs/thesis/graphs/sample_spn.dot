@@ -1,0 +1,37 @@
+digraph G {
+  graph [ranksep="0.50"];
+  node [shape=circle];
+  root [label="+", shape=circle];
+  splines="false";
+  subgraph L1 {
+    P1 [label=<&times;>];
+    P2 [label=<&times;>];
+    P3 [label=<&times;>];
+  };
+  root -> P1 [label="0.5"];
+  root -> P2 [label="0.2"];
+  root -> P3 [label="0.3"];
+  subgraph L2 {
+    S1 [label="+"];
+    S2 [label="+"];
+    S3 [label="+"];
+    S4 [label="+"];
+  };
+  P1 -> {S1 S3};
+  P2 -> {S1 S4};
+  P3 -> {S2 S4};
+  subgraph L3 {
+    I1 [label=<[X<sub>1</sub>=1]>, shape=none];
+    I2 [label=<[X<sub>1</sub>=0]>, shape=none];
+    I3 [label=<[X<sub>2</sub>=1]>, shape=none];
+    I4 [label=<[X<sub>2</sub>=0]>, shape=none];
+  };
+  S1 -> I1 [label="0.6"];
+  S1 -> I2 [label="0.4"];
+  S2 -> I1 [label="0.9"];
+  S2 -> I2 [label="0.1"];
+  S3 -> I3 [label="0.3"];
+  S3 -> I4 [label="0.7"];
+  S4 -> I3 [label="0.2"];
+  S4 -> I4 [label="0.8"];
+}

@@ -58,7 +58,7 @@ polynomial has exponential size in terms of variables, computing the probability
 linear in its size. By representing the network polynomial as an arithmetic circuit of sums and
 products, one can prove that the cost of inference is indeed polynomial.
 
-\section{Definition}
+\section{Definitions}
 
 Sum-product networks borrow many concepts from network polynomials and arithmetic circuits. There
 are many definitions of SPNs and in this thesis we present two. The first definition is given by
@@ -69,7 +69,12 @@ we will use more throughout this thesis, as it lends itself better to continous 
 Let $\mathbf{X}=\{X_1,X_2,\ldots,X_n\}$ be the set of all variables. We shall call this set the
 root scope. Let $G$ be a graph $G$. The sets of vertices and edges of $G$ will be denoted by $V(G)$
 and $E(G)$. We will call $\Ch(n)$ and $\Pa(n)$ the sets of children and parents of node $n\in
-V(G)$.\\
+V(G)$.
+
+\begin{figure}[h]
+  \centering\includegraphics[scale=0.60]{graphs/sample_spn.png}
+  \caption{An example of an SPN.}
+\end{figure}
 
 \begin{definition}[Sum-product network;~\cite{poon-domingos}]
   A sum-product network (SPN) over variables $X_1,X_2,\ldots,X_n$ is a DAG whose leaves are
@@ -83,6 +88,76 @@ V(G)$.\\
 \end{definition}
 
 Throughout this thesis, we denote by $S(X=x)$ the value of an SPN $S$ given evidence $x$. A sub-SPN
-$S_n$ of $S$ is the subgraph of $S$ rooted at $n$. The partition function of $S$ is when all
-indicator variables are set to one, and is denoted by $S(\ast)$. The scope of an SPN $S$ is the
-union set of all scopes of its children. A leaf's scope is the scope of its IV\@.
+$S_n$ of $S$ is the subgraph of $S$ rooted at $n$. A node in an SPN is itself an SPN\@. When all
+indicator variables are set to one, the value of $S$ is denoted by $S(\ast)$. The scope of an SPN
+$S$, denoted by $\Sc(S)$, is the union set of all scopes of its children. A leaf's scope is the
+scope of its IV\@.
+
+\begin{definition}[Validity]
+  An SPN is valid iff, for all evidence $E=e$, $S(E=e)=\Phi_S(E=e)$, where $\Phi_S$ is an
+  unnormalized probability distribution.
+\end{definition}
+
+\begin{definition}[Completeness]
+  An SPN is complete iff all children of the same sum node have the same scope.
+\end{definition}
+
+\begin{definition}[Consistency]
+  An SPN is consistent iff no variable appears with a value $v$ in one child of a product node and
+  valued $u$, with $u\neq v$, in another.
+\end{definition}
+
+Validity in an SPN means that the network correctly and efficiently computes the probability of
+evidence of the distribution it represents. In this document we only work with valid SPNs, as we
+wish to always compute exact inference. However, non-valid SPNs are an interesting field of
+research for approximate inference in SPNs.
+
+A sufficient condition for validity is completeness and consistency. Yet whilst this condition is
+sufficient, it is not necessary, as the converse (i.e.\ an incomplete and inconsistent valid SPN)
+can hold.
+
+\begin{theorem}[\cite{poon-domingos}]
+  An SPN is valid if it is complete and consistent.
+\end{theorem}
+
+When an SPN $S$ is valid, then $S(\ast)$ is the partition function, and we can extract the
+probability of evidence from an SPN by computing $P(X=x)=S(x)/S(\ast)$.
+
+\begin{corollary}[Validity recursion;~\cite{poon-domingos}]
+  If an SPN $S$ is valid, then all sub-SPN of $S$ is valid.
+\end{corollary}
+
+\begin{definition}[Decomposability]
+  An SPN is decomposable iff no variable appears in more than one child of a product node.
+\end{definition}
+
+In other words, an SPN is decomposable if and only if, for every product node, every child node has
+disjoint scopes with relation to all their other siblings. It is easy to see that decomposability
+implies in consistency, as there can be no inconsistency between product children since scopes are
+disjoint. Therefore, a complete and decomposable SPN is valid. Indeed it is much easier to produce
+decomposable SPNs then only consistent ones, and although this condition may seem too strong and
+restrictive,~\cite{theoretical-spn} showed that a consistent SPN is representable by a polynomially
+larger decomposable SPN\@.
+
+So far, SPNs are restricted to the discrete domain, as we rely on IVs to define possible valuations
+to variables. We can generalize SPNs to the continuous by assuming an infinite number of IVs and
+thus replacing sum nodes whose children are IVs with integral nodes. A leaf node then becomes an
+integral node with infinite IVs as children. Particularly, it represents an unnormalized
+univariate probability distribution, such as a Gaussian. The value of this integral node $n$
+becomes the fdp $p_n(x)$. This extension brings us to a second definition of SPNs.
+
+\begin{definition}[Sum-product networks;~\cite{gens-domingos}]
+  A sum-product network is defined recursively as follows.
+  \begin{enumerate}[noitemsep]
+    \item A tractable univariate probability distribution is an SPN\@.
+    \item A product of SPNs with disjoint scopes is an SPN\@.
+    \item A weighted sum of SPNs with the same scope is an SPN, provided all weights are positive.
+    \item Nothing else is an SPN\@.
+  \end{enumerate}
+\end{definition}
+
+This second definition limits our scope to only complete and decomposable SPNs. Note that an IV is
+also an SPN, as we can assume that an indicator variable is a degenerate tractable univariate
+distribution, taking a value of 1 if it agrees with the given evidence and zero otherwise.
+
+\section{Inference}
