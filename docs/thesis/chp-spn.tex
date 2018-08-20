@@ -73,7 +73,7 @@ V(G)$.
 
 \begin{figure}[h]
   \centering\includegraphics[scale=0.60]{graphs/sample_spn.png}
-  \caption{An example of an SPN.}
+  \caption{An example of an SPN.\label{fig:sample_spn}}
 \end{figure}
 
 \begin{definition}[Sum-product network;~\cite{poon-domingos}]
@@ -121,7 +121,9 @@ can hold.
 \end{theorem}
 
 When an SPN $S$ is valid, then $S(\ast)$ is the partition function, and we can extract the
-probability of evidence from an SPN by computing $P(X=x)=S(x)/S(\ast)$.
+probability of evidence from an SPN by computing $P(X=x)=S(x)/S(\ast)$. If for every sum node all
+of their weights are non-negative and sum to one, then the partition function is $S(\ast)=1$, and
+the SPN is the distribution itself.
 
 \begin{corollary}[Validity recursion;~\cite{poon-domingos}]
   If an SPN $S$ is valid, then all sub-SPN of $S$ is valid.
@@ -158,6 +160,60 @@ becomes the fdp $p_n(x)$. This extension brings us to a second definition of SPN
 
 This second definition limits our scope to only complete and decomposable SPNs. Note that an IV is
 also an SPN, as we can assume that an indicator variable is a degenerate tractable univariate
-distribution, taking a value of 1 if it agrees with the given evidence and zero otherwise.
+distribution, taking a value of one if it agrees with the given evidence and zero otherwise.
 
 \section{Inference}
+
+Throughout this thesis we assume that all sum nodes are normalized and sum to one, meaning the
+partition function is $S(\ast)=1$ and the SPN's value is the probability itself.
+
+Let $X=\{X_1=x_1,X_2=x_2,\ldots,X_k=x_k\}$ be a valuation and $S$ be an SPN\@. We say that $X$ is a
+complete valuation if $\Sc(X)=\Sc(S)$. That is, $X$ contains a valuation for all variables in $S$.
+An incomplete valuation has some variable assignment missing.
+
+Computing the probability of evidence is done through a bottom-up backwards pass through the SPN\@.
+To find the value of an SPN, we must know the value of the root node, which depends on all nodes
+below it. This is done through a topological traversal of the graph.
+
+Finding the value of a leaf node depends on the valuation given. Let $n$ be a leaf node, and
+$\Sc(n)=\{X_j\}$. Let $X$ be some valuation. Assuming the univariate probability distribution of
+$n$ has fpd $p_n(x)$, then if $X$ has a valution $X_j=x_j$, the value of node $n$ will be
+$S_n(X)=p_n(x_j)$. If $X$ has no valuation for variable $X_j$, then $S_n(X)$ is the
+distribution's mode. Note that this holds for indicator variables, as if $X$ has a valuation for
+$X_j=x_j$ and the IV matches with $x_j$, then $p_n(x_j)=1$. In case it does not, $p_n(x_j)=0$. For
+the incomplete case, the mode of an indicator variable is one, which holds the equivalence.
+
+Once we compute leaf nodes, we can compute each internal node's values by following the topological
+order until we reach the root. For sum nodes, we compute the weighted sum
+$S_n(X)=\sum_{j\in\Ch(n)}w_{n,j}S_j(X)$, and for products $S_n(X)=\prod_{j\in\Ch(n)}S_j(X)$.
+
+\begin{figure}[h]
+  \centering\includegraphics[scale=0.6]{graphs/sample_spn_prob.png}
+  \caption{Computing the probability of evidence on a sample SPN.\label{fig:sample_spn_prob}}
+\end{figure}
+
+\autoref{fig:sample_spn_prob} shows the value of the SPN in \autoref{fig:sample_spn} given a
+valuation $X=\{X_1=0\}$. Values in blue are the values of each sub-SPN\@. Finding the probability
+of evidence $P(X=x)$ is fast, as computing the value of an SPN is linear to the number of edges of
+the graph.
+
+Additionally, we might want to find the probability that maximizes a certain valuation, i.e.\ the
+maximum a posteriori probability (MAP). To compute the approximate value of the MAP of some
+valuation $X$, we first transform the SPN into a max-product network (MPN) by replacing all sums
+with max nodes. The value of a max node is the maximum value of its weighted children. More
+formally, the value of an MPN's max node $n$ is given by $M_n(X)=\max_{j\in\Ch(n)} w_{n,j}M_j(X)$.
+Other nodes behave identically to an SPN\@. The computed value of an MPN is an approximation of
+$\max_y P(X=x, Y=y)$, where $X$ is incomplete and $Y$ is the set of variables that are missing.
+This is called the max-product algorithm.
+
+In SPNs, computing the exact MAP was shown to be NP-hard (\cite{theoretical-spn,cmc2017,mei2018}),
+and better approximation algorithms were proposed as an alternative to the max-product algorithm
+described here. However, in this thesis, when we talk about computing the (approximate) MAP, we are
+referring to the usual max-product algorithm.
+
+\begin{figure}[h]
+  \centering\includegraphics[scale=0.6]{graphs/sample_mpn_prob.png}
+  \caption{Computing the approximate MAP of an SPN through its MPN.\label{fig:sample_mpn_prob}}
+\end{figure}
+
+

@@ -1,0 +1,37 @@
+digraph G {
+  graph [ranksep="0.50"];
+  node [shape=circle];
+  root [label="+", shape=circle, xlabel=<<font color="blue">0.31</font>>];
+  splines="false";
+  subgraph L1 {
+    P1 [label=<&times;>, xlabel=<<font color="blue">0.4</font>>];
+    P2 [label=<&times;>, xlabel=<<font color="blue">0.4</font>>];
+    P3 [label=<&times;>, xlabel=<<font color="blue">0.1</font>>];
+  };
+  root -> P1 [label="0.5"];
+  root -> P2 [label="0.2"];
+  root -> P3 [label="0.3"];
+  subgraph L2 {
+    S1 [label="+", xlabel=<<font color="blue">0.4</font>>];
+    S2 [label="+", xlabel=<<font color="blue">0.1</font>>];
+    S3 [label="+", xlabel=<<font color="blue">1.0</font>>];
+    S4 [label="+", xlabel=<<font color="blue">1.0</font>>];
+  };
+  P1 -> {S1 S3};
+  P2 -> {S1 S4};
+  P3 -> {S2 S4};
+  subgraph L3 {
+    I1 [label=<[X<sub>1</sub>=1]>, shape=none, xlabel=<<font color="blue">0.0</font>>];
+    I2 [label=<[X<sub>1</sub>=0]>, shape=none, xlabel=<<font color="blue">1.0</font>>];
+    I3 [label=<[X<sub>2</sub>=1]>, shape=none, xlabel=<<font color="blue">1.0</font>>];
+    I4 [label=<[X<sub>2</sub>=0]>, shape=none, xlabel=<<font color="blue">1.0</font>>];
+  };
+  S1 -> I1 [label="0.6"];
+  S1 -> I2 [label="0.4"];
+  S2 -> I1 [label="0.9"];
+  S2 -> I2 [label="0.1"];
+  S3 -> I3 [label="0.3"];
+  S3 -> I4 [label="0.7"];
+  S4 -> I3 [label="0.2"];
+  S4 -> I4 [label="0.8"];
+}
