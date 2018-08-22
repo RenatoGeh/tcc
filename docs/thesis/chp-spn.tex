@@ -58,7 +58,7 @@ polynomial has exponential size in terms of variables, computing the probability
 linear in its size. By representing the network polynomial as an arithmetic circuit of sums and
 products, one can prove that the cost of inference is indeed polynomial.
 
-\section{Definitions}
+\section{Definitions and properties}
 
 Sum-product networks borrow many concepts from network polynomials and arithmetic circuits. There
 are many definitions of SPNs and in this thesis we present two. The first definition is given by
@@ -233,3 +233,95 @@ to as \textit{hard} inference, is done through a bottom-up pass on the SPN's MPN
 hand, finding the MPE valuations requires a bottom-up pass to first compute the MAP, and then a
 top-down search to find the most probable instantiations.
 
+We provide next pseudocode for computing both soft and hard inference. We assume as input only
+valid, (weight) normalized SPNs. However, one could easily extend the included algorithms for
+unnormalized networks.
+
+\begin{algorithm}[H]
+  \caption{\code{SoftInference}: Computes the probability of evidence in SPNs}
+  \begin{algorithmic}[1]
+    \Require\, A valid SPN $S$ with normalized weights and a valuation $X$
+    \Ensure\, The soft inference values at each node $S_n$
+    \State\, Initialize $S_n=0$
+    \State\, Find topological order $T$ of $S$
+    \For{each node $n\in S$ from $T$}
+      \If{$n$ is a leaf node}
+        \State\, Let $\Sc(n)=\{X_k\}$, $p_n(x)$ be $n$'s fdp and $\hat{p}_n$ be $p_n$'s mode
+        \If{$X_k\in X$}
+          \State\, Let $x_k$ be $X_k$'s value in $X$
+          \State\, $S_n\gets p_n(x_k)$
+        \Else%
+          \State\, $S_n\gets\hat{p}_n$
+        \EndIf%
+      \ElsIf{$n$ is sum node}
+        \For{all $j\in\Ch(n)$}
+          \State\, $S_n\gets S_n + w_{n,j}S_j$
+        \EndFor%
+      \Else%
+        \For{all $j\in\Ch(n)$}
+          \State\, $S_n\gets S_n\cdot S_j$
+        \EndFor%
+      \EndIf
+    \EndFor%
+    \State\,\textbf{return} each $S_n$ node value
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]
+  \caption{\code{HardInference}: Computes an approximation of the MAP in SPNs}
+  \begin{algorithmic}[1]
+    \Require\, A valid SPN $S$ with normalized weights and a valuation $X$
+    \Ensure\, The hard inference values at each node $M_n$
+    \State\, Let $M$ be $S$'s MPN
+    \State\, Initialize $M_n=0$
+    \State\, Find topological order $T$ of $M$
+    \For{each node $n\in M$ from $T$}
+      \If{$n$ is a leaf node}
+        \State\, Let $\Sc(n)=\{X_k\}$, $p_n(x)$ be $n$'s fdp and $\hat{p}_n$ be $p_n$'s mode
+        \If{$X_k\in X$}
+          \State\, Let $x_k$ be $X_k$'s value in $X$
+          \State\, $M_n\gets p_n(x_k)$
+        \Else%
+          \State\, $M_n\gets\hat{p}_n$
+        \EndIf%
+      \ElsIf{$n$ is sum node}
+        \For{all $j\in\Ch(n)$}
+          \State\, $M_n\gets\max(M_n, w_{n,j}M_j)$
+        \EndFor%
+      \Else%
+        \For{all $j\in\Ch(n)$}
+          \State\, $M_n\gets M_n\cdot M_j$
+        \EndFor%
+      \EndIf
+    \EndFor%
+    \State\,\textbf{return} each $M_n$ node value
+  \end{algorithmic}
+\end{algorithm}
+
+Finally, we show how to algorithmically compute the MPE given some evidence.
+
+\begin{algorithm}[H]
+  \caption{\code{ArgMaxSPN}: Finds the MPE of a valuation on an SPN}
+  \begin{algorithmic}[1]
+    \Require\, A valid SPN $S$ with normalized weights and a valuation $X$
+    \Ensure\, The $\argmax$ values of each variable according to $X$
+    \State\, $M\gets$\code{HardInference}$(S, X)$
+    \State\, Let $Y$ be a copy of $X$
+    \State\, Let $Q$ be a queue
+    \State\, Push $S$ into $Q$
+    \For{each node $n\in M$ in $Q$}
+      \If{$n$ is a leaf node}
+        \State\, Let $\Sc(n)=\{X_k\}$ and $p_n(x)$ be $n$'s fdp
+        \State\, Let $\hat{x}=\argmax_{x_k} p_n(x_k)$ be $p_n$'s maximum valuation
+        \If{$X_k\not\in X$}
+          \State\, $Y\gets Y\cup\{X_k=\hat{x}\}$
+        \EndIf%
+      \ElsIf{$n$ is sum node}
+        \State\, Push maximum child $M_j$, $j\in\Ch(n)$ into $Q$
+      \Else%
+        \State\, Push all children $j\in\Ch(n)$ into $Q$
+      \EndIf
+    \EndFor%
+    \State\,\textbf{return} Y
+  \end{algorithmic}
+\end{algorithm}
