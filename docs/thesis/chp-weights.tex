@@ -10,8 +10,9 @@ gradient descent.
 \section{Derivatives}
 
 Let $S$ be an SPN\@. We are only interested in finding the derivative of internal nodes, as leaf
-nodes have no weights to be updated. Our objective is to find the derivative $\iddspn{S}{W}$ so
-that we can compute the gradient at each weight and update parameters accordingly.
+nodes have no weights to be updated. Our objective is to find the gradient $\iddspn{S}{W}$ by
+computing each component $\iddspn{S}{w_{n,j}}$, allowing us to find each weight update on the
+SPN\@.
 
 At each weighted edge $(n\to j, w_{n,j})$, the derivative $\iddspn{S}{w_{n,j}}$ takes the form
 
@@ -93,7 +94,9 @@ the network, eventually becoming zero.
 
 A possible solution to this issue is replacing soft derivation with hard derivation. This is done
 by finding the derivatives of the MPN of the network instead of the SPN\@. This guarantees that the
-signal remains constant throughout the structure, at the cost of slower convergence rate.
+signal remains constant throughout the structure, at the cost of slower convergence rate. We call
+this hard inference derivation, as opposed to the regular soft inference derivation we derived
+earlier.
 
 \begin{figure}[h]
   \centering\includegraphics[scale=0.325]{graphs/softgrad.png}
@@ -123,6 +126,64 @@ hard derivative
   \ddspn{\log M}{w_{n,j}}=c_{n,j}\frac{w_{n,j}^{c_{n,j}-1}}{w_{n,j}^{c_{n,j}}}=
     \frac{c_{n,j}}{w_{n,j}}.
 \end{equation}
+
+Although not needed for the gradient, we can also compute the derivative in each internal node. The
+process is similar to soft derivation. There is no change for parent product nodes. For parent max
+nodes, we sum only contributions where $w_{n,j}\in W$.
+
+\begin{equation}
+  \ddspn{M}{M_j}=\sum_{\substack{n\in\Pa(j)\\n:\text{ max}}}
+    \begin{cases}
+      w_{k,n}\ddspn{M}{M_k} & \text{if $w_{k,n}\in W$}\\
+      0 & \text{otherwise}
+    \end{cases}
+    + \sum_{\substack{n\in\Pa(j)\\n:\text{ product}}}\ddspn{M}{M_n}\prod_{k\in\Ch(n)\setminus\{j\}}M_k
+\end{equation}
+
+In summary, the derivatives of an SPN with respect to its internal nodes take values according
+to~\autoref{tab:derivatives_spn}. The gradient components are shown
+in~\autoref{tab:derivatives_weight}.
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{l|l}
+    \hline
+    \multicolumn{1}{c}{\bfseries Inference} & \multicolumn{1}{c}{\bfseries Partial derivatives wrt
+    internal node $j$}\\
+    \hline & \\
+    \textbf{Soft} & \(\displaystyle \ddspn{S}{S_j}=\sum_{\substack{n\in\Pa(j)\\n:\text{ }}}w_{n,j}
+      \ddspn{S}{S_n}+\sum_{\substack{n\in\Pa(j)\\n:\text{ product}}}\ddspn{S}{S_n}\prod_{k\in\Ch(n)
+      \setminus\{j\}}S_k\) \\
+    & \\
+    \textbf{Hard} & \(\displaystyle
+        \ddspn{M}{M_j}=\sum_{\substack{n\in\Pa(j)\\n:\text{ max}}}
+        \begin{cases}
+          w_{k,n}\ddspn{M}{M_k} & \text{if $w_{k,n}\in W$,}\\
+          0 & \text{otherwise.}
+        \end{cases}
+        + \sum_{\substack{n\in\Pa(j)\\n:\text{ product}}}\ddspn{M}{M_n}\prod_{k\in\Ch(n)\setminus\{j\}}M_k
+      \) \\
+      & \\
+    \hline
+  \end{tabular}
+  \caption{Partial derivatives for the SPN wrt internal nodes.\label{tab:derivatives_spn}}
+\end{table}
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{l|c}
+    \hline
+    \multicolumn{1}{c}{\bfseries Inference} & \multicolumn{1}{c}{\bfseries Partial derivatives wrt
+      weight $w_{n,j}$}\\
+    \hline & \\
+    \textbf{Soft} & \(\displaystyle \ddspn{S}{w_{n,j}} = S_j\ddspn{S}{S_n} \) \\
+    & \\
+    \textbf{Hard} & \(\displaystyle \ddspn{M}{w_{n,j}} = M_j\ddspn{M}{M_n} \) \\
+    & \\
+    \hline
+  \end{tabular}
+  \caption{Partial derivatives for the SPN wrt weights.\label{tab:derivatives_weight}}
+\end{table}
 
 \section{Generative gradient descent}
 
