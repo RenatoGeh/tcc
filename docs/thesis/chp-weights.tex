@@ -95,7 +95,7 @@ the network, eventually becoming zero.
 A possible solution to this issue is replacing soft derivation with hard derivation. This is done
 by finding the derivatives of the MPN of the network instead of the SPN\@. This guarantees that the
 signal remains constant throughout the structure, at the cost of slower convergence rate. We call
-this hard inference derivation, as opposed to the regular soft inference derivation we derived
+this hard inference derivation, as opposed to the regular soft inference derivation we covered
 earlier.
 
 \begin{figure}[h]
@@ -105,7 +105,7 @@ earlier.
 \end{figure}
 
 \autoref{fig:soft_hard_diff} gives a visual representation of the difference between soft and hard
-derivation in gradient descent.
+derivation in gradient descent. MPNs preserve the signal, as the resulting gradient is constant.
 
 To compute the hard derivatives of an SPN, we take its MPN and find its derivatives in a similar
 way as in soft derivation. Let $M$ be an MPN\@. We shall call $W$ the multiset of weights that a
@@ -124,7 +124,7 @@ hard derivative
 
 \begin{equation}
   \ddspn{\log M}{w_{n,j}}=c_{n,j}\frac{w_{n,j}^{c_{n,j}-1}}{w_{n,j}^{c_{n,j}}}=
-    \frac{c_{n,j}}{w_{n,j}}.
+    \frac{c_{n,j}}{w_{n,j}}.\label{eq:hard_weight_update}
 \end{equation}
 
 Although not needed for the gradient, we can also compute the derivative in each internal node. The
@@ -151,7 +151,7 @@ in~\autoref{tab:derivatives_weight}.
     \multicolumn{1}{c}{\bfseries Inference} & \multicolumn{1}{c}{\bfseries Partial derivatives wrt
     internal node $j$}\\
     \hline & \\
-    \textbf{Soft} & \(\displaystyle \ddspn{S}{S_j}=\sum_{\substack{n\in\Pa(j)\\n:\text{ }}}w_{n,j}
+    \textbf{Soft} & \(\displaystyle \ddspn{S}{S_j}=\sum_{\substack{n\in\Pa(j)\\n:\text{ sum}}}w_{n,j}
       \ddspn{S}{S_n}+\sum_{\substack{n\in\Pa(j)\\n:\text{ product}}}\ddspn{S}{S_n}\prod_{k\in\Ch(n)
       \setminus\{j\}}S_k\) \\
     & \\
@@ -187,9 +187,9 @@ in~\autoref{tab:derivatives_weight}.
 
 \section{Generative gradient descent}
 
-Once computed all derivatives, we update each node with the resulting gradient. For generative
-gradient descent, where we are learning a joint probability distribution $P(X,Y)$, our objective is
-to find the gradient of the log-likelihood
+Once computed all derivatives, we update each node with the resulting gradient component. For
+generative gradient descent, where we are learning a joint probability distribution $P(X,Y)$, our
+objective is to find the gradient of the log-likelihood
 
 \begin{equation*}
   \ddspn{}{W}\log P(X,Y)=\ddspn{}{W}\log S(X,Y)=\frac{1}{S(X,Y)}\ddspn{S}{W}(X,Y)\propto
@@ -209,4 +209,52 @@ above, leaving us with the final generative gradient descent weight update
   \Delta w_{n,j}=\eta\ddspn{S}{w_{n,j}}(X, Y)-2\lambda w_{n,j},
 \end{equation}
 
-where $\lambda$ is the regularization constant.
+where $\lambda$ is the regularization constant. We call this soft generative gradient descent. It
+is now easy to visualize why gradient diffusion occurs with soft derivation. Component
+$\iddspn{S}{w_{n,j}}$ depends on partial derivative $\iddspn{S}{S_n}$. Assuming normalized weights,
+the root node derivative $\iddspn{S}{S}=1$ and each subsequent descendant node becomes smaller and
+smaller.
+
+Weight update for hard derivation comes directly from~\autoref{eq:hard_weight_update}. Since we are
+interested in the log-likelihood of the joint distribution
+
+\begin{equation*}
+  \ddspn{}{W}\log P(X,Y)=\ddspn{}{W}\log M(X,Y),
+\end{equation*}
+
+we get, for each component $w_{n,j}$, the weight update
+
+\begin{equation*}
+  \Delta w_{n,j}=\eta\frac{c_{n,j}}{w_{n,j}}.
+\end{equation*}
+
+In a similar fashion to soft generative gradient descent, we can apply L2 regularization to each
+weight update.
+
+\begin{equation}
+  \Delta w_{n,j}=\eta\frac{c_{n,j}}{w_{n,j}}-2\lambda w_{n,j}
+\end{equation}
+
+So for generative gradient descent we get the following weight updates.
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{l|l}
+    \hline
+    \multicolumn{1}{c}{\bfseries Inference} & \multicolumn{1}{c}{\bfseries Weight updates}\\
+    \hline & \\
+    \textbf{Soft} & \(\displaystyle \Delta w_{n,j}=\eta\ddspn{S}{w_{n,j}}(X, Y)-2\lambda w_{n,j} \) \\
+    & \\
+    \textbf{Hard} & \(\displaystyle \Delta w_{n,j}=\eta\frac{c_{n,j}}{w_{n,j}}-2\lambda w_{n,j} \) \\
+    & \\
+    \hline
+  \end{tabular}
+  \caption{Generative gradient descent weight updates with L2
+    regularization.\label{tab:generative_weight_updates}}
+\end{table}
+
+
+
+\section{Discriminative gradient descent}
+
+
