@@ -67,20 +67,20 @@ the way up to the root, where $\iddspn{S}{S}=1$. This derivation lends itself ne
 algorithmic format.
 
 \begin{algorithm}[H]
-  \caption{\code{BackpropSPN}: Backpropagation derivation on SPNs}
+  \caption{\code{Backprop}: Backpropagation derivation on SPNs}
   \begin{algorithmic}[1]
-    \Require\, A valid SPN $S$ with pre-computed probabilities $S_n(X)$
-    \Ensure\, Partial derivatives of $S$ with respect to every node and weight
-    \State\, Initialize $\ddspn{S}{S_n}=0$ except $\ddspn{S}{S}=1$
+    \Require A valid SPN $S$ with pre-computed probabilities $S_n(X)$
+    \Ensure Partial derivatives of $S$ with respect to every node and weight
+    \State Initialize $\ddspn{S}{S_n}=0$ except $\ddspn{S}{S}=1$
     \For{each node $n\in S$ in top-down order}
       \If{$n$ is sum node}
         \For{all $j\in\Ch(n)$}
-          \State\, $\ddspn{S}{S_j}\gets\ddspn{S}{S_j}+w_{n,j}\ddspn{S}{S_n}$
-          \State\, $\ddspn{S}{w_{n,j}}\gets\ddspn{S}{S_n}S_j$
+          \State $\ddspn{S}{S_j}\gets\ddspn{S}{S_j}+w_{n,j}\ddspn{S}{S_n}$
+          \State $\ddspn{S}{w_{n,j}}\gets\ddspn{S}{S_n}S_j$
         \EndFor%
       \Else%
         \For{all $j\in\Ch(n)$}
-          \State\, $\ddspn{S}{S_j}\gets\ddspn{S}{S_j}+\ddspn{S}{S_n}\prod_{k\in\Ch(n)\setminus
+          \State $\ddspn{S}{S_j}\gets\ddspn{S}{S_j}+\ddspn{S}{S_n}\prod_{k\in\Ch(n)\setminus
             \{j\}}S_k$
         \EndFor%
       \EndIf
@@ -124,7 +124,7 @@ hard derivative
 
 \begin{equation}
   \ddspn{\log M}{w_{n,j}}=c_{n,j}\frac{w_{n,j}^{c_{n,j}-1}}{w_{n,j}^{c_{n,j}}}=
-    \frac{c_{n,j}}{w_{n,j}}.\label{eq:hard_weight_update}
+    \frac{c_{n,j}}{w_{n,j}}.\label{eq:hard_weight_derivative}
 \end{equation}
 
 Although not needed for the gradient, we can also compute the derivative in each internal node. The
@@ -139,6 +139,32 @@ nodes, we sum only contributions where $w_{n,j}\in W$.
     \end{cases}
     + \sum_{\substack{n\in\Pa(j)\\n:\text{ product}}}\ddspn{M}{M_n}\prod_{k\in\Ch(n)\setminus\{j\}}M_k
 \end{equation}
+
+Computing each derivative $\iddspn{\log M}{w_{n,j}}$ means finding each $c_{n,j}$ count at each
+weight. This is done through an initial forward pass on $M$ to find each MAP, and then finding each
+maximal edge in $W$ through a backwards pass.~\autoref{alg:hard_backprop} computes the total number
+of occurences $c_{n,j}$ for each maximal edge $w_{n,j}$.
+
+\begin{algorithm}[H]
+  \caption{\code{HardBackprop}: Hard backpropagation derivation on SPNs\label{alg:hard_backprop}}
+  \begin{algorithmic}[1]
+    \Require A valid SPN $S$ with pre-computed MAP probabilities $M_n(X)$
+    \Ensure Counts $c_{n,j}$ of each derivative $\ddspn{\log M}{w_{n,j}}$
+    \State Initialize $c_{n,j}=0$
+    \State Let Q be a queue
+    \State Push $M$ into $Q$
+    \For{each node $n\in M$ in queue $Q$}
+      \If{$n$ is max node}
+        \State Let $j=\argmax_{i\in\Ch(n)}w_{n,i}M_{i}(X)$ the maximum weighted child
+        \State $c_{n,j}\gets c_{n,j}+1$
+        \State Push $M_j$ into $Q$
+      \ElsIf{$n$ is product node}
+        \State Push all children $j\in\Ch(n)$ into $Q$
+      \EndIf
+    \EndFor%
+    \State \textbf{return} all counts $c_{n,j}$
+  \end{algorithmic}
+\end{algorithm}
 
 In summary, the derivatives of an SPN with respect to its internal nodes take values according
 to~\autoref{tab:derivatives_spn}. The gradient components are shown
@@ -215,8 +241,8 @@ $\iddspn{S}{w_{n,j}}$ depends on partial derivative $\iddspn{S}{S_n}$. Assuming 
 the root node derivative $\iddspn{S}{S}=1$ and each subsequent descendant node becomes smaller and
 smaller.
 
-Weight update for hard derivation comes directly from~\autoref{eq:hard_weight_update}. Since we are
-interested in the log-likelihood of the joint distribution
+Weight update for hard derivation comes directly from~\autoref{eq:hard_weight_derivative}. Since we
+are interested in the log-likelihood of the joint distribution
 
 \begin{equation*}
   \ddspn{}{W}\log P(X,Y)=\ddspn{}{W}\log M(X,Y),
@@ -253,8 +279,215 @@ So for generative gradient descent we get the following weight updates.
     regularization.\label{tab:generative_weight_updates}}
 \end{table}
 
+\autoref{alg:gen_soft_gd} and \autoref{alg:gen_hard_gd} show pseudocode for both soft and hard
+generative stochastic gradient descent, though it is easy to extend both to mini-batch versions.
+From now on we denote soft generative gradient descent and hard generative gradient descent as SGGD
+and HGGD for short.
 
+\begin{algorithm}[H]
+  \caption{\code{SoftGenGD}: Soft generative stochastic gradient descent for SPNs\label{alg:gen_soft_gd}}
+  \begin{algorithmic}[1]
+    \Require A valid SPN $S$, learning rate $\eta$, regularization constant $\lambda$ and a dataset $D$
+    \Ensure $S$ with learned weights
+    \Repeat%
+      \For{each instance $I\in D$}
+        \State Compute \code{SoftInference}$(S, I)$
+        \State Compute \code{Backprop}$(S)$
+        \For{each sum node $n\in S$}
+          \State $w_{n,j}\gets\eta\ddspn{S}{w_{n,j}}-2\lambda w_{n,j}$
+        \EndFor%
+        \State Normalize weights
+      \EndFor%
+    \Until{convergence}
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]
+  \caption{\code{HardGenGD}: Hard generative stochastic gradient descent for SPNs\label{alg:gen_hard_gd}}
+  \begin{algorithmic}[1]
+    \Require A valid SPN $S$, learning rate $\eta$, regularization constant $\lambda$ and a dataset $D$
+    \Ensure $S$ with learned weights
+    \Repeat%
+      \For{each instance $I\in D$}
+        \State Compute \code{HardInference}$(S, I)$
+        \State Compute \code{HardBackprop}$(S)$
+        \For{each sum node $n\in S$}
+          \State $w_{n,j}\gets\eta\frac{c_{n,j}}{w_{n,j}}-2\lambda w_{n,j}$
+        \EndFor%
+        \State Normalize weights
+      \EndFor%
+    \Until{convergence}
+  \end{algorithmic}
+\end{algorithm}
 
 \section{Discriminative gradient descent}
 
+The goal of discriminative learning is optimizing the conditional probability distribution
+$P(Y|X)$, where $Y$ and $X$ are query and evidence variables. To compute the gradient of this
+distribution we maximize the conditional log-likelihood (\cite{discriminative}).
 
+\begin{equation*}
+  \ddspn{}{W}\log P(Y|X)=\ddspn{}{W}\log\left(\frac{P(Y,X)}{P(X)}\right)=
+    \ddspn{}{W}\log P(Y,X)-\ddspn{}{W}\log P(X)
+\end{equation*}
+
+Through chain rule, we get the form
+\begin{align*}
+  \ddspn{}{W}\log P(Y,X)-\ddspn{}{W}\log P(X)&=\frac{1}{P(Y,X)}\ddspn{}{W}P(Y,X)-\frac{1}{P(X)}
+    \ddspn{}{W}P(X)=\\
+    &=\frac{1}{S(Y,X)}\ddspn{}{W}S(Y,X)-\frac{1}{S(Y,X)}\ddspn{}{W}S(X).
+\end{align*}
+
+We can update our weights discriminatively by taking each gradient component
+
+\begin{equation*}
+  \Delta w_{n,j}=\eta\left(\frac{1}{S(Y,X)}\ddspn{S(Y,X)}{w_{n,j}}-\frac{1}{S(X)}
+    \ddspn{S(X)}{w_{n,j}}\right).
+\end{equation*}
+
+With L2 regularization, soft discriminative gradient descent has the following form.
+
+\begin{equation}
+  \Delta w_{n,j}=\eta\left(\frac{1}{S(Y,X)}\ddspn{S(Y,X)}{w_{n,j}}-\frac{1}{S(X)}
+    \ddspn{S(X)}{w_{n,j}}\right)-2\lambda w_{n,j}
+\end{equation}
+
+For hard inference we want to optimize the following expression.
+
+\begin{equation*}
+  \ddspn{}{W}\log\tilde{P}(Y|X)=\ddspn{}{W}\log\left(\frac{\tilde{P}(Y,X)}{\tilde{P}(X)}\right)=
+    \ddspn{}{W}\log\left(\frac{M(Y,X)}{M(X)}\right)
+\end{equation*}
+
+Where $\tilde{P}$ is the MAP probability of the distribution. As usual, we apply chain rule,
+yielding
+
+\begin{equation*}
+  \ddspn{}{W}\log\left(\frac{M(Y,X)}{M(X)}\right)=\ddspn{}{W}\log M(Y,X)-\ddspn{}{W}\log M(X).
+\end{equation*}
+
+But we know from~\autoref{eq:hard_weight_derivative} that the derivatives of the logs have a
+particular expression based on the counts of visited weights. We substitute the equation above with
+the earlier results from hard derivation, giving us the following equation for each gradient
+component.
+
+\begin{equation*}
+  \ddspn{}{w_{n,j}}\log\left(\frac{M(Y,X)}{M(X)}\right)=\ddspn{}{w_{n,j}}\log M(Y,X)-
+  \ddspn{}{w_{n,j}}\log M(X)=\frac{\Delta c_{n,j}}{w_{n,j}}
+\end{equation*}
+
+Where $\Delta c_{n,j}$ is the difference between the first counting, restricted to $(Y,X)$, and the
+second restricted to only $X$.
+
+\begin{figure}[h]
+  \centering
+  \begin{minipage}{0.3\textwidth}
+    \includegraphics[width=\linewidth]{graphs/hard_diff_0.png}
+    \caption*{$\ddspn{}{W}\log M(Y,X)$}
+  \end{minipage}
+  $-$
+  \begin{minipage}{0.3\textwidth}
+    \includegraphics[width=\linewidth]{graphs/hard_diff_1.png}
+    \caption*{$\ddspn{}{W}\log M(X)$}
+  \end{minipage}
+  $=$
+  \begin{minipage}{0.3\textwidth}
+    \includegraphics[width=\linewidth]{graphs/hard_diff_2.png}
+    \caption*{$\nabla\log\tilde{P}(Y|X)$}
+  \end{minipage}
+  \caption{Hard discriminative gradient descent counts visualization.\label{fig:hard_diff}}
+\end{figure}
+
+\autoref{fig:hard_diff} shows the hard discriminative gradient descent difference derived from
+$\ddspn{}{W}\log\tilde{P}(Y|X)$. The first pass, shown in the image with blue edges, counts the
+maximum edges given the $Y,X$ valuation. The second pass, in red, is the evidence pass on $X$. The
+gradient is then computed by finding the difference between the two countings. On the right-hand
+side of the expression portrayed in~\autoref{fig:hard_diff}, blue edges mean a positive count
+$c_{n,j}$ and red edges represent a negative count.
+
+The actual weight update has a similar form to hard gradient descent.
+
+\begin{equation*}
+  \Delta w_{n,j}=\eta\frac{\Delta c_{n,j}}{w_{n,j}}
+\end{equation*}
+
+With L2 regularization we get
+
+\begin{equation}
+  \Delta w_{n,j}=\eta\frac{\Delta c_{n,j}}{w_{n,j}}-2\lambda w_{n,j}.
+\end{equation}
+
+In a similar fashion to generative gradient descent, we denote by HDGD and SDGD hard discriminative
+gradient descent and soft discriminative gradient descent respectively.
+
+We now build a discriminative gradient descent table for each inference type. Just like in
+generative gradient descent, we add an L2 term to it.
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{l|l}
+    \hline
+    \multicolumn{1}{c}{\bfseries Inference} & \multicolumn{1}{c}{\bfseries Weight updates}\\
+    \hline & \\
+    \textbf{Soft} & \(\displaystyle \Delta
+      w_{n,j}=\eta\left(\frac{1}{S(Y,X)}\ddspn{S(Y,X)}{w_{n,j}}-\frac{1}{S(X)}
+        \ddspn{S(X)}{w_{n,j}}\right)-2\lambda w_{n,j} \) \\
+    & \\
+    \textbf{Hard} & \(\displaystyle \Delta w_{n,j}=\eta\frac{\Delta c_{n,j}}{w_{n,j}}-2\lambda w_{n,j} \) \\
+    & \\
+    \hline
+  \end{tabular}
+  \caption{Discriminative gradient descent weight updates with L2
+    regularization.\label{tab:discriminative_weight_updates}}
+\end{table}
+
+We now finally show an algorithmic form to HDGD and SDGD\@. Note how in discriminative gradient
+descent we have two passes through the network. We can avoid recomputing node values by memoizing
+nodes that have no query variables in descendant's scopes (\cite{discriminative}).
+
+\begin{algorithm}[H]
+  \caption{\code{SoftDiscGD}: Soft discriminative stochastic gradient descent for
+    SPNs\label{alg:disc_soft_gd}}
+  \begin{algorithmic}[1]
+    \Require A valid SPN $S$, query variables $Y$, learning rate $\eta$, regularization constant
+      $\lambda$ and a dataset $D$
+    \Ensure $S$ with learned weights
+    \Repeat%
+      \For{each instance $I\in D$}
+        \State Compute \code{SoftInference}$(S, I)$ and store them in $S^+_n$ for each node $n$
+        \State Compute \code{Backprop}$(S^+)$ and store them in $\ddspn{S^+_n}{w_{n,j}}$
+        \State Compute \code{SoftInference}$(S, I\setminus Y)$ and store them in $S^-_n$ for each
+          node $n$
+        \State Compute \code{Backprop}$(S^-)$ and store them in $\ddspn{S^-_n}{w_{n,j}}$
+        \For{each sum node $n\in S^-\cup S^+$}
+          \State $w_{n,j}\gets\eta\left(\frac{1}{S^+}\ddspn{S^+}{w_{n,j}}-\frac{1}{S^-}
+            \ddspn{S^-}{w_{n,j}}\right)-2\lambda w_{n,j}$
+        \EndFor%
+        \State Normalize weights
+      \EndFor%
+    \Until{convergence}
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]
+  \caption{\code{HardDiscGD}: Hard discriminative stochastic gradient descent for
+    SPNs\label{alg:disc_hard_gd}}
+  \begin{algorithmic}[1]
+    \Require A valid SPN $S$, query variables $Y$, learning rate $\eta$, regularization constant
+      $\lambda$ and a dataset $D$
+    \Ensure $S$ with learned weights
+    \Repeat%
+      \For{each instance $I\in D$}
+        \State Compute \code{HardInference}$(S, I)$ and store them in $M^+_n$ for each node $n$
+        \State Compute \code{HardBackprop}$(M^+)$ and store them in $c^+_{n,j}$
+        \State Compute \code{HardInference}$(S, I\setminus Y)$ and store them in $M^-_n$ for each
+          node $n$
+        \State Compute \code{HardBackprop}$(M^-)$ and store them in $c^-_{n,j}$
+        \For{each sum node $n\in S$}
+          \State $w_{n,j}\gets\eta\left(\frac{c^+_{n,j}-c^-_{n,j}}{w_{n,j}}\right)-2\lambda w_{n,j}$
+        \EndFor%
+        \State Normalize weights
+      \EndFor%
+    \Until{convergence}
+  \end{algorithmic}
+\end{algorithm}

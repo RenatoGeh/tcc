@@ -1,0 +1,70 @@
+graph G {
+  root [shape=circle, label="max", margin=0, fontsize=14];
+  graph [ranksep="1"];
+  splines="false";
+  subgraph L1 {
+    rank=same;
+    P1 [shape=circle, label=<&times;>];
+    P2 [shape=circle, label=<&times;>];
+    P3 [shape=circle, label=<&times;>];
+    P4 [shape=circle, label=<&times;>];
+    P5 [shape=circle, label=<&times;>];
+  };
+  root -- P1 [color="blue", penwidth="7"];
+  root -- P2;
+  root -- P3 [color="red", penwidth="7"];
+  root -- P4;
+  root -- P5;
+  subgraph L2 {
+    rank=same;
+    S1 [shape=circle, label="max", margin=0, fontsize=14];
+    S2 [shape=circle, label="max", margin=0, fontsize=14];
+    S3 [shape=circle, label="max", margin=0, fontsize=14];
+    S4 [shape=circle, label="max", margin=0, fontsize=14];
+    S5 [shape=circle, label="max", margin=0, fontsize=14];
+    S6 [shape=circle, label="max", margin=0, fontsize=14];
+    S7 [shape=circle, label="max", margin=0, fontsize=14];
+    S8 [shape=circle, label="max", margin=0, fontsize=14];
+  }
+  P1 -- {S1 S2 S3, S4};
+  P2 -- {S2 S3 S4 S5};
+  P3 -- {S3 S4 S5 S6};
+  P4 -- {S4 S5 S6 S7};
+  P5 -- {S5 S6 S7 S8};
+  subgraph L3 {
+    rank=same;
+    U1 [style=invis,  label="", shape="point", width="0.125"];
+    U2 [style=invis,  label="", shape="point", width="0.125"];
+    U3 [style=invis,  label="", shape="point", width="0.125"];
+    U4 [style=invis,  label="", shape="point", width="0.125"];
+    U5 [style=invis,  label="", shape="point", width="0.125"];
+    U6 [style=invis,  label="", shape="point", width="0.125"];
+    U7 [style=invis,  label="", shape="point", width="0.125"];
+    U8 [style=invis,  label="", shape="point", width="0.125"];
+    U9 [style=invis,  label="", shape="point", width="0.125"];
+    U10 [style=invis, label="", shape="point", width="0.125"];
+    U11 [style=invis, label="", shape="point", width="0.125"];
+    U12 [style=invis, label="", shape="point", width="0.125"];
+    U13 [style=invis, label="", shape="point", width="0.125"];
+    U14 [style=invis, label="", shape="point", width="0.125"];
+    U15 [style=invis, label="", shape="point", width="0.125"];
+    U16 [style=invis, label="", shape="point", width="0.125"];
+    U17 [style=invis, label="", shape="point", width="0.125"];
+    U18 [style=invis, label="", shape="point", width="0.125"];
+  }
+  S1 -- U2 [color="blue", penwidth="7"];
+  S1 -- {U1 U3 U4}
+  S2 -- U4 [color="blue", penwidth="7"];
+  S2 -- {U3 U5 U6}
+  S3 -- U6 [color="red", penwidth="7"];
+  S3 -- U8 [color="blue", penwidth="7"];
+  S3 -- {U5 U7}
+  S4 -- {U7 U8 U9 U10}
+  S5 -- U12 [color="red", penwidth="7"];
+  S5 -- {U9 U10 U11}
+  S6 -- U11 [color="red", penwidth="7"];
+  S6 -- {U12 U13 U14}
+  S7 -- {U13 U14 U15 U16}
+  S8 -- {U15 U16 U17 U18}
+}
+
