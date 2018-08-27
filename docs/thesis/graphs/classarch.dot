@@ -1,0 +1,30 @@
+digraph G {
+  root [shape=circle, label="+"];
+  graph [ranksep=0.01];
+  splines="false";
+  subgraph L1 {
+    rank=same;
+    P1 [shape=circle, label=<&times;>];
+    P2 [shape=circle, label=<&times;>];
+    Pi [shape=none, label=<. . .>, margin=0.75, fontsize=20];
+    Pn [shape=circle, label=<&times;>];
+  };
+  root -> {P1 P2};
+  root -> Pi [style=invis];
+  root -> Pn;
+  subgraph L2 {
+    rank=same;
+    I1 [shape=none, label=<Y=y<sub>1</sub>>];
+    I2 [shape=none, label=<Y=y<sub>2</sub>>];
+    In [shape=none, label=<Y=y<sub>n</sub>>];
+  };
+  subgraph L3 {
+    rank=same;
+    S1 [shape=house, label=<S | Y=y<sub>1</sub>>, margin=0.05];
+    S2 [shape=house, label=<S | Y=y<sub>2</sub>>, margin=0.05];
+    Sn [shape=house, label=<S | Y=y<sub>n</sub>>, margin=0.05];
+  };
+  P1 -> {S1 I1};
+  P2 -> {S2 I2};
+  Pn -> {Sn In};
+}

@@ -57,7 +57,8 @@ restricted to $R$'s scope. We partition $R$ into two subregions $R_1$ and $R_2$ 
 clustering $D_R^\intercal$, yielding two subclusters $D_{R_1}^\intercal$ and $D_{R_2}^\intercal$.
 We then apply recursion on the two subregions. At each clustering step, we connect regions $R$ to a
 decomposition node $P$, which is then connected to each $R_i$ node. Our stop criteria is when
-$\Sc(R_i)=1$.
+$\Sc(R_i)=1$. The root node is a special case. We run $k$-means cluster on $D$, and for each
+$D_i$ cluster, we construct a sub-SPN for each root child with $D_i$.
 
 Once created, the region graph is then translated to a valid SPN\@. Each region node $R$ is
 translated to a set of SPN nodes. If $\Sc(R)=1$, then these nodes are $g$ univariate gaussian
@@ -86,7 +87,7 @@ this partitioning of variables is one, we create a univariate distribution over 
 dataset.
 
 \begin{algorithm}[H]
-  \caption*{\code{GensArch}: Gens-Domingos structure learning schema}
+  \caption{\code{GensArch}: Gens-Domingos structure learning schema}
   \begin{algorithmic}[1]
     \Require Set of instances $D$ and scope $X$
     \Ensure SPN structure learned from $D$ and $X$
@@ -130,10 +131,47 @@ algorithm. The resulting connected components of the spanning tree are the parti
 find. This significantly reduces complexity. However, we have found that it still accounts for
 approximately 90\% of the algorithm's runtime.
 
-We conjecture that a better approach to variable indepedence would be finding approximate spanning
+We speculate that a better approach to variable indepedence would be finding approximate spanning
 trees on the graph. Many independence tests resulted in a completely dependent graph, but with
 cuts that could possibly yield better accuracy and runtime performance.
 
+Gens-Domingos learned structures generated very deep and expressive SPNs, resulting in good
+accuracy results. However, the algorithm only generates SPTs, as once each step (either clustering
+or variable independence) is concluded, the function never returns to the same node.
+
 \section{The classification architecture}
 
+The Dennis-Ventura structure learning algorithm is able to model classification problems by
+partitioning data into $l$ clusters, where $l$ is the total number of labels, and assigning a
+sub-SPN for each cluster. One can interpret each sub-SPN as a model of each label. However,
+clustering may not select the right classification instances for each label, as we have no control
+over which labels fit each cluster. This effect is intensified on datasets containing a large
+number of data.
 
+We try to solve this problem by simplifying the model. Instead of generating sub-SPNs through
+clustering, we restrict each label to its own SPN\@. In our architecture, we create a single sum
+node as root, representing the image and its classification label. For each label $l$, we construct
+a sub-SPN $S_l$ such that the SPN is still valid. This is done by assigning a product node as
+$S_l$'s root. Let $Y$ be the classification variable. Each of these products are then connected to
+an indicator variable $[Y=y_l]$ and a sub-SPN restricted to only data where $Y=y_l$.
+
+\begin{figure}[h]
+  \centering\includegraphics[scale=0.5]{graphs/classarch.png}
+  \caption{The classification architecture for the Dennis-Ventura structure.\label{fig:class_arch}}
+\end{figure}
+
+\autoref{fig:class_arch} shows the graphical representation of the classification architecture. The
+SPN is still valid, as the product node guarantees decomposability and the root sum node is
+complete. Each sub-SPN $S|Y=y_i$ is then constructed with the Dennis-Ventura algorithm, but
+restricted to data with the $Y=y_i$ valuation.
+
+In practice, this architecture yielded much better results than the original clustering method.
+Furthermore, it is possible to easily parallelize each $S|Y=y_i$ learning procedures for faster
+learning runtime. Similarly, since each $S|Y=y_i$ is independent of other restricted SPNs, we can
+compute SPN values concurrently, allowing for faster inference. We cover this more thoroughly
+in~\autoref{chp:modelling}.
+
+Interestingly, when this architecture model was applied to the Gens-Domingos algorithm, accuracy
+decreased. This is possibly due to the limitations of trees in SPNs. Another possible reason is
+that the Gens-Domingos better captures interactions between labels and pixels than only between
+pixels.
