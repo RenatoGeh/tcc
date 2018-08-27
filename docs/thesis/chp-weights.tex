@@ -334,8 +334,8 @@ distribution we maximize the conditional log-likelihood (\cite{discriminative}).
 Through chain rule, we get the form
 \begin{align*}
   \ddspn{}{W}\log P(Y,X)-\ddspn{}{W}\log P(X)&=\frac{1}{P(Y,X)}\ddspn{}{W}P(Y,X)-\frac{1}{P(X)}
-    \ddspn{}{W}P(X)=\\
-    &=\frac{1}{S(Y,X)}\ddspn{}{W}S(Y,X)-\frac{1}{S(Y,X)}\ddspn{}{W}S(X).
+    \ddspn{}{W}P(X)\\
+    &=\frac{1}{S(Y,X)}\ddspn{}{W}S(Y,X)-\frac{1}{S(X)}\ddspn{}{W}S(X).
 \end{align*}
 
 We can update our weights discriminatively by taking each gradient component
@@ -403,7 +403,8 @@ $\ddspn{}{W}\log\tilde{P}(Y|X)$. The first pass, shown in the image with blue ed
 maximum edges given the $Y,X$ valuation. The second pass, in red, is the evidence pass on $X$. The
 gradient is then computed by finding the difference between the two countings. On the right-hand
 side of the expression portrayed in~\autoref{fig:hard_diff}, blue edges mean a positive count
-$c_{n,j}$ and red edges represent a negative count.
+$c_{n,j}$ and red edges represent a negative count. Edges coming out from product nodes are not
+colored, as they are not weighted.
 
 The actual weight update has a similar form to hard gradient descent.
 
