@@ -42,18 +42,20 @@ represents a pixel of a flattened image. Our entire scope is defined by the set 
 objective is to reliably guess $Y$'s value based solely on the values of $X$. That is, we wish to
 find
 
-\begin{equation*}
+\begin{equation}\label{eq:model-prob}
   \argmax_{y\in\Val(Y)} P(Y=y|X) = \argmax_{y\in\Val(Y)} \frac{P(Y=y,X)}{P(X)}\propto
-  \argmax_{y\in\Val(Y)} P(Y=y,X)
-\end{equation*}
+  \argmax_{y\in\Val(Y)} P(Y=y,X).
+\end{equation}
 
-As we have seen in~\autoref{chp:spn}, we can compute this probability in two different ways. Either
-by computing each $Y$ value by means of a forward pass on the SPN $S(Y=y,X)$, or through the
-approximate MAP $M(Y=y,X)$. We address the computational and approximation problems of both later
-in this chapter.
+Where we assume the existence of an underlying probability distribution that correctly models the
+classification problem. Ultimately, our goal is to find this distribution by ``learning'' from data
+through the learning algorithms described in~\autoref{chp:weights} and~\autoref{chp:structure}.
 
-In this chapter we ignore the system control aspect of the robot. We address this issue
-in~\autoref{chp:hardware}.
+Once learned, the SPN is able to find the MAP probabilities and states that correctly predict the
+most probable values of $Y$ given an image. Note how the LHS of~\autoref{eq:model-prob} can be
+computed with a single pass with the approximate max-product algorithm. Alternatively, we can also
+compute the exact max values by computing each possible $y\in\Val(Y)$ with a single forward pass
+through the SPN.
 
 \section{The dataset}
 
@@ -75,12 +77,53 @@ has label $\Left$, the one on the middle is $\Up$ and the one on the right $\Rig
 to observe that images do not have uniform lightning and lane markings are irregular. This adds a
 noise effect to the images.
 
+The original dataset is already reduced in size. However, the presence of color is not so important
+to identify the correct values of $Y$. If we compare~\autoref{fig:dataset_sample}
+and~\autoref{fig:dataset_gray}, lane markings are still very much visible.
+
+\begin{figure}[h]
+  \centering\includegraphics[width=0.31\textwidth]{imgs/gray_left.png}
+  \includegraphics[width=0.31\textwidth]{imgs/gray_up.png}
+  \includegraphics[width=0.31\textwidth]{imgs/gray_right.png}
+  \caption{Grayscale sample images from training dataset.\label{fig:dataset_gray}}
+\end{figure}
+
+We can try to further reduce the complexity of the dataset at the same time preserving its most
+informational features by attempting to reduce the number of possible values of each pixel through
+image quantization. This transformation turned out to be very meaningful in terms of both training
+speed and accuracy, as we detail in a later chapter. However, noise is still very much present in
+the images, as~\autoref{fig:dataset_transformed} shows.
+
 \begin{figure}[h]
   \centering\includegraphics[width=0.31\textwidth]{imgs/trans_left.png}
   \includegraphics[width=0.31\textwidth]{imgs/trans_up.png}
   \includegraphics[width=0.31\textwidth]{imgs/trans_right.png}
-  \caption{Transformed images from training dataset.\label{fig:dataset_sample}}
+  \caption{Quantized sample images from training dataset.\label{fig:dataset_transformed}}
 \end{figure}
+
+Another possible transformation we can apply on the dataset is binarization. However, traditional
+``hard'' binarization with a fixed $k$ threshold on the image could potentially cause completely
+black or white images due to a poor choice of $k$. This can countered with two possible solutions.
+Either through adaptive threshold where we choose $k$ either by a mean measurement or through a
+gaussian, or by use of Otsu's binarization (\cite{otsu}). We found that Otsu's method, coupled with
+a prior gaussian blur transformation on each image, proved the most capable of correctly applying
+binarization in our dataset.
+
+\begin{figure}[h]
+  \centering\includegraphics[width=0.31\textwidth]{imgs/binary_left.png}
+  \includegraphics[width=0.31\textwidth]{imgs/binary_up.png}
+  \includegraphics[width=0.31\textwidth]{imgs/binary_right.png}
+  \caption{Binarized sample images from training dataset.\label{fig:dataset_binary}}
+\end{figure}
+
+\autoref{fig:dataset_binary} shows the final result of applying a combination of gaussian blur and
+Otsu's binarization.
 
 \section{The model}
 
+%As we have seen in~\autoref{chp:spn}, we can compute this probability in two different ways. Either
+%by computing each $Y$ value by means of a forward pass on the SPN $S(Y=y,X)$, or through the
+%approximate MAP $M(Y=y,X)$. We address the computational and approximation problems of both later
+%in this chapter.
+%In this chapter we ignore the system control aspect of the robot. We address this issue
+%in~\autoref{chp:hardware}.
