@@ -1,5 +1,12 @@
+# dot2texi
+*-dot2tex-*.dot
+*-dot2tex-*.tex
+
 # Vim
 *.vim
+
+# vim-tex
+*_vimtex.*
 
 *-current
 

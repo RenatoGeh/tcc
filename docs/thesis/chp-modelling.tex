@@ -1,1 +1,86 @@
+%&tex
+
 \chapter{Modelling the problem}\label{chp:modelling}
+
+In this chapter we formally define a possible model for the mobile robots self-driving problem.  We
+first present this problem as an imitation learning through image classification problem. We then
+describe the dataset intended as training set for image classification. Finally, we discuss the
+problems of inference speed we should encounter when dealing with a mobile robot, and provide a
+concurrent programming solution for our particular problem.
+
+\section{The problem}
+
+One of the main problems of self-driving is to follow a certain pathway. In real life, a
+self-driving car should be able to maintain itself centered on a lane, more specifically inbetween
+lane markings. We address this particular subproblem of self-driving. This is achieved by
+considering this situation as an imitation learning application.
+
+Imitation learning consists of an agent accurately mimicking human behavior. In our case, we wish
+for such an agent to simulate the behavior of keeping a car centered on a single lane. We model
+this particular situation by use of image classification. The agent, in this case the self-driving
+car, should reliably identify when to turn and when to go straight my solely ``looking'' at the
+road. This can be achieved through the use of image classification, as a turn tends to have
+different visual features then a straight lane.
+
+Whilst this comes naturally to humans, machines have trouble identifying these features by
+themselves.  Noise and object occlusion play a big role in how reliably the agent behaves. A
+possible obstruction of the agent's view could turn fatal in a real-life scenario. However, with
+the advent of more complex models in machine learning, modelling this problem through image
+classification has become a feasible solution.
+
+Our approach to self-driving in mobile robots consists of a very simplified and purely reactive
+image classification problem. The mobile robot should follow a lane and turn accordingly based on
+its image input of its front view.
+
+We define a classification variable, which we will denote by $Y$, as an indicator of what the robot
+should do. The function $\Val(Y)$ defines the set of all possible values of $Y$. In our case,
+$\Val(Y)=\{\Left,\Right, \Up\}$, each meaning that the robot should ``go left'', ``go right'' and
+``go straight'' respectively.
+
+Let $X=\{X_1,X_2,\ldots,X_n\}$ be the set of variables that compose an image, where each $X_i$
+represents a pixel of a flattened image. Our entire scope is defined by the set $W=X\cup Y$. Our
+objective is to reliably guess $Y$'s value based solely on the values of $X$. That is, we wish to
+find
+
+\begin{equation*}
+  \argmax_{y\in\Val(Y)} P(Y=y|X) = \argmax_{y\in\Val(Y)} \frac{P(Y=y,X)}{P(X)}\propto
+  \argmax_{y\in\Val(Y)} P(Y=y,X)
+\end{equation*}
+
+As we have seen in~\autoref{chp:spn}, we can compute this probability in two different ways. Either
+by computing each $Y$ value by means of a forward pass on the SPN $S(Y=y,X)$, or through the
+approximate MAP $M(Y=y,X)$. We address the computational and approximation problems of both later
+in this chapter.
+
+In this chapter we ignore the system control aspect of the robot. We address this issue
+in~\autoref{chp:hardware}.
+
+\section{The dataset}
+
+For training, we used Moraes and Salvatore's self-driving dataset (\cite{self-driving}). Every
+image has dimensions $45\times 80$, with three additional channels for RGB. The dataset is split
+into three sets, corresponding to training, test and validation data. Each image contains a label
+indicating whether the robot should go straight, turn left or turn right. These actions are labeled
+as $0$, $1$ and $2$.
+
+\begin{figure}[h]
+  \centering\includegraphics[width=0.31\textwidth]{imgs/sample_left.png}
+  \includegraphics[width=0.31\textwidth]{imgs/sample_up.png}
+  \includegraphics[width=0.31\textwidth]{imgs/sample_right.png}
+  \caption{Sample images from training dataset.\label{fig:dataset_sample}}
+\end{figure}
+
+\autoref{fig:dataset_sample} showcases sample images from the training dataset. The leftmost image
+has label $\Left$, the one on the middle is $\Up$ and the one on the right $\Right$. It is possible
+to observe that images do not have uniform lightning and lane markings are irregular. This adds a
+noise effect to the images.
+
+\begin{figure}[h]
+  \centering\includegraphics[width=0.31\textwidth]{imgs/trans_left.png}
+  \includegraphics[width=0.31\textwidth]{imgs/trans_up.png}
+  \includegraphics[width=0.31\textwidth]{imgs/trans_right.png}
+  \caption{Transformed images from training dataset.\label{fig:dataset_sample}}
+\end{figure}
+
+\section{The model}
+

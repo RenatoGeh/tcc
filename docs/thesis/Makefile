@@ -10,7 +10,7 @@ LATEX := pdflatex
 # mais abaixo. Ela nao esta habilitada por padrao porque pode acarretar
 # problemas de seguranca
 #OPTS := --shell-escape
-OPTS := -synctex=1 -halt-on-error -file-line-error -interaction nonstopmode -recorder
+OPTS := -synctex=1 -halt-on-error -file-line-error -interaction nonstopmode -recorder -shell-escape
 
 #BIBTEX := bibtex
 BIBTEX := biber
@@ -163,7 +163,8 @@ clean: $(BASE_NAME)-clean
 		$*.idx-current $*.bcf-current $*.fls-current \
 		$*.run.xml-current $*.synctex.gz-current \
 		$*.fdb_latexmk-current $*.ps-current \
-		$*.pdf-current $*.dvi-current
+		$*.pdf-current $*.dvi-current \
+    $*-dot2tex-* $*_vimtex* $*.loa* mkidxhead.ist hyperxindy.xdy\
 
 define SHOW_REPORT =
 	if test -f bibtex-out.log; then \
