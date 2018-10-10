@@ -6,7 +6,7 @@ learning schema. Once we cover both algorithms, we explain how we add a slight m
 first architecture. We have empirically found that this change increased image classification
 accuracy significantly. We call this the ``classification architecture''.
 
-\section{The Dennis-Ventura architecture}
+\section{The Dennis-Ventura architecture}\label{section:dv}
 
 Let us first formalize the notion of dataset. We call a dataset a set of \textit{instances}, where
 each instance is a set we call \textit{valuation} or \textit{instantiation}. As we have mentioned
@@ -72,7 +72,7 @@ With the architecture done, we apply parameter learning on the SPN to learn weig
 either through gradient descent or EM\@. In this thesis we apply generative and discriminative
 gradient descent to the architecture.
 
-\section{The Gens-Domingos schema}
+\section{The Gens-Domingos schema}\label{section:gd}
 
 In~\cite{gens-domingos}, Gens and Domingos describe a flexible schema for structure learning of
 SPNs. The schema is based on the idea that the scope in a sum node's child mean that these

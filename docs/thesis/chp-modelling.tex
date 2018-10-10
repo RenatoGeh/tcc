@@ -121,9 +121,55 @@ Otsu's binarization.
 
 \section{The model}
 
-%As we have seen in~\autoref{chp:spn}, we can compute this probability in two different ways. Either
-%by computing each $Y$ value by means of a forward pass on the SPN $S(Y=y,X)$, or through the
-%approximate MAP $M(Y=y,X)$. We address the computational and approximation problems of both later
-%in this chapter.
-%In this chapter we ignore the system control aspect of the robot. We address this issue
-%in~\autoref{chp:hardware}.
+Our classification model should be able to accurately infer the most probable action to be taken
+given the front camera feed's image. Although a simple decision model could be used for such a
+task, in many cases we wish to maintain an uncertainty measurement (e.g. a probability
+distribution) as a means to quantify error. Error and noise is often a problem in robotics, one
+which can be mitigated through probabilistic localization algorithms. For our particular case, we
+discard these problematic issues and focus solely on the problem of computing a valid probability
+distribution that accurately models our classification problem. SPNs have full probabilistic
+semantics and are able to represent local and sparse variable interactions due to their deep
+architecture. This allows for a reliable probabilistic model for modelling our classification
+problem.
+
+We use two SPN architectures for our problem. We model the first using the Dennis-Ventura algorithm
+described in~\autoref{section:dv}. This model in particular uses the classification architecture
+also cited in~\autoref{chp:structure}. The second model uses the Gens-Domingos structural algorithm
+(\autoref{section:gd}).
+
+As we have previously mentioned, we wish to compute the MPE
+
+\begin{equation}
+  \argmax_{y\in\Val(Y)} P(Y=y,X)=\argmax_{y\in\Val(Y)}S(Y=y,X)\approx y|_{M(Y=y,X)}, y\in\Val(Y).
+\end{equation}
+
+Where $y|_{M(Y=y,X)}$ signals an MPN forward and backward pass to compute the most probable
+explanation of variable $Y$ given $X$ as evidence on the underlying SPN.
+
+Recalling~\autoref{chp:spn}, we can compute this probability in two different ways. Either
+by computing each $Y$ value by means of a forward pass on the SPN $S(Y=y,X)$, or through the
+approximate MAP $M(Y=y,X)$. These two options both carry disadvantages. On one hand, computing each
+$Y$ value through a forward pass on each possible valuation can cause inference to become very
+slow, especially when hardware is as limited as in a mobile robot. On the other, the max-product
+algorithm is a fast inference method, though approximate. Furthermore, the approximate method tends
+to favor shallower paths due to its Viterbi-style features.
+
+We compromise with exact inference, but with an addendum. We take advantage of our hardware's
+multi-cored CPU by running exact inference in parallel. Since the Gens-Domingos and Dennis-Ventura
+architectures are very distinct structure-wise, we apply a different implementation for each.
+
+As mentioned in~\autoref{chp:structure}, the Dennis-Ventura structure we implemented follows a
+particular classification architecture that models each set of images of a certain label as a
+separate, independent sub-SPN. This allows for an easy parallel programming implementation, as each
+CPU core can be assigned to a single sub-SPN, and thus to a label. Each core will then be linked to
+a particular label. Once all cores finish inference, we then compare which sub-SPN returned the
+highest probability. This is only advantageous if the number of labels is low. In our case,
+$|\Val(Y)|=3$, meaning this method is feasible for our problem.
+
+This implementation does not work as well on the Gens-Domingos structure, as we cannot guarantee if
+an independency or clustering step on the root node has yielded a sufficient number of nodes for
+each core. However, a similar method is used, where a concurrency queue of $n$ most processes
+stores each child of the root node, allowing for them to be run in parallel. Since the
+Gens-Domingos structural algorithm produces SPTs, every child of a node is guaranteed to be
+independent of its siblings.
+
