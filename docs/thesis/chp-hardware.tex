@@ -1,0 +1,104 @@
+%&tex
+
+\chapter{Hardware}\label{chp:hardware}
+
+In this chapter we dive into the hardware specifications of our mobile robot. Our robot is composed
+of two main units: the Berry and the Brick. The former is composed of a Raspberry Pi and a webcam,
+and serve as the brain for our robot. The latter is a Lego Mindstorms robot, which contains two
+differential motors for each wheel and a small processing unit, called the Brick, used for issuing
+low-level commands to the wheels. We first explore the Berry, and then describe the Brick.
+
+\section{The Berry}
+
+The main processing unit of our robot consists of a Raspberry Pi 3 Model B+. With a Broadcom
+BCM2837B0 Cortex-A53 64-bit at 1.4 GHz, it is a small, yet powerful micro-computer. Its
+architecture is based on ARMv8, and has four processing cores.
+
+Through four USB 2.0 ports, we are able to connect the Raspberry Pi with the motor part of our
+robot, which will be mentioned in the next section, and a small portable webcam that will be used
+as input.
+
+A MicroSD of 64 GB provides both the Raspbian operating system, which is based on Debian, as well as
+8 GB swap memory space, as the Berry contains only 1 GB LPDDR2 SDRAM. The remaining amount is used
+as storage.
+
+Although the Berry has reasonable processing power for its size, training is done offline in a
+desktop computer, with only inference done on the micro-computer. With its connected webcam, the
+Berry receives each image frame, applies some pre-processing to the image (which will be detailed
+in~\autoref{chp:benchmarks}), feeds it to the SPN as evidence, computes the most probable
+classification label, and finally sends this to the external unit, i.e. the Brick, responsible for
+dealing with the robot's motion. This is all done concurrently, as we can dedicate three cores to
+classification, and the remaining unit to camera capture, image pre-processing and message passing.
+
+\section{The Brick}
+
+The Lego Mindstorms robot is composed of three main parts: the brick, which is the Lego Mindstorm's
+processing unit that handles the motors, and two differential motors that are able to give motion
+to the robot in a somewhat precise manner through the use of tachometers. In this document, when we
+say the Brick, we are referring to the whole set of brick and motors.
+
+In our experiments we used the Lego Mindstorms NXT. Its main processor is an Atmel AT91SAM7S256
+with a 48 MHz clock and 32-bit ARMv4 architecture. It has 64 KB of RAM and 256 KB of flash storage.
+A USB port allows for local input and output from and to the Brick.
+
+Low-level handling is done on the Brick. Once it receives a command to be executed (i.e. the
+classification label passed by the Berry), the Brick needs to interpret it and execute the desired
+movement. We use the leJOS NXJ API\footnote{Available at \url{http://lejos.org/nxj.php}} for
+low-level motor programming. The Brick's cycle is as follows:
+
+\begin{algorithm}[H]
+  \caption{\code{Brick}: The Brick's cycle}
+  \begin{algorithmic}[1]
+    \State Connect and power up motors
+    \State Let \code{UP} $\gets$ \code{0x00}
+    \State Let \code{LEFT} $\gets$ \code{0x01}
+    \State Let \code{RIGHT} $\gets$ \code{0x02}
+    \State Let \code{QUIT} $\gets$ \code{0x03}
+    \State Let \code{NOOP} $\gets$ \code{0x04}
+    \State Let $M_L$ and $M_R$ be the left and right side motors respectively
+    \State Let $k$ be some speed constant
+    \While{\textbf{true}}
+      \If{input size $>$ 0}
+        \State Read input byte and store in variable $c$
+        \If{$c$ is \code{QUIT}}
+          \State Disconnect and power down
+        \ElsIf{$c$ is \code{UP}}
+          \State Set $M_L$'s power to $k$
+          \State Set $M_R$'s power to $k$
+        \ElsIf{$c$ is \code{LEFT}}
+          \State Set $M_L$'s power to $2k$
+          \State Set $M_R$'s power to $3k$
+        \ElsIf{$c$ is \code{RIGHT}}
+          \State Set $M_L$'s power to $3k$
+          \State Set $M_R$'s power to $2k$
+        \EndIf%
+      \EndIf%
+    \EndWhile%
+  \end{algorithmic}
+\end{algorithm}
+
+No complex control is done on the Brick. A standard ``do something until told otherwise'' is
+implemented. This is reliant on the Berry's inference speed, but we found that inference was fast
+enough for this to work well on slow speeds.
+
+Setting the motors' power is straightforward with leJOS. Two function calls are enough for our
+case. The problem is in choosing $k$. If $k$ is too big, not only the Berry might not have enough
+time to compute the labels, but also turns may not be as steep as the lane requires. In the case of
+a too small $k$, the challenge of autonomous driving becomes null. We experimented on values of $k$
+and chose $k=150$ for our Lego Mindstorms. We recognize that a better control solution to this
+would be preferred, but for our case this suffices.
+
+\section{Bridging the two}
+
+Communication between the two modules, Berry and Brick, is done through a USB cable. We use a Go
+codebase on the Berry, opting to use Google's GoUSB\footnote{Available at
+\url{https://github.com/google/gousb}} as a low-level interface to handle the Raspberry Pi's data
+output, sending each predicted label as a byte value.
+
+At each cycle, the Brick checks for new input by reading from an input stream. This is done through
+Java's \code{java.io.DataInputStream}, which translates the incoming USB data into Java bytes.
+
+This hierarchization of Berry to Brick allows for the unit with most processing power, i.e.  the
+Berry, to take on the heavy load, leaving only the necessary dedicated low-level motor handling to
+the Brick, which is very limited in terms of CPU and memory.
+

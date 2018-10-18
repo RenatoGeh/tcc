@@ -119,6 +119,23 @@ binarization in our dataset.
 \autoref{fig:dataset_binary} shows the final result of applying a combination of gaussian blur and
 Otsu's binarization.
 
+One last transformation we tested our models on was histogram equalization. Equalization was done
+in order to reshape the pixel value histogram to an approximately uniform distribution. This was
+done in an attempt to increase the accuracy of the Gens-Domingos algorithm. As mentioned
+in~\autoref{chp:structure}, the Gens-Domingos schema attempts to find partitions of independent
+variables. We use an implementation of the G-test, which works best when there are sufficient
+samples for every variable category. The original dataset has a skewed histogram that contains
+almost no pixel values in the extreme ranges (either too white or too black). This transformation
+added a lot of noise to the dataset. In spite of this, we empirically found that with the use of
+equalization accuracy was increased by more or less 5\%.
+
+\begin{figure}[h]
+  \centering\includegraphics[width=0.31\textwidth]{imgs/eq_left.png}
+  \includegraphics[width=0.31\textwidth]{imgs/eq_up.png}
+  \includegraphics[width=0.31\textwidth]{imgs/eq_right.png}
+  \caption{Equalized sample images from training dataset.\label{fig:dataset_equalized}}
+\end{figure}
+
 \section{The model}
 
 Our classification model should be able to accurately infer the most probable action to be taken
@@ -150,9 +167,9 @@ Recalling~\autoref{chp:spn}, we can compute this probability in two different wa
 by computing each $Y$ value by means of a forward pass on the SPN $S(Y=y,X)$, or through the
 approximate MAP $M(Y=y,X)$. These two options both carry disadvantages. On one hand, computing each
 $Y$ value through a forward pass on each possible valuation can cause inference to become very
-slow, especially when hardware is as limited as in a mobile robot. On the other, the max-product
-algorithm is a fast inference method, though approximate. Furthermore, the approximate method tends
-to favor shallower paths due to its Viterbi-style features.
+slow, especially when hardware is as limited as in a mobile robot. On the other hand, the
+max-product algorithm is a fast inference method, though approximate. Furthermore, the approximate
+method tends to favor shallower paths due to its Viterbi-style features.
 
 We compromise with exact inference, but with an addendum. We take advantage of our hardware's
 multi-cored CPU by running exact inference in parallel. Since the Gens-Domingos and Dennis-Ventura
@@ -162,11 +179,11 @@ As mentioned in~\autoref{chp:structure}, the Dennis-Ventura structure we impleme
 particular classification architecture that models each set of images of a certain label as a
 separate, independent sub-SPN. This allows for an easy parallel programming implementation, as each
 CPU core can be assigned to a single sub-SPN, and thus to a label. Each core will then be linked to
-a particular label. Once all cores finish inference, we then compare which sub-SPN returned the
-highest probability. This is only advantageous if the number of labels is low. In our case,
+a particular robot command. Once all cores finish inference, we then compare which sub-SPN returned
+the highest probability. This is only advantageous if the number of labels is low. In our case,
 $|\Val(Y)|=3$, meaning this method is feasible for our problem.
 
-This implementation does not work as well on the Gens-Domingos structure, as we cannot guarantee if
+This method does not work as well on the Gens-Domingos structure, as we cannot guarantee if
 an independency or clustering step on the root node has yielded a sufficient number of nodes for
 each core. However, a similar method is used, where a concurrency queue of $n$ most processes
 stores each child of the root node, allowing for them to be run in parallel. Since the
