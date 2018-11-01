@@ -15,6 +15,32 @@ and equalization.
 
 \subsection{Binarization}
 
+The binarization process was done by first converting the original dataset to grayscale, followed
+by applying a gaussian blur filter with a $(1, 1)$ kernel and $(1, 1)$ standard deviation, and
+finally using Otsu's binarization. We chose this particular process since standard hard threshold
+binarization was unable to produce clear images of the track lines.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=1.75]{imgs/binary_left_h.png}
+  \includegraphics[scale=1.75]{imgs/binary_up_h.png}
+  \includegraphics[scale=1.75]{imgs/binary_right_h.png}
+  \caption{Binarization using hard threshold.\label{fig:bin-hard}}
+\end{figure}
+
+\autoref{fig:bin-hard} shows how hard thresholding can produce noisy images, as the applied
+threshold does not depend on local neighborhoods. Images are labeled as left, up and right
+respectively.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=1.75]{imgs/binary_left.png}
+  \includegraphics[scale=1.75]{imgs/binary_up.png}
+  \includegraphics[scale=1.75]{imgs/binary_right.png}
+  \caption{Binarization using Otsu's threshold.\label{fig:bin-otsu}}
+\end{figure}
+
+\autoref{fig:bin-otsu} shows a sample of the dataset after applying Otsu's binarization.
 
 \subsection{Quantization}
 
@@ -22,14 +48,15 @@ The Gens-Domingos algorithm, as mentioned in~\autoref{chp:structure}, has two ma
 clustering phase and an independency test part. Our independency test implementation in specific
 uses the standard G-test statistical independence test based on contingency tables, where each
 frequency of the categories of each two variables are laid out on a matrix and their likelihood
-ratio are computed. This test takes time $\bigo(n m)$, where $n$ and $m$ are the number of
-categories of each variable, and grows fast with $n$ and $m$. We empirically found that when
-$\max\{n,m\}$ is relatively big (in our experiments 16 was considered as such) both accuracy and
-speed were negatively affected.
+ratios are computed. This test takes only $\bigo(n m)$, where $n$ and $m$ are the number of
+categories of each variable, but each two variables must be tested pairwise with all others, and
+although we use a spanning-tree heuristic, it still grows fast with $n$ and $m$.
 
-A possible explanation for this is the low number of pixel intensity values for too extreme values.
-For instance, there are fewer samples where pixels are either too bright or too dark,
-as~\autoref{fig:hist-orig} shows.
+We empirically found that $\max\{n,m\}$ and training set size are directly correlated to the
+model's accuracy and speed. If $n$ and $m$ are big and the training set size is small, then
+accuracy will fall. On the other hand, accuracy increases if $n$ and $m$ are small and the training
+set is small. However, when both $n$, $m$ and training set are big, we achieve much better accuracy
+results, but inference speed increases as well.
 
 \begin{figure}[h]
   \includegraphics[scale=0.3]{imgs/hist_8.png}
@@ -39,9 +66,15 @@ as~\autoref{fig:hist-orig} shows.
     resolutions.\label{fig:hist-orig}}
 \end{figure}
 
-Although quantizing the dataset proved to be a significant improvement in accuracy to the model
-(from $\approx$35\% to 75\%), the issue of fewer, near zero, samples for particular values still
-haunted our Gens-Domingos implementation.
+A possible explanation for poor results with small training sets is the low number of pixel
+intensity values for too extreme values, as there are fewer samples where pixels are either too
+bright or too dark, as~\autoref{fig:hist-orig} shows.
+
+
+Quantizing the dataset resulted in a significant improvement in accuracy to the model when training
+with a small set of images ($\leq$ 300). We found that when we increased the number of training
+images, accuracy depended less on quantization, but inference time increased, as the model grew in
+depth. We thus needed to find a balance between network complexity and accuracy.
 
 We faced two possible solutions to this problem. Either implement an exact independence test, such
 as the Fisher exact test (\cite{fisher-exact}), or perform equalization on the dataset. The former
@@ -54,9 +87,9 @@ dataset.
 
 Equalization was done using OpenCV. We attempted two methods of histogram equalization: traditional
 equalization through brightness and contrast normalization, and Contrast Limited Adaptive Histogram
-Equalization (CLAHE). We found that the CLAHE method resulted in images that were very similar to
-the output of the traditional method. Since these transformations are also expected to be applied
-on-the-fly during inference, we chose the standard equalization for its speed.
+Equalization (CLAHE) (\cite{clahe}). We found that the CLAHE method resulted in images that were
+very similar to the output of the traditional method. Since these transformations are also expected
+to be applied on-the-fly during inference, we chose the standard equalization for its speed.
 \autoref{fig:hist-eq} shows how the dataset pixel histogram looks like after equalization.
 
 \begin{figure}[h]
@@ -67,15 +100,16 @@ on-the-fly during inference, we chose the standard equalization for its speed.
   resolutions.\label{fig:hist-eq}}
 \end{figure}
 
-When coupling quantization and equalization, we were able to achieve $\approx$78\% accuracy.
-Interestingly, these transformation proved to be harmful for the Dennis-Ventura architecture. In
+When coupling quantization and equalization, we were able to achieve $\approx$81\% accuracy.
+Interestingly, these transformations proved to be harmful for the Dennis-Ventura architecture. In
 fact, the structure yielded better results with higher resolutions compared to lower. Equalization
-also had little to no effect on this architecture, increasing accuracy in 1\% or 2\%. We attribute
-this phenomenom to the classification architecture we discussed in~\autoref{chp:structure}. Since
-each sub-SPN is essentially modelling each class as a separate, independent image model to the
-other classes, the more details in the image, the easier the model can distinguish from other label
-images. Furthermore, since the Dennis-Ventura algorithm does not need to run an independence test,
-it does not suffer from its drawbacks.
+also had little to no effect on this architecture, increasing accuracy in 1\% or 2\% when training
+with a small dataset, and having no effect when training with many samples. We attribute this
+phenomenom to the classification architecture we discussed in~\autoref{chp:structure}. Since each
+sub-SPN is essentially modelling each class as a separate, independent image model to the other
+classes, the more details in the image, the easier the model can distinguish from other label
+images.  Furthermore, since the Dennis-Ventura algorithm does not need to run an independence test,
+it does not suffer from its drawbacks and thus does not depend on an equalized histogram.
 
 \section{Setups}
 
