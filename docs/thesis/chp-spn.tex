@@ -146,7 +146,7 @@ to variables. We can generalize SPNs to the continuous by assuming an infinite n
 thus replacing sum nodes whose children are IVs with integral nodes. A leaf node then becomes an
 integral node with infinite IVs as children. Particularly, it represents an unnormalized
 univariate probability distribution, such as a Gaussian. The value of this integral node $n$
-becomes the fdp $p_n(x)$. This extension brings us to a second definition of SPNs.
+becomes the pdf $p_n(x)$. This extension brings us to a second definition of SPNs.
 
 \begin{definition}[Sum-product networks;~\cite{gens-domingos}]
   A sum-product network is defined recursively as follows.
@@ -246,7 +246,7 @@ unnormalized networks.
     \State\, Find topological order $T$ of $S$
     \For{each node $n\in S$ from $T$}
       \If{$n$ is a leaf node}
-        \State\, Let $\Sc(n)=\{X_k\}$, $p_n(x)$ be $n$'s fdp and $\hat{p}_n$ be $p_n$'s mode
+        \State\, Let $\Sc(n)=\{X_k\}$, $p_n(x)$ be $n$'s pdf and $\hat{p}_n$ be $p_n$'s mode
         \If{$X_k\in X$}
           \State\, Let $x_k$ be $X_k$'s value in $X$
           \State\, $S_n\gets p_n(x_k)$
@@ -277,7 +277,7 @@ unnormalized networks.
     \State\, Find topological order $T$ of $M$
     \For{each node $n\in M$ from $T$}
       \If{$n$ is a leaf node}
-        \State\, Let $\Sc(n)=\{X_k\}$, $p_n(x)$ be $n$'s fdp and $\hat{p}_n$ be $p_n$'s mode
+        \State\, Let $\Sc(n)=\{X_k\}$, $p_n(x)$ be $n$'s pdf and $\hat{p}_n$ be $p_n$'s mode
         \If{$X_k\in X$}
           \State\, Let $x_k$ be $X_k$'s value in $X$
           \State\, $M_n\gets p_n(x_k)$
@@ -311,7 +311,7 @@ Finally, we show how to algorithmically compute the MPE given some evidence.
     \State\, Push $S$ into $Q$
     \For{each node $n\in M$ in $Q$}
       \If{$n$ is a leaf node}
-        \State\, Let $\Sc(n)=\{X_k\}$ and $p_n(x)$ be $n$'s fdp
+        \State\, Let $\Sc(n)=\{X_k\}$ and $p_n(x)$ be $n$'s pdf
         \State\, Let $\hat{x}=\argmax_{x_k} p_n(x_k)$ be $p_n$'s maximum valuation
         \If{$X_k\not\in X$}
           \State\, $Y\gets Y\cup\{X_k=\hat{x}\}$

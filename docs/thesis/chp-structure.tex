@@ -119,23 +119,31 @@ dataset.
 
 Our implementation was done by using DBSCAN, a density based clustering algorithm that
 automatically decides the number of clusters to generate (\cite{dbscan}), for clustering and the
-traditional G-test for variable independence. We additionally implemented $k$-means, $k$-mode and
-$k$-median for clustering and Pearson's $\chi^2$-square for independence testing. However, we found
-that DBSCAN yielded the best clustering results and G-test the best variable independence.
+traditional G-test for variable independence. We also implemented $k$-means, $k$-mode and
+$k$-median for clustering and Pearson's $\chi^2$-square for independence testing. We found that
+DBSCAN yielded the best accuracy results on clustering, but took a long time for training. Using
+$k$-means clustering with $k=2$ yielded worse, but comparable results, but with the upside of being
+fast to train. The G-test provided the best variable independence results.
 
-For variable independence, instead of testing every variable pairwise, we constructed a dependency
-graph. Each vertex from the dependency graph represents a variable. An edge between two vertices
-means the two variables are dependent. To find independent partitions in a dataset it suffices to
-find a spanning tree of the dependency graph. We do this through Kruskal's MST union-find
-algorithm. The resulting connected components of the spanning tree are the partitions we wish to
-find. This significantly reduces complexity. However, we have found that it still accounts for
-approximately 90\% of the algorithm's runtime.
+Finding independent variable subsets can be done by iteratively comparing variables pairwise. The
+connected components of the resulting disconnected graph are independent subsets. This brute force
+approach is intractable, as the G-test already takes $\bigo(|X||Y|)$ time, where $X$ and $Y$ are
+random variables and $|\cdot|$ indicates the number of categories of the RV, and testing each pair
+of variables exhaustively is exponential.
+
+Instead of testing every variable pairwise, we constructed a dependency graph. Each vertex from the
+dependency graph represents a variable. An edge between two vertices means the two variables are
+dependent. To find independent partitions in a dataset it suffices to find a spanning tree of the
+dependency graph. We do this through Kruskal's MST union-find algorithm. The resulting connected
+components of the spanning tree are the partitions we wish to find. This significantly reduces
+complexity. However, we have found that it still accounts for approximately 90\% of the algorithm's
+runtime.
 
 We speculate that a better approach to variable indepedence would be finding approximate spanning
 trees on the graph. Many independence tests resulted in a completely dependent graph, but with
 cuts that could possibly yield better accuracy and runtime performance.
 
-Gens-Domingos learned structures generated very deep and expressive SPNs, resulting in good
+Our Gens-Domingos implementation generated very deep and expressive SPNs, resulting in good
 accuracy results. However, the algorithm only generates SPTs, as once each step (either clustering
 or variable independence) is concluded, the function never returns to the same node.
 
