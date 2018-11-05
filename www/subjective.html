@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+	<meta charset="utf-8">
+
+  <!-- Main CSS Stylesheet -->
+  <link rel="stylesheet" href="main.css">
+  <!-- Roboto Font -->
+  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+
+  <!-- MathJax -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+	<title>TCC - Renato Lui Geh</title>
+</head>
+
+
+<body onload="javascript:select_language(parseParam('lang', 'pt'))">
+
+<!-- NavBar -->
+<ul class="navbar">
+  <li class="navitem">
+    <a href="index.html?lang=en" lang="en">Proposal</a>
+    <a href="index.html?lang=pt" lang="pt">Proposta</a>
+  </li>
+  <li class="navitem">
+    <a href="thesis.html?lang=en" lang="en">Thesis</a>
+    <a href="thesis.html?lang=pt" lang="pt">Monografia</a>
+  </li>
+  <li class="navitem">
+    <a href="code.html?lang=en" lang="en">Code</a>
+    <a href="code.html?lang=pt" lang="pt">Código</a>
+  </li>
+  <li class="navitem">
+    <a href="poster.html?lang=en" lang="en">Poster</a>
+    <a href="poster.html?lang=pt" lang="pt">Pôster</a>
+  </li>
+  <li class="navitem">
+    <a href="presentation.html?lang=en" lang="en">Presentation</a>
+    <a href="presentation.html?lang=pt" lang="pt">Apresentação</a>
+  </li>
+  <li class="navitem">
+    <a class="active" href="subjective.html?lang=en" lang="en">Subjective part</a>
+    <a class="active" href="subjective.html?lang=pt" lang="pt">Apreciação pessoal</a>
+  </li>
+</ul>
+
+<div class="body">
+
+<!-- Language flags -->
+<div class="localization">
+  <label>
+    <input type="radio" name="radios" onchange="select_language(this.value)" value="en"/>
+    <img src="imgs/en.png">
+  </label>
+  <label>
+    <input type="radio" name="radios" onchange="select_language(this.value)" value="pt"/>
+    <img src="imgs/pt.png">
+  </label>
+</div>
+
+<div>
+  <h1>Apreciação pessoal e crítica</h1>
+
+  <p>
+    Na qual discute-se o trabalho, estudo e considerações subjetivas por parte do aluno.
+  </p>
+
+  <h2>Escolha do tema e dificuldades</h2>
+
+  <p>
+    A escolha do tema foi feita em conjunto com o Prof. Denis, orientador do TCC. Como durante o
+    começo do ano já estava cursando a matéria MAC0318 (Introdução a Programação de Robôs) e era do
+    meu interesse continuar o mesmo assunto da minha Iniciação Científica, i.e. redes soma-produto,
+    o Prof. Denis sugeriu combinar os dois assuntos, com a adição de um novo elemento: aprendizado
+    discriminativo.
+  </p>
+
+  <p>
+    Como já havia estudado a teoria necessária para a parte não-<i>hardware</i> do TCC na minha IC,
+    a implementação do modelo e toda a parte de aprendizagem de máquina foi a parte mais tranquila
+    do trabalho. A parte implementação no robô, no entanto, foi o problema.
+  </p>
+
+  <p>
+    Durante o primeiro semestre, cursando MAC0318, pude perceber quão diferente é o mundo da teoria
+    e da prática. Algoritmos que funcionavam de forma "comportada" em simulações, tornavam-se dor
+    de cabeça ao serem implementadas nos robôs. De fato, durante o TCC, a parte mais complicada foi
+    a implementação no robô e os diversos detalhes do sistema do Raspberry Pi. Apesar das
+    dificuldades e frustrações com a parte de <i>hardware</i>, acho que aprendi bastante.
+  </p>
+
+  <p>
+    Na minha opinião, este TCC foi bastante completo do ponto de vista de computação, já que tive
+    de aprender desde a parte matemática de se computar o gradiente da log-verossimilhança de um
+    modelo complexo; até a parte de engenharia, onde precisei tratar passagem de informação em
+    bytes de um dispositivo ao outro.
+  </p>
+
+  <h2>Disciplinas relevantes</h2>
+
+  <p>
+    Durante o TCC usei diversos materiais que aprendi durante a graduação. Na lista abaixo enumero
+    as disciplinas mais relevantes, seguidas de uma breve descrição dos assuntos que foram usados
+    neste trabalho.
+  </p>
+
+  <h3>Disciplinas de graduação</h3>
+
+  <h4>Cálculo Diferencial e Integral I, II e III (MAT0111, MAT0121, MAT0211)</h4>
+
+  <p>
+    Para conseguir entender e calcular as derivações feitas para achar o gradiente da
+    log-verossimilhança é preciso entender o básico de Cálculo. O capítulo de aprendizagem
+    paramétrica do TCC é praticamente um exercício de cálculo. As três matérias de cálculo integral
+    e diferencial me ajudaram muito a entender como os artigos originais chegaram em seus
+    respectivos resultados.
+  </p>
+
+  <h4>Introdução à Probabilidade e à Estatística I e II (MAE0121, MAE0212)</h4>
+
+  <p>
+    Entender distribuições de probabilidade e o método de máxima verossimilhança foram fundamentais
+    para o TCC. Além disso, a disciplina MAE0212 em especial mostrou como computar se duas
+    variáveis são estatisticamente independentes, o que foi usado no algoritmo de Gens-Domingos.
+  </p>
+
+  <h4>Estruturas de Dados (MAC0323)</h4>
+
+  <p>
+    Várias estruturas de dados foram usadas durante este TCC. Filas, pilhas, heaps e listas ligadas
+    foram usadas extensivamente.
+  </p>
+
+  <h4>Análise de Algoritmos (MAC0338)</h4>
+
+  <p>
+    Uma das matérias mais importantes para este TCC. Foram usados diversos conceitos aprendidos
+    nesta matéria. Grafos, algoritmo de Kruskal para MSTs, complexidade, union-find, programação
+    dinâmica e muitos outros assuntos foram cobertos por essa disciplina.
+  </p>
+
+  <h4>Atividade Curricular em Pesquisa (MAC0215)</h4>
+
+  <p>
+    Apesar de pessoal para cada um, esta matéria permitiu que eu pudesse dedicar-me mais à
+    iniciação científica, que cobriu grande parte do que foi feito no TCC.
+  </p>
+
+  <h4>Sistemas Operacionais (MAC0422)</h4>
+
+  <p>
+    Tanto na parte de treinamento do modelo, ao usar nohup, pipes, redirecionamento e nice; como
+    também na parte da implementação no robô.
+  </p>
+
+  <h4>Inteligência Artifical (MAC0425)</h4>
+
+  <p>
+    Esta disciplina serviu como uma introdução a vários modelos e técnicas de inteligência
+    artificial. Em particular esta matéria me introduziu a redes bayesianas, precursores de redes
+    soma-produto.
+  </p>
+
+  <h4>Programação Concorrente (MAC0438)</h4>
+
+  <p>
+    Muito do código teve de ser paralelizado por questão de eficiência. Em especial inferência teve
+    de ser o mais paralelizado possível para obter predições em tempo real. Esta matéria foi
+    fundamental para isso.
+  </p>
+
+  <h4>Algoritmos em Grafos (MAC0328)</h4>
+
+  <p>
+    Muito do que foi implementado usou algoritmos descritos nessa disciplina. Ordem topológica,
+    pré-ordem, Kruskal, busca em profundidade e largura, etc.
+  </p>
+
+  <h4>Introdução à Programação de Robôs Móveis (MAC0318)</h4>
+
+  <p>
+    Fundamental para a parte da robôtica.
+  </p>
+
+  <h4>Introdução ao Aprendizado de Máquina (MAC0460)</h4>
+
+  <p>
+    Tanto pelas formalizações quanto pelos métodos de validação e introdução a modelos lineares.
+  </p>
+
+  <h4>Noções de Probabilidade e Processos Estocásticos (MAE0228)</h4>
+
+  <p>
+    Foram vistos vários assuntos relacionados a probabilidade e modelos probabilísticos que achei
+    que contribuiu bastante para me familiar com vários assuntos abordados pelo TCC.
+  </p>
+
+  <h3>Disciplinas de Pós-graduação</h3>
+
+  <h4>Modelos Probabilísticos Baseados em Grafos (MAC6916)</h4>
+
+  <p>
+    Fundamental para entender modelos probabilísticos baseados em grafos, como redes bayesianas,
+    redes de markov e redes soma-produto.
+  </p>
+
+  <h4>Aprendizado de Máquina em Visão Computacional (MAC6914)</h4>
+
+  <p>
+    Vários tópicos em classificação de imagens vistos na disciplina foram muito úteis para o TCC.
+  </p>
+
+  <h2>Futuro</h2>
+
+  <p>
+    Planejo aprofundar-me no estudo de modelos probabilísticos baseados em grafos, aprendizagem de
+    máquina e redes soma-produto durante o mestrado.
+  </p>
+
+</div>
+
+</body>
+
+<!-- Language Localization JavaScript -->
+<script src="./locale/lang_sel.js"></script>
+
+</html>
