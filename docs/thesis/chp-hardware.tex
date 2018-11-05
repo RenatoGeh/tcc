@@ -10,17 +10,16 @@ low-level commands to the wheels. We first explore the Berry, and then describe 
 
 \section{The Berry}
 
-The main processing unit of our robot consists of a Raspberry Pi 3 Model B+. With a Broadcom
-BCM2837B0 Cortex-A53 64-bit at 1.4 GHz, it is a small, yet powerful micro-computer. Its
-architecture is based on ARMv8, and has four processing cores.
+The main processing unit of our robot consists of a Raspberry Pi 3 Model B. With a Broadcom
+Quad-Core BCM2837 with 64-bit at 1.4 GHz, it is a small, yet powerful micro-computer. Its
+architecture is based on ARMv7, and has four processing cores.
 
 Through four USB 2.0 ports, we are able to connect the Raspberry Pi with the motor part of our
-robot, which will be mentioned in the next section, and a small portable webcam that will be used
-as input.
+robot and a small portable webcam that will be used for input.
 
-A MicroSD of 64 GB provides both the Raspbian operating system, which is based on Debian, as well as
-8 GB swap memory space, as the Berry contains only 1 GB LPDDR2 SDRAM. The remaining amount is used
-as storage.
+A MicroSD with 16GB provides both the Raspbian operating system, which is based on Debian, as well
+as an additional 1 GB swap memory space, as the Berry contains only 1GB SDRAM. The remaining amount
+is used as storage.
 
 Although the Berry has reasonable processing power for its size, training is done offline in a
 desktop computer, with only inference done on the micro-computer. With its connected webcam, the

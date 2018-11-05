@@ -11,7 +11,7 @@ of the models and pre-processing transformations. Finally we show how fast each 
 
 Before training and inference, we apply different image transformations to the dataset. As
 mentioned in~\autoref{chp:modelling}, we use three main transformations: binarization, quantization
-and equalization.
+and equalization. In all cases we first convert the original RGB colored dataset to grayscale.
 
 \subsection{Binarization}
 
@@ -113,8 +113,148 @@ it does not suffer from its drawbacks and thus does not depend on an equalized h
 
 \section{Setups}
 
+For our experiments, we tested two structure learning algorithms, the Dennis-Ventura and
+Gens-Domingos architectures, and for each of these models we evaluated accuracy when applying
+either generative or discriminative weight learning. We additionally ran tests without applying
+weight learning to serve as reference.
 
+For the Dennis-Ventura algorithm, we discarded pre-clustering, opting to use the classification
+architecture mentioned in~\autoref{chp:structure}, as it resulted in much better accuracy. We also
+fixed the number of sums per region and gaussians per pixel to four, and the similarity threshold
+to $0.975$.
+
+For the Gens-Domingos algorithm, we tested two implementations. The first uses $k$-means for the
+clustering step with $k=2$. The second uses DBSCAN, with parameters $\epsilon=4$ the maximum radius
+of a point neighborhood, and $m=4$ the minimum number of points to describe a dense region. Both
+were set with a $p$-value of $0.01$ for the independence step. We refer to the $k$-means
+implementation as $k$-GD, and the DBSCAN variation as DBSCAN-GD.
+
+We found that when using DBSCAN-GD, the resulting structure was too complex, causing inference to
+take too long. For instance, when running inference on $k$-GD, average prediction took about $0.4$
+second.  When using DBSCAN, the average time of prediction was $12.33$ seconds.  Size-wise, the
+DBSCAN variation had a structure 18 times bigger. However, in terms of accuracy, DBSCAN-GD showed
+impressive results, with accuracies ranging from 98\% to 100\%. Despite these results, a model that
+takes too long for inference is not adequate for a self-driving application. For this reason, we
+show only comparisons with the $k$-GD model.
+
+In both training and testing, we first apply image transformations (e.g. quantizing, binarization
+or equalization) to the dataset and then train or perform prediction with a particular model. The
+applied image transformation is always identical in training and testing. For example, a valid
+training pipeline would be choosing to apply 3-bit quantization and equalization to a training
+dataset, train an SPN structure using $k$-GD, perform discriminative gradient descent on the
+resulting structure to learn its weights, and finally save the model for testing. The equivalent
+testing pipeline for this training pipeline would be applying the same image transformation, in our
+case 3-bit quantization and equalization, and for each image find the $\argmax_{y\in Y} P(Y=y|X)$.
+
+Both Gens-Domingos and Dennis-Ventura algorithms generate a structure as deep as the number of
+training samples. The deeper the structure, the more expressive it is. We found that accuracy with
+models trained with 1000 samples had much better accuracies than with 500. However, a more complex
+network means inference will take longer. We attempted to keep inference at less than a second per
+prediction. This was done by restricting the training dataset to 500 images.
+
+We use a particular set of notations for our experiments. For image transformations, we denote by
+$Q_n$ as applying an $n$-bit quantization of the dataset. An $E$ means the dataset was equalized,
+and a $B$ means it was binarized. Any combination of image transformation is signalled with a $+$
+sign. A $\emptyset$ means there were no image transformations done to the dataset apart from
+grayscale conversion.
+
+For learning algorithms, a GD means we are using $k$-means Gens-Domingos and DV Dennis-Ventura.
+This is then followed by the weight learning algorithm used. The letters g, d and s mean we either
+applied generative gradient descent, discriminative gradient descent or no weight learning.
 
 \section{Accuracy}
 
+In this section we show accuracy results in each setup. All values are in percentage of hits.
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{l|c|c|c|c|c|c}
+    \hline
+    \multicolumn{1}{c}{\bfseries Accuracy (\%)} & \multicolumn{1}{c}{\bfseries DV+g} &
+    \multicolumn{1}{c}{\bfseries DV+d} & \multicolumn{1}{c}{\bfseries DV+s} &
+    \multicolumn{1}{c}{\bfseries GD+g} & \multicolumn{1}{c}{\bfseries GD+d} &
+    \multicolumn{1}{c}{\bfseries GD+s}\\
+    \hline
+    $B$         & 76.0 & 00.0 & 76.6 & 00.0 & 78.2 & 78.8\\
+    $Q_2$       & 75.6 & 00.0 & 76.6 & 00.0 & 00.0 & 77.6\\
+    $Q_2+E$     & 75.8 & 00.0 & 76.6 & 00.0 & 00.0 & 78.0\\
+    $Q_3$       & 76.0 & 00.0 & 76.6 & 00.0 & 71.8 & 79.2\\
+    $Q_3+E$     & 75.2 & 76.6 & 76.6 & 00.0 & 80.2 & 80.2\\
+    $Q_4$       & 75.8 & 00.0 & 76.6 & 00.0 & 00.0 & 79.8\\
+    $Q_4+E$     & 75.6 & 00.0 & 76.6 & 00.0 & 00.0 & 82.0\\
+    $Q_5$       & 76.0 & 76.6 & 76.6 & 00.0 & 73.8 & 78.0\\
+    $Q_5+E$     & 75.6 & 76.6 & 76.6 & 00.0 & 81.2 & 78.8\\
+    $Q_6$       & 76.0 & 00.0 & 76.6 & 00.0 & 00.0 & 80.8\\
+    $Q_6+E$     & 75.6 & 00.0 & 76.6 & 00.0 & 00.0 & 77.6\\
+    $Q_7$       & 76.6 & 00.0 & 76.6 & 00.0 & 00.0 & 79.2\\
+    $Q_7+E$     & 76.6 & 00.0 & 76.6 & 00.0 & 00.0 & 79.6\\
+    $\emptyset$ & 75.6 & 76.6 & 76.6 & 00.0 & 69.6 & 80.4\\
+    $E$         & 75.6 & 76.6 & 76.6 & 00.0 & 78.6 & 79.0\\
+  \end{tabular}
+  \caption{Accuracy values for each possible model permutation.\label{tab:accuracy}}
+\end{table}
+
+\autoref{tab:accuracy} shows some interesting results. The first is that generative gradient
+descent on the Dennis-Ventura architecture had a small to no negative impact on the performance of
+the network.
+
+The Gens-Domingos architecture, on the other hand, achieved better results, but showed a more
+unpredictable behavior.
+
 \section{Speed}
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{l|c|c|c|c|c|c}
+    \hline
+    \multicolumn{1}{c}{\bfseries Training (mins)} & \multicolumn{1}{c}{\bfseries DV+g} &
+    \multicolumn{1}{c}{\bfseries DV+d} & \multicolumn{1}{c}{\bfseries DV+s} &
+    \multicolumn{1}{c}{\bfseries GD+g} & \multicolumn{1}{c}{\bfseries GD+d} &
+    \multicolumn{1}{c}{\bfseries GD+s}\\
+    \hline
+    $B$         & 54m54s & 48m42s & 00m19s & 00.0 & 0.47 & 05m50s\\
+    $Q_2$       & 53m46s & 00.0   & 00m17s & 00.0 & 0.42 & 04m44s\\
+    $Q_2+E$     & 53m00s & 00.0   & 00m15s & 00.0 & 0.33 & 04m55s\\
+    $Q_3$       & 60m19s & 00.0   & 00m15s & 00.0 & 0.40 & 05m23s\\
+    $Q_3+E$     & 62m06s & 76.6   & 00m22s & 00.0 & 0.34 & 04m28s\\
+    $Q_4$       & 50m14s & 0.71   & 00m18s & 00.0 & 0.31 & 04m39s\\
+    $Q_4+E$     & 50m19s & 00.0   & 00m16s & 00.0 & 0.37 & 05m43s\\
+    $Q_5$       & 54m22s & 0.61   & 00m15s & 00.0 & 0.34 & 04m55s\\
+    $Q_5+E$     & 50m32s & 0.66   & 00m24s & 00.0 & 0.33 & 04m06s\\
+    $Q_6$       & 50m54s & 00.0   & 00m14s & 00.0 & 0.37 & 04m19s\\
+    $Q_6+E$     & 56m32s & 00.0   & 00m15s & 00.0 & 0.34 & 05m23s\\
+    $Q_7$       & 56m58s & 00.0   & 00m15s & 00.0 & 0.40 & 05m52s\\
+    $Q_7+E$     & 60m13s & 00.0   & 00m15s & 00.0 & 0.42 & 05m52s\\
+    $\emptyset$ & 62m14s & 0.57   & 00m15s & 00.0 & 0.52 & 06m45s\\
+    $E$         & 57m23s & 0.57   & 00m15s & 00.0 & 0.37 & 04m58s\\
+  \end{tabular}
+  \caption{Average time in minutes for training each model.\label{tab:time-training}}
+\end{table}
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{l|c|c|c|c|c|c}
+    \hline
+    \multicolumn{1}{c}{\bfseries Inference (secs)} & \multicolumn{1}{c}{\bfseries DV+g} &
+    \multicolumn{1}{c}{\bfseries DV+d} & \multicolumn{1}{c}{\bfseries DV+s} &
+    \multicolumn{1}{c}{\bfseries GD+g} & \multicolumn{1}{c}{\bfseries GD+d} &
+    \multicolumn{1}{c}{\bfseries GD+s}\\
+    \hline
+    $B$         & 0.58 & 00.0 & 0.79 & 00.0 & 78.8 & 0.47 \\
+    $Q_2$       & 0.56 & 00.0 & 0.63 & 00.0 & 77.6 & 0.42 \\
+    $Q_2+E$     & 0.62 & 00.0 & 0.61 & 00.0 & 78.0 & 0.33 \\
+    $Q_3$       & 0.65 & 00.0 & 0.59 & 00.0 & 79.2 & 0.40 \\
+    $Q_3+E$     & 0.57 & 76.6 & 0.69 & 00.0 & 80.2 & 0.34 \\
+    $Q_4$       & 0.56 & 0.71 & 0.65 & 00.0 & 79.8 & 0.31 \\
+    $Q_4+E$     & 0.57 & 00.0 & 0.61 & 00.0 & 82.0 & 0.37 \\
+    $Q_5$       & 0.56 & 0.61 & 0.66 & 00.0 & 78.0 & 0.34 \\
+    $Q_5+E$     & 0.57 & 0.66 & 0.62 & 00.0 & 78.8 & 0.33 \\
+    $Q_6$       & 0.65 & 00.0 & 0.62 & 00.0 & 80.8 & 0.37 \\
+    $Q_6+E$     & 0.57 & 00.0 & 0.60 & 00.0 & 77.6 & 0.34 \\
+    $Q_7$       & 0.56 & 00.0 & 0.59 & 00.0 & 79.2 & 0.40 \\
+    $Q_7+E$     & 0.56 & 00.0 & 0.58 & 00.0 & 79.6 & 0.42 \\
+    $\emptyset$ & 0.64 & 0.57 & 0.58 & 00.0 & 80.4 & 0.52 \\
+    $E$         & 0.62 & 0.57 & 0.59 & 00.0 & 79.0 & 0.37 \\
+  \end{tabular}
+  \caption{Average time in seconds to predict a single image.\label{tab:time-inference}}
+\end{table}
