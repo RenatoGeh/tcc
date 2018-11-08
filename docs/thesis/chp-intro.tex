@@ -56,22 +56,21 @@ the network through gradient descent both generatively and discriminatively.
 \Cref{chp:structure} is dedicated to algorithms for learning the structure of an SPN\@. We explain
 the two structural learning algorithms that were used in the experiments.
 
-For~\autoref{chp:robot}, we first show how we model self-driving as an image classification
-problem. We then specify the architecture of the robot used in the experiments, giving
-specifications on the hardware and software used. Furthermore, we describe some concepts of control
-we use for navigation.
+For~\autoref{chp:modelling}, we first show how we model self-driving as an image classification
+problem. We then give a brief explanation on the dataset used for training and testing. We then
+formalize how we extract inference for self-driving.
 
-In~\autoref{chp:results}, we provide classification results on many image classification datasets
-from various domains with different learning algorithms. We then describe the self-driving dataset
-used for training, and give in-dataset accuracies as well as real-world empirical results on the
-mobile robot itself.
+\Cref{chp:hardware} is dedicated to explaining the hardware aspects of this work. We describe the
+processing unit used for inference and the unit used for handling the motors. We also explain how
+communication between the two is done.
+
+In~\autoref{chp:benchmarks}, we first explain how image pre-processing was done. Accuracy results
+and timings on training and inference on different SPN architectures and weight learning methods
+are then presented.
+
+We finally implement and show results of the self-driving robot on a real world application
+in~\autoref{chp:realworld}.
 
 Finally, in~\autoref{chp:conclusion} we give our conclusions and provide some discussion of the
 results.
-
-There is an additional section of this thesis in which we give a brief subjective insight on the
-work done for this thesis. We also list subjects we deemed important for the work done in this
-thesis.
-
-Furthermore, \autoref{app:proofs} contains all proofs done in this thesis.
 

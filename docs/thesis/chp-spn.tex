@@ -5,8 +5,6 @@ this is covered, we formally define an SPN, list some interesting properties on 
 and describe how to perform exact inference (i.e.\ extract the probability of evidence of some
 valuation) and how to find an approximation of the maximum a posteriori probability.
 
-We leave all proofs in~\autoref{app:proofs}.
-
 \section{Background}
 
 The objective of probabilistic modelling is to compactly represent a probability distribution, be
@@ -55,13 +53,14 @@ Which means we can avoid computing values from the two first terms. We can also 
 polynomial of some unnormalized probability distribution as long as we divide by the partition
 function, defined as the network polynomial with all indicators set to one. Although the network
 polynomial has exponential size in terms of variables, computing the probability of evidence is
-linear in its size. By representing the network polynomial as an arithmetic circuit of sums and
-products, one can prove that the cost of inference is indeed polynomial.
+linear in its size (\cite{diff-approach-darwiche}). By representing the network polynomial as an
+arithmetic circuit of sums and products, one can prove that the cost of inference is indeed
+polynomial.
 
 \section{Definitions and properties}
 
 Sum-product networks borrow many concepts from network polynomials and arithmetic circuits. There
-are many definitions of SPNs and in this thesis we present two. The first definition is given by
+are many definitions of SPNs, and in this thesis we present two. The first definition is given by
 the seminal article~\cite{poon-domingos}, and can be seen as a more low-level approach to defining
 the network\@. The second, based on~\cite{gens-domingos}, is a stronger definition, but one which
 we will use more throughout this thesis, as it lends itself better to continous data.
@@ -79,7 +78,7 @@ V(G)$.
 \begin{definition}[Sum-product network;~\cite{poon-domingos}]
   A sum-product network (SPN) over variables $X_1,X_2,\ldots,X_n$ is a DAG whose leaves are
   indicator variables $[X_1=x_1^1],[X_2=x_2^1],\ldots,[X_n=x_n^1],\ldots,[X_1=x_1^d],[X_2=x_2^d],
-  \ldots,[X_n=x_n^d]$. Its internal nodes are weighted sums or products. Each edge coming out from
+  \ldots,[X_n=x_n^d]$. Its internal nodes are products or weighted sums. Each edge coming out from
   a sum node $n$ to another node $j$ has a non-negative weight associated with it. We denote such
   weight by $w_{n,j}$. The value of a sum node $n$ is $v_n=\sum_{j\in\Ch(n)}w_{n,j}v_j$, where
   $v_j$ is the value of node $j$. The value of a product node $n$ is $v_n=\prod_{j\in\Ch(n)}v_j$.
@@ -87,11 +86,11 @@ V(G)$.
   value of its root node.
 \end{definition}
 
-Throughout this thesis, we denote by $S(X=x)$ the value of an SPN $S$ given evidence $x$. A sub-SPN
-$S_n$ of $S$ is the subgraph of $S$ rooted at $n$. A node in an SPN is itself an SPN\@. When all
-indicator variables are set to one, the value of $S$ is denoted by $S(\ast)$. The scope of an SPN
-$S$, denoted by $\Sc(S)$, is the union set of all scopes of its children. A leaf's scope is the
-scope of its IV\@.
+Throughout this thesis, we denote by $S(X=x)$, or simply by $S(X)$, the value of an SPN $S$ given
+evidence $x$. A sub-SPN $S_n$ of $S$ is the subgraph of $S$ rooted at node $n$. A node in an SPN is
+itself an SPN\@. When all indicator variables are set to one, the value of $S$ is denoted by
+$S(\ast)$. The scope of an SPN $S$, denoted by $\Sc(S)$, is the union set of all scopes of its
+children. A leaf's scope is the scope of its IV\@.
 
 \begin{definition}[Validity]
   An SPN is valid iff, for all evidence $E=e$, $S(E=e)=\Phi_S(E=e)$, where $\Phi_S$ is an
@@ -103,7 +102,7 @@ scope of its IV\@.
 \end{definition}
 
 \begin{definition}[Consistency]
-  An SPN is consistent iff no variable appears with a value $v$ in one child of a product node and
+  An SPN is consistent iff no variable appears with a value $v$ in one child of a product node, and
   valued $u$, with $u\neq v$, in another.
 \end{definition}
 
@@ -114,7 +113,7 @@ research for approximate inference in SPNs.
 
 A sufficient condition for validity is completeness and consistency. Yet whilst this condition is
 sufficient, it is not necessary, as the converse (i.e.\ an incomplete and inconsistent valid SPN)
-can hold.
+can be true.
 
 \begin{theorem}[\cite{poon-domingos}]
   An SPN is valid if it is complete and consistent.
@@ -135,16 +134,17 @@ the SPN is the distribution itself.
 
 In other words, an SPN is decomposable if and only if, for every product node, every child node has
 disjoint scopes with relation to all their other siblings. It is easy to see that decomposability
-implies in consistency, as there can be no inconsistency between product children since scopes are
-disjoint. Therefore, a complete and decomposable SPN is valid. Indeed it is much easier to produce
-decomposable SPNs then only consistent ones, and although this condition may seem too strong and
-restrictive,~\cite{theoretical-spn} showed that a consistent SPN is representable by a polynomially
-larger decomposable SPN\@.
+implies consistency, as there can be no inconsistency between product children since scopes are
+disjoint. Therefore, a complete and decomposable SPN is valid, as it is already consistent. Indeed
+it is much easier to produce decomposable SPNs than purely consistent ones. Although this condition
+may seem strong and restrictive,~\cite{theoretical-spn} showed that a consistent SPN is
+representable by a polynomially larger decomposable SPN, meaning representability power is not lost
+on adding decomposability.
 
 So far, SPNs are restricted to the discrete domain, as we rely on IVs to define possible valuations
 to variables. We can generalize SPNs to the continuous by assuming an infinite number of IVs and
 thus replacing sum nodes whose children are IVs with integral nodes. A leaf node then becomes an
-integral node with infinite IVs as children. Particularly, it represents an unnormalized
+integral node with infinite IVs as children. Particularly, this represents an unnormalized
 univariate probability distribution, such as a Gaussian. The value of this integral node $n$
 becomes the pdf $p_n(x)$. This extension brings us to a second definition of SPNs.
 
@@ -177,13 +177,13 @@ below it. This is done through a topological traversal of the graph.
 
 Finding the value of a leaf node depends on the valuation given. Let $n$ be a leaf node, and
 $\Sc(n)=\{X_j\}$. Let $X$ be some valuation. Assuming the univariate probability distribution of
-$n$ has fpd $p_n(x)$, then if $X$ has a valution $X_j=x_j$, the value of node $n$ will be
+$n$ has pdf $p_n(x)$, then if $X$ has a valuation $X_j=x_j$, the value of node $n$ will be
 $S_n(X)=p_n(x_j)$. If $X$ has no valuation for variable $X_j$, then $S_n(X)$ is the
 distribution's mode. Note that this holds for indicator variables, as if $X$ has a valuation for
 $X_j=x_j$ and the IV matches with $x_j$, then $p_n(x_j)=1$. In case it does not, $p_n(x_j)=0$. For
 the incomplete case, the mode of an indicator variable is one, which holds the equivalence.
 
-Once we compute leaf nodes, we can compute each internal node's values by following the topological
+Once we compute leaf nodes, we can compute each internal node's value by following the topological
 order until we reach the root. For sum nodes, we compute the weighted sum
 $S_n(X)=\sum_{j\in\Ch(n)}w_{n,j}S_j(X)$, and for products $S_n(X)=\prod_{j\in\Ch(n)}S_j(X)$.
 
@@ -219,7 +219,7 @@ referring to the usual max-product algorithm.
 Once the MPN values are computed, we can find the most probable explanation (MPE) of the
 distribution given an evidence. This is done through a top-down forward pass, where we take a
 maximum sub-circuit path of the MPN by always taking the max path at a max node and taking all
-paths on a product node. The MPE are the maximum sub-circuit leaves' instantiations.
+paths on a product node. The MPE is the maximum sub-circuit leaves' instantiations.
 
 \autoref{fig:sample_mpn_prob} shows the MPN of the SPN shown in \autoref{fig:sample_spn} given
 $X=\{X_1=0\}$, where the numbers in blue represent the MPN values at each node, green arrows
@@ -233,68 +233,68 @@ to as \textit{hard} inference, is done through a bottom-up pass on the SPN's MPN
 hand, finding the MPE valuations requires a bottom-up pass to first compute the MAP, and then a
 top-down search to find the most probable instantiations.
 
-We provide next pseudocode for computing both soft and hard inference. We assume as input only
+Next, we provide pseudocode for computing both soft and hard inference. We assume as input only
 valid, (weight) normalized SPNs. However, one could easily extend the included algorithms for
 unnormalized networks.
 
 \begin{algorithm}[H]
   \caption{\code{SoftInference}: Computes the probability of evidence in SPNs}
   \begin{algorithmic}[1]
-    \Require\, A valid SPN $S$ with normalized weights and a valuation $X$
-    \Ensure\, The soft inference values at each node $S_n$
-    \State\, Initialize $S_n=0$
-    \State\, Find topological order $T$ of $S$
+    \Require A valid SPN $S$ with normalized weights and a valuation $X$
+    \Ensure The soft inference values at each node $S_n$
+    \State Initialize $S_n=0$
+    \State Find topological order $T$ of $S$
     \For{each node $n\in S$ from $T$}
       \If{$n$ is a leaf node}
-        \State\, Let $\Sc(n)=\{X_k\}$, $p_n(x)$ be $n$'s pdf and $\hat{p}_n$ be $p_n$'s mode
+        \State Let $\Sc(n)=\{X_k\}$, $p_n(x)$ be $n$'s pdf and $\hat{p}_n$ be $p_n$'s mode
         \If{$X_k\in X$}
-          \State\, Let $x_k$ be $X_k$'s value in $X$
-          \State\, $S_n\gets p_n(x_k)$
+          \State Let $x_k$ be $X_k$'s value in $X$
+          \State $S_n\gets p_n(x_k)$
         \Else%
-          \State\, $S_n\gets\hat{p}_n$
+          \State $S_n\gets\hat{p}_n$
         \EndIf%
       \ElsIf{$n$ is sum node}
         \For{all $j\in\Ch(n)$}
-          \State\, $S_n\gets S_n + w_{n,j}S_j$
+          \State $S_n\gets S_n + w_{n,j}S_j$
         \EndFor%
       \Else%
         \For{all $j\in\Ch(n)$}
-          \State\, $S_n\gets S_n\cdot S_j$
+          \State $S_n\gets S_n\cdot S_j$
         \EndFor%
       \EndIf
     \EndFor%
-    \State\,\textbf{return} each $S_n$ node value
+    \State \textbf{return} each $S_n$ node value
   \end{algorithmic}
 \end{algorithm}
 
 \begin{algorithm}[H]
   \caption{\code{HardInference}: Computes an approximation of the MAP in SPNs}
   \begin{algorithmic}[1]
-    \Require\, A valid SPN $S$ with normalized weights and a valuation $X$
-    \Ensure\, The hard inference values at each node $M_n$
-    \State\, Let $M$ be $S$'s MPN
-    \State\, Initialize $M_n=0$
-    \State\, Find topological order $T$ of $M$
+    \Require A valid SPN $S$ with normalized weights and a valuation $X$
+    \Ensure The hard inference values at each node $M_n$
+    \State Let $M$ be $S$'s MPN
+    \State Initialize $M_n=0$
+    \State Find topological order $T$ of $M$
     \For{each node $n\in M$ from $T$}
       \If{$n$ is a leaf node}
-        \State\, Let $\Sc(n)=\{X_k\}$, $p_n(x)$ be $n$'s pdf and $\hat{p}_n$ be $p_n$'s mode
+        \State Let $\Sc(n)=\{X_k\}$, $p_n(x)$ be $n$'s pdf and $\hat{p}_n$ be $p_n$'s mode
         \If{$X_k\in X$}
-          \State\, Let $x_k$ be $X_k$'s value in $X$
-          \State\, $M_n\gets p_n(x_k)$
+          \State Let $x_k$ be $X_k$'s value in $X$
+          \State $M_n\gets p_n(x_k)$
         \Else%
-          \State\, $M_n\gets\hat{p}_n$
+          \State $M_n\gets\hat{p}_n$
         \EndIf%
       \ElsIf{$n$ is sum node}
         \For{all $j\in\Ch(n)$}
-          \State\, $M_n\gets\max(M_n, w_{n,j}M_j)$
+          \State $M_n\gets\max(M_n, w_{n,j}M_j)$
         \EndFor%
       \Else%
         \For{all $j\in\Ch(n)$}
-          \State\, $M_n\gets M_n\cdot M_j$
+          \State $M_n\gets M_n\cdot M_j$
         \EndFor%
       \EndIf
     \EndFor%
-    \State\,\textbf{return} each $M_n$ node value
+    \State \textbf{return} each $M_n$ node value
   \end{algorithmic}
 \end{algorithm}
 
@@ -303,25 +303,25 @@ Finally, we show how to algorithmically compute the MPE given some evidence.
 \begin{algorithm}[H]
   \caption{\code{ArgMaxSPN}: Finds the MPE of a valuation on an SPN}
   \begin{algorithmic}[1]
-    \Require\, A valid SPN $S$ with normalized weights and a valuation $X$
-    \Ensure\, The $\argmax$ values of each variable according to $X$
-    \State\, $M\gets$\code{HardInference}$(S, X)$
-    \State\, Let $Y$ be a copy of $X$
-    \State\, Let $Q$ be a queue
-    \State\, Push $S$ into $Q$
+    \Require A valid SPN $S$ with normalized weights and a valuation $X$
+    \Ensure The $\argmax$ values of each variable according to $X$
+    \State $M\gets$\code{HardInference}$(S, X)$
+    \State Let $Y$ be a copy of $X$
+    \State Let $Q$ be a queue
+    \State Push $S$ into $Q$
     \For{each node $n\in M$ in $Q$}
       \If{$n$ is a leaf node}
-        \State\, Let $\Sc(n)=\{X_k\}$ and $p_n(x)$ be $n$'s pdf
-        \State\, Let $\hat{x}=\argmax_{x_k} p_n(x_k)$ be $p_n$'s maximum valuation
+        \State Let $\Sc(n)=\{X_k\}$ and $p_n(x)$ be $n$'s pdf
+        \State Let $\hat{x}=\argmax_{x_k} p_n(x_k)$ be $p_n$'s maximum valuation
         \If{$X_k\not\in X$}
-          \State\, $Y\gets Y\cup\{X_k=\hat{x}\}$
+          \State $Y\gets Y\cup\{X_k=\hat{x}\}$
         \EndIf%
       \ElsIf{$n$ is sum node}
-        \State\, Push maximum child $M_j$, $j\in\Ch(n)$ into $Q$
+        \State Push maximum child $M_j$, $j\in\Ch(n)$ into $Q$
       \Else%
-        \State\, Push all children $j\in\Ch(n)$ into $Q$
+        \State Push all children $j\in\Ch(n)$ into $Q$
       \EndIf
     \EndFor%
-    \State\,\textbf{return} Y
+    \State \textbf{return} Y
   \end{algorithmic}
 \end{algorithm}

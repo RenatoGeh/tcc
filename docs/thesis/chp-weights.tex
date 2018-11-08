@@ -28,8 +28,8 @@ compute the derivative wrt a weight, we need to find the derivative $\iddspn{S}{
 internal node $j$.
 
 Finding $\iddspn{S}{S_j}$ requires analyzing two possible cases: sum and product parents of $j$.
-We now that $S$ is a multilinear function of $X$, since in reality $S$ is just a function made of
-sums and products. In particular, if we apply chain rule on $\iddspn{S}{S_j}$, we have that
+We know that $S$ is a multilinear function of $X$, since in reality $S$ is just a function made out
+of sums and products. In particular, if we apply chain rule on $\iddspn{S}{S_j}$, we have that
 
 \begin{equation*}
   \ddspn{S}{S_j}(X)=\underbrace{\sum_{\substack{n\in\Pa(j)\\n:\text{
@@ -46,7 +46,9 @@ $S_n(X)$ with the corresponding expansion.
     w_{n,i}S_i(X)\right)=\sum_{\substack{n\in\Pa(j)\\n:\text{ sum}}}\ddspn{S}{S_n}w_{n,j}
 \end{equation*}
 
-We do the same for the product case.
+Here we are computing the derivative $\iddspn{}{S_j}$ of each weighted sibling of $j$, counting $j$
+itself. Since no sibling $i$ depends on $j$, its derivative wrt $S_j$ is zero, leaving the case
+when $i=j$, which is trivially equal to $w_{n,j}$. We do the same for the product case.
 
 \begin{equation*}
   (\ast\ast)=\sum_{\substack{n\in\Pa(j)\\n:\text{ product}}}\ddspn{S}{S_n}\ddspn{}{S_j}\left(\prod_{i\in\Ch(n)}
@@ -54,7 +56,9 @@ We do the same for the product case.
       \Ch(n)\setminus\{j\}}S_k
 \end{equation*}
 
-Which brings us to the final form.
+In this expansion, we simply find the derivative of the product of siblings of $j$ and $j$ itself.
+This can be seen as the derivative of a variable multiplied by a constant, which gives us the
+constant, in this case the product of siblings. This brings us to the final form.
 
 \begin{equation}
   \ddspn{S}{S_j}(X)=\sum_{\substack{n\in\Pa(j)\\n:\text{
@@ -119,12 +123,12 @@ with a friendlier expression.
       W\setminus\{w_{n,j}\}}w_i^{c_i}
 \end{equation*}
 
-If we assume that weights are strictly positive, the resulting expression results in the final
-hard derivative
+If we assume that weights are strictly positive, the resulting expression yields the following
+expression for the final hard derivative.
 
 \begin{equation}
   \ddspn{\log M}{w_{n,j}}=c_{n,j}\frac{w_{n,j}^{c_{n,j}-1}}{w_{n,j}^{c_{n,j}}}=
-    \frac{c_{n,j}}{w_{n,j}}.\label{eq:hard_weight_derivative}
+    \frac{c_{n,j}}{w_{n,j}}\label{eq:hard_weight_derivative}
 \end{equation}
 
 Although not needed for the gradient, we can also compute the derivative in each internal node. The
@@ -238,8 +242,8 @@ above, leaving us with the final generative gradient descent weight update
 where $\lambda$ is the regularization constant. We call this soft generative gradient descent. It
 is now easy to visualize why gradient diffusion occurs with soft derivation. Component
 $\iddspn{S}{w_{n,j}}$ depends on partial derivative $\iddspn{S}{S_n}$. Assuming normalized weights,
-the root node derivative $\iddspn{S}{S}=1$ and each subsequent descendant node becomes smaller and
-smaller.
+the root node derivative is $\iddspn{S}{S}=1$ and each subsequent descendant node becomes smaller
+and smaller.
 
 Weight update for hard derivation comes directly from~\autoref{eq:hard_weight_derivative}. Since we
 are interested in the log-likelihood of the joint distribution
