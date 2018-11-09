@@ -18,16 +18,21 @@ Through four USB 2.0 ports, we are able to connect the Raspberry Pi with the mot
 robot and a small portable webcam that will be used for input.
 
 A MicroSD with 16GB provides both the Raspbian operating system, which is based on Debian, as well
-as an additional 1 GB swap memory space, as the Berry contains only 1GB SDRAM. The remaining amount
+as an additional 1 GB swap memory space, as the Berry contains only 1GB RAM. The remaining amount
 is used as storage.
 
 Although the Berry has reasonable processing power for its size, training is done offline in a
-desktop computer, with only inference done on the micro-computer. With its connected webcam, the
-Berry receives each image frame, applies some pre-processing to the image (which will be detailed
-in~\autoref{chp:benchmarks}), feeds it to the SPN as evidence, computes the most probable
-classification label, and finally sends this to the external unit, i.e. the Brick, responsible for
-dealing with the robot's motion. This is all done concurrently, as we can dedicate three cores to
-classification, and the remaining unit to camera capture, image pre-processing and message passing.
+desktop computer, with only inference done on the micro-computer. On the training-side computer, we
+generate the SPN and then serialize it into a string of bytes and save it to a binary file. This
+file is then sent through SSH to the Berry, read, loaded into memory, converting the array of bytes
+into a full SPN, and then used for inference.
+
+With its connected webcam, the Berry receives each image frame, applies some pre-processing to the
+image (which will be detailed in~\autoref{chp:benchmarks}), feeds it to the SPN as evidence,
+computes the most probable classification label, and finally sends this to the external unit, i.e.
+the Brick, responsible for dealing with the robot's motion. This is all done concurrently, as we
+can dedicate three cores to classification, and the remaining unit to camera capture, image
+pre-processing and message passing.
 
 \section{The Brick}
 
@@ -99,17 +104,18 @@ Java's \code{java.io.DataInputStream}, which translates the incoming USB data in
 
 This hierarchization of Berry to Brick allows for the unit with most processing power, i.e.  the
 Berry, to take on the heavy load, leaving only the necessary dedicated low-level motor handling to
-the Brick, which is very limited in terms of CPU and memory.
+the Brick, a very limited processing unit in terms of power and memory.
 
 Every USB device contains a pair of IDs that are essential for identification. The vendor ID is
 used to identify which company or organization created the device. Whilst the product ID is used to
-identify specific products created by the company, in our case the Lego Mindstorms NXT version 2.
-The vendor and product IDs of the Brick are \code{0x0694} and \code{0x0002}. These IDs allow us to
-cycle through each active USB device and select exactly the one we need.
+identify specific products created by the company. In our case, the vendor refers to the Lego
+Mindstorms company and the product to the NXT version 2, which are \code{0x0694} and \code{0x0002}
+respectively.  These IDs allow us to cycle through each active USB device and select exactly the
+one we need.
 
 USB devices may contain multiple functionalities, such as acting as a power source or as an
-input/output stream. These are called configurations, and are usually indexed by a number. In this
-thesis we are interested in the read and write configuration of the Brick, indexed by the number 1.
+input/output stream. These are called configurations, and are usually indexed by a number. In our
+case we are interested in the read and write configuration of the Brick, indexed by the number 1.
 
 Each configuration contains different interfaces that can be seen as virtual devices to the
 physical USB. We selected interface number 0, with alternative interface 0.
