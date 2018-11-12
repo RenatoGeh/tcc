@@ -80,30 +80,34 @@
   <p>
     Como já havia estudado a teoria necessária para a parte não-<i>hardware</i> do TCC na minha IC,
     a implementação do modelo e toda a parte de aprendizagem de máquina foi a parte mais tranquila
-    do trabalho. A parte implementação no robô, no entanto, foi o problema.
+    do trabalho. A parte de implementação no robô, no entanto, foi o maior problema.
   </p>
 
   <p>
     Durante o primeiro semestre, cursando MAC0318, pude perceber quão diferente é o mundo da teoria
     e da prática. Algoritmos que funcionavam de forma "comportada" em simulações, tornavam-se dor
     de cabeça ao serem implementadas nos robôs. De fato, durante o TCC, a parte mais complicada foi
-    a implementação no robô e os diversos detalhes do sistema do Raspberry Pi. Apesar das
-    dificuldades e frustrações com a parte de <i>hardware</i>, acho que aprendi bastante.
+    a implementação no robô e os diversos detalhes do sistema do Raspberry Pi. Além disso,
+    performance em um computador de mesa não significa performance em um minicomputador como o
+    Raspberry Pi. Muitas otimizações tiveram de ser feitas para que inferência fosse possível no
+    robô. Apesar das dificuldades e frustrações com a parte de <i>hardware</i>, acho que aprendi
+    bastante.
   </p>
 
   <p>
-    Na minha opinião, este TCC foi bastante completo do ponto de vista de computação, já que tive
-    de aprender desde a parte matemática de se computar o gradiente da log-verossimilhança de um
-    modelo complexo; até a parte de engenharia, onde precisei tratar passagem de informação em
-    bytes de um dispositivo ao outro.
+    Na minha opinião, este TCC foi bem completo do ponto de vista de computação, já que tive de
+    aprender desde a parte matemática de se computar o gradiente da log-verossimilhança de um
+    modelo complexo e entender probabilidade e distribuições; até a parte de engenharia, onde
+    precisei tratar passagem de informação em bytes de um dispositivo ao outro e otimizar código
+    paralelo.
   </p>
 
   <h2>Disciplinas relevantes</h2>
 
   <p>
-    Durante o TCC usei diversos materiais que aprendi durante a graduação. Na lista abaixo enumero
-    as disciplinas mais relevantes, seguidas de uma breve descrição dos assuntos que foram usados
-    neste trabalho.
+    Durante o TCC usei diversos assuntos que aprendi durante a graduação. Na lista abaixo enumero
+    as disciplinas mais relevantes, seguidas de uma breve descrição dos assuntos abordados nas
+    disciplinas que foram usados neste trabalho.
   </p>
 
   <h3>Disciplinas de graduação</h3>
@@ -113,8 +117,8 @@
   <p>
     Para conseguir entender e calcular as derivações feitas para achar o gradiente da
     log-verossimilhança é preciso entender o básico de Cálculo. O capítulo de aprendizagem
-    paramétrica do TCC é praticamente um exercício de cálculo. As três matérias de cálculo integral
-    e diferencial me ajudaram muito a entender como os artigos originais chegaram em seus
+    paramétrica da monografia é praticamente um exercício de cálculo. As três matérias de cálculo
+    integral e diferencial me ajudaram muito a entender como os artigos originais chegaram em seus
     respectivos resultados.
   </p>
 
@@ -144,8 +148,9 @@
   <h4>Atividade Curricular em Pesquisa (MAC0215)</h4>
 
   <p>
-    Apesar de pessoal para cada um, esta matéria permitiu que eu pudesse dedicar-me mais à
-    iniciação científica, que cobriu grande parte do que foi feito no TCC.
+    Apesar de pessoal para cada um, esta matéria permitiu que eu pudesse me dedicar mais à
+    iniciação científica. Os assuntos abordados na IC cobriram grande parte do que foi feito no
+    TCC.
   </p>
 
   <h4>Sistemas Operacionais (MAC0422)</h4>
@@ -159,8 +164,8 @@
 
   <p>
     Esta disciplina serviu como uma introdução a vários modelos e técnicas de inteligência
-    artificial. Em particular esta matéria me introduziu a redes bayesianas, precursores de redes
-    soma-produto.
+    artificial. Em particular esta matéria me introduziu a redes bayesianas, que abriu o caminho
+    para meus estudos de redes soma-produto.
   </p>
 
   <h4>Programação Concorrente (MAC0438)</h4>
@@ -175,19 +180,20 @@
 
   <p>
     Muito do que foi implementado usou algoritmos descritos nessa disciplina. Ordem topológica,
-    pré-ordem, Kruskal, busca em profundidade e largura, etc.
+    pré-ordem, Kruskal, busca em profundidade e largura, componentes conexas, etc.
   </p>
 
   <h4>Introdução à Programação de Robôs Móveis (MAC0318)</h4>
 
   <p>
-    Fundamental para a parte da robôtica.
+    Fundamental para a parte da robótica.
   </p>
 
   <h4>Introdução ao Aprendizado de Máquina (MAC0460)</h4>
 
   <p>
-    Tanto pelas formalizações quanto pelos métodos de validação e introdução a modelos lineares.
+    Tanto pelas formalizações quanto pelos métodos de validação. Também proporcionou uma visão
+    geral de aprendizagem e suas técnicas.
   </p>
 
   <h4>Noções de Probabilidade e Processos Estocásticos (MAE0228)</h4>
