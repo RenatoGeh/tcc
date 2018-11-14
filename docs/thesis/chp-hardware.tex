@@ -17,6 +17,11 @@ architecture is based on ARMv7, and has four processing cores.
 Through four USB 2.0 ports, we are able to connect the Raspberry Pi with the motor part of our
 robot and a small portable webcam that will be used for input.
 
+\begin{figure}[h]
+  \centering\includegraphics[width=0.66\textwidth]{imgs/berry.png}
+  \caption{The Berry part of the robot.}
+\end{figure}
+
 A MicroSD with 16GB provides both the Raspbian operating system, which is based on Debian, as well
 as an additional 1 GB swap memory space, as the Berry contains only 1GB RAM. The remaining amount
 is used as storage.
@@ -44,6 +49,11 @@ say the Brick, we are referring to the whole set of brick and motors.
 In our experiments we used the Lego Mindstorms NXT. Its main processor is an Atmel AT91SAM7S256
 with a 48 MHz clock and 32-bit ARMv4 architecture. It has 64 KB of RAM and 256 KB of flash storage.
 A USB port allows for local input and output from and to the Brick.
+
+\begin{figure}[h]
+  \centering\includegraphics[width=0.66\textwidth]{imgs/brick.png}
+  \caption{The Brick part of the robot.}
+\end{figure}
 
 Low-level handling is done on the Brick. Once it receives a command to be executed (i.e. the
 classification label passed by the Berry), the Brick needs to interpret it and execute the desired
@@ -105,6 +115,11 @@ Java's \code{java.io.DataInputStream}, which translates the incoming USB data in
 This hierarchization of Berry to Brick allows for the unit with most processing power, i.e.  the
 Berry, to take on the heavy load, leaving only the necessary dedicated low-level motor handling to
 the Brick, a very limited processing unit in terms of power and memory.
+
+\begin{figure}[h]
+  \centering\includegraphics[width=0.66\textwidth]{imgs/robot.png}
+  \caption{The fully assembled robot.}
+\end{figure}
 
 Every USB device contains a pair of IDs that are essential for identification. The vendor ID is
 used to identify which company or organization created the device. Whilst the product ID is used to
