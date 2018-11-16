@@ -63,7 +63,7 @@ comparisons with the $k$-GD model.
     \draw[->,thick] (struct.west) -- (weights.east);
     \draw[->,thick] (weights.west) -- (save.east);
   \end{tikzpicture}
-  \caption{Our training pipeline when using binarization in pre-processing.}
+  \caption{Our training pipeline when using binarization in pre-processing.\label{fig:train_pipe}}
 \end{figure}
 
 In both training and testing, we first apply image transformations (e.g. quantizing, binarization
@@ -74,6 +74,8 @@ dataset, train an SPN structure using $k$-GD, perform discriminative gradient de
 resulting structure to learn its weights, and finally save the model for testing. Its then
 equivalent testing pipeline would be applying the same image transformation, in our case 3-bit
 quantization and equalization, and for each image find the $\argmax_{y\in Y} P(Y=y|X)$.
+\autoref{fig:train_pipe} shows a visualization of the training pipeline, whereas
+\autoref{fig:infer_pipe} displays its equivalent inference pipeline.
 
 Both Gens-Domingos and Dennis-Ventura algorithms generate a structure as deep as the number of
 training samples. The deeper the structure, the more expressive it is. We found that accuracy with
@@ -115,12 +117,17 @@ grayscale conversion.
     \draw[->,thick] (create) -- (infer);
     \draw[->,thick] (infer) -- (pred);
   \end{tikzpicture}
-  \caption{Our inference pipeline when using binarization in pre-processing.}
+  \caption{Our inference pipeline when using binarization in pre-processing.\label{fig:infer_pipe}}
 \end{figure}
 
 For learning algorithms, a GD means we are using $k$-means Gens-Domingos and DV Dennis-Ventura.
 This is then followed by the weight learning algorithm used. The letters g, d and s mean we either
 applied generative gradient descent, discriminative gradient descent or no weight learning.
+
+Parameters for weight learning were fixed to learning rate $\eta=1.0$, L2 regularization constant
+$\lambda=0.001$, mini-batch size $b=50$ and number of epochs $N=15$. In all setups weight learning
+suffered heavily from gradient diffusion when using soft gradient descent, leading us to be forced
+to only use hard gradient descent for all test.
 
 \section{Accuracy}
 
@@ -172,6 +179,11 @@ discriminative learning usually provides a small boost to accuracy.
 
 \section{Speed}
 
+In this section we try to quantify both training and inference of our models in each setup. We ran
+all tests on an Intel Core i7-4500U CPU @ 1.8GHz, a 2-core 4-threaded processor. For memory we had
+16GB RAM and 16GB swap space, though training didn't use more than 4GB and testing didn't exceed
+100MB.
+
 \begin{table}[h]
   \centering
   \begin{tabular}{l|c|c|c|c|c|c}
@@ -197,8 +209,25 @@ discriminative learning usually provides a small boost to accuracy.
     $\emptyset$ & 22m10s & 36m56s & 00m33s &166m53s & 107m44s& 90m22s \\
     $E$         & 22m10s & 34m58s & 00m33s &174m55s & 116m41s& 186m49s\\
   \end{tabular}
-  \caption{Average time in minutes for training each model.\label{tab:time-training}}
+  \caption{Average time in minutes and seconds for training each model.\label{tab:time-training}}
 \end{table}
+
+Training time for DV was very well behaved, as~\autoref{tab:time-training} shows. As expected,
+discriminative gradient descent took the most time, as we require two passes through the network
+for each mini-batch.
+
+Training time with gradient descent depends on the depth of the network. We found that the DV
+structure had very regular training times for only generating the network. Not only that,
+regardless of pre-processing the network had very similar network depth and size. This was in clear
+distinction with the Gens-Domingos structure. In fact, binarization generated the deepest network,
+whilst training the structure with no pre-processing resulted in the shallowest. Interestingly,
+on average, deeper networks took the least time to train and had the best accuracy results. This is
+probably due to better variable partitioning during the independence step, resulting in a better
+balanced and more expressive tree.
+
+\autoref{tab:time-inference} shows how much time it took, on average, to predict a single image.
+Again, the DV architecture had very regular times. The GD structure, on the other hand, showed how
+much deeper the SPN structures are with heavy quantization.
 
 \begin{table}[h]
   \centering
