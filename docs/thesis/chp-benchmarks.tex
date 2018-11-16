@@ -4,123 +4,20 @@
 
 In this chapter we apply our model on an artificial self-driving dataset, running several
 experiments and measuring how good our models perform with each setup. The thinking behind this
-benchmarking of models is to provide an initial screening to find the best possible SPN to use on
-the real-world testing scenario.
+benchmarking is to provide an initial screening to find the best SPN iteration to use on a
+real-world testing scenario.
 
-We first describe the different pre-processing transformations applied on the dataset. We then show
-results on accuracy for each of the models and pre-processing transformations. Finally we show how
-fast each model is, train and test-wise.
-
-\section{Pre-processing}
-
-Before training and inference, we apply different image transformations to the dataset. As
-mentioned in~\autoref{chp:modelling}, we use three main transformations: binarization, quantization
-and equalization. In all cases we first convert the original RGB colored dataset to grayscale.
-
-\subsection{Binarization}
-
-The binarization process was done by first converting the original dataset to grayscale, followed
-by applying a gaussian blur filter with a $(1, 1)$ kernel and $(1, 1)$ standard deviation, and
-finally using Otsu's binarization. We chose this particular process since standard hard threshold
-binarization was unable to produce clear images of the track lines.
-
-\begin{figure}[h]
-  \centering
-  \includegraphics[scale=1.75]{imgs/binary_left_h.png}
-  \includegraphics[scale=1.75]{imgs/binary_up_h.png}
-  \includegraphics[scale=1.75]{imgs/binary_right_h.png}
-  \caption{Binarization using hard threshold.\label{fig:bin-hard}}
-\end{figure}
-
-\autoref{fig:bin-hard} shows how hard thresholding can produce noisy images, as the applied
-threshold does not depend on local neighborhoods. Images are labeled as left, up and right
-respectively.
-
-\begin{figure}[h]
-  \centering
-  \includegraphics[scale=1.75]{imgs/binary_left.png}
-  \includegraphics[scale=1.75]{imgs/binary_up.png}
-  \includegraphics[scale=1.75]{imgs/binary_right.png}
-  \caption{Binarization using Otsu's threshold.\label{fig:bin-otsu}}
-\end{figure}
-
-\autoref{fig:bin-otsu} shows a sample of the dataset after applying Otsu's binarization.
-
-\subsection{Quantization}
-
-The Gens-Domingos algorithm, as mentioned in~\autoref{chp:structure}, has two main steps: a
-clustering phase and an independency test part. Our independency test implementation in specific
-uses the standard G-test statistical independence test based on contingency tables, where each
-frequency of the categories of each two variables are laid out on a matrix and their likelihood
-ratios are computed. This test takes only $\bigo(n m)$, where $n$ and $m$ are the number of
-categories of each variable, but each two variables must be tested pairwise with all others, and
-although we use a spanning-tree heuristic, it still grows fast with $n$ and $m$.
-
-We empirically found that $\max\{n,m\}$ and training set size are directly correlated to the
-model's accuracy and speed. If $n$ and $m$ are big and the training set size is small, then
-accuracy will fall. On the other hand, accuracy increases if $n$ and $m$ are small and the training
-set is small. However, when both $n$, $m$ and training set are big, we achieve much better accuracy
-results, but inference speed increases as well.
-
-\begin{figure}[h]
-  \includegraphics[scale=0.3]{imgs/hist_8.png}
-  \includegraphics[scale=0.3]{imgs/hist_5.png}
-  \includegraphics[scale=0.3]{imgs/hist_3.png}
-  \caption{Histogram for dataset pixel values on 8-bit, 5-bit and 3-bit image
-    resolutions.\label{fig:hist-orig}}
-\end{figure}
-
-A possible explanation for poor results with small training sets is the low number of pixel
-intensity values for too extreme values, as there are fewer samples where pixels are either too
-bright or too dark, as~\autoref{fig:hist-orig} shows.
-
-
-Quantizing the dataset resulted in a significant improvement in accuracy to the model when training
-with a small set of images ($\leq$ 300). We found that when we increased the number of training
-images, accuracy depended less on quantization, but inference time increased, as the model grew in
-depth. We thus needed to find a balance between network complexity and accuracy.
-
-We faced two possible solutions to this problem. Either implement an exact independence test, such
-as the Fisher exact test (\cite{fisher-exact}), or perform equalization on the dataset. The former
-was unfortunately not an option, as we found that there were no libraries in Go or C that provided
-a general case implementation of the Fisher exact test, and implementing our own within our time
-constraints was out of question. We chose the latter, applying histogram equalization on the entire
-dataset.
-
-\subsection{Equalization}
-
-Equalization was done using OpenCV. We attempted two methods of histogram equalization: traditional
-equalization through brightness and contrast normalization, and Contrast Limited Adaptive Histogram
-Equalization (CLAHE) (\cite{clahe}). We found that the CLAHE method resulted in images that were
-very similar to the output of the traditional method. Since these transformations are also expected
-to be applied on-the-fly during inference, we chose the standard equalization for its speed.
-\autoref{fig:hist-eq} shows how the dataset pixel histogram looks like after equalization.
-
-\begin{figure}[h]
-  \includegraphics[scale=0.3]{imgs/hist_8_eq.png}
-  \includegraphics[scale=0.3]{imgs/hist_5_eq.png}
-  \includegraphics[scale=0.3]{imgs/hist_3_eq.png}
-  \caption{Histogram for equalized dataset with 8-bit, 5-bit and 3-bit image
-  resolutions.\label{fig:hist-eq}}
-\end{figure}
-
-When coupling quantization and equalization, we were able to achieve $\approx$81\% accuracy.
-Interestingly, these transformations proved to be harmful for the Dennis-Ventura architecture. In
-fact, the structure yielded better results with higher resolutions compared to lower. Equalization
-also had little to no effect on this architecture, increasing accuracy in 1\% or 2\% when training
-with a small dataset, and having no effect when training with many samples. We attribute this
-phenomenom to the classification architecture we discussed in~\autoref{chp:structure}. Since each
-sub-SPN is essentially modelling each class as a separate, independent image model to the other
-classes, the more details in the image, the easier the model can distinguish from other label
-images.  Furthermore, since the Dennis-Ventura algorithm does not need to run an independence test,
-it does not suffer from its drawbacks and thus does not depend on an equalized histogram.
+We first show results on accuracy for each of the models and pre-processing transformations.
+We then show how fast each model is, i.e. how long it took for training and how much time it took
+for the model to predict a label.
 
 \section{Setups}
 
 For our experiments, we tested two structure learning algorithms, the Dennis-Ventura and
 Gens-Domingos architectures, and for each of these models we evaluated accuracy when applying
 either generative or discriminative weight learning. We additionally ran tests without applying
-weight learning to serve as reference.
+weight learning to serve as reference. In this case, for the Gens-Domingos architecture we set
+weights proportional to each cluster size, whereas in Dennis-Ventura we randomized weights.
 
 For the Dennis-Ventura algorithm, we discarded pre-clustering, opting to use the classification
 architecture mentioned in~\autoref{chp:structure}, as it resulted in much better accuracy. We also
@@ -134,33 +31,92 @@ were set with a $p$-value of $0.01$ for the independence step. We refer to the $
 implementation as $k$-GD, and the DBSCAN variation as DBSCAN-GD.
 
 We found that when using DBSCAN-GD, the resulting structure was too complex, causing inference to
-take too long. For instance, when running inference on $k$-GD, average prediction took about $0.4$
+take too long. For instance, when running inference on $k$-GD, average prediction took about $0.1$
 second.  When using DBSCAN, the average time of prediction was $12.33$ seconds.  Size-wise, the
 DBSCAN variation had a structure 18 times bigger. However, in terms of accuracy, DBSCAN-GD showed
-impressive results, with accuracies ranging from 98\% to 100\%. Despite these results, a model that
-takes too long for inference is not adequate for a self-driving application. For this reason, we
-show only comparisons with the $k$-GD model.
+impressive results, with accuracies reaching $>$98\%. Despite these results, a model that takes too
+long for inference is not adequate for a self-driving application. For this reason, we show only
+comparisons with the $k$-GD model.
+\begin{figure}
+  \centering
+  \begin{tikzpicture}
+    \node[inner sep=0pt, label=Raw] (raw) at (0, 0)
+      {\includegraphics{imgs/pipe_raw.png}};
+    \node[inner sep = 0pt, right = 2.0cm of raw, label=Gray] (gray)
+      {\includegraphics{imgs/pipe_gray.png}};
+    \node[inner sep = 0pt, right = 2.0cm of gray, label=Binarized] (bin)
+      {\includegraphics{imgs/pipe_bin.png}};
+    \node[rectangle, rounded corners, draw, below = 2.0cm of gray,
+      minimum size=2cm] (weights) {LearnWeight};
+    \node[rectangle, rounded corners, draw, right = 2.0cm of weights,
+      minimum size=2cm] (struct) {LearnStructure};
+    \node[cylinder, shape border rotate=90, draw, left = 2.0cm of weights,
+      label=below:SaveDisk, minimum width=2cm, minimum height=1cm] (save) {};
+    \node[inner sep = 0.75cm, rectangle, dashed, draw, thick, fit=(raw) (gray) (bin),
+      label=above:\textbf{Pre-processing}] (pp) {};
+    \node[inner sep = 0.5cm, rectangle, dotted, draw, thick, fit=(struct) (weights) (save),
+      label=above:\textbf{Training}] (train) {};
+    \draw[->,thick] (raw.east) -- (gray.west);
+    \draw[->,thick] (gray.east) -- (bin.west);
+    \draw[->,thick] let \p1 = (train.east), \p2 = (pp.east) in
+      (\p2) -- ($ (\p2) + (0.5, 0) $) -- ($ (\x2, \y1) + (0.5, 0) $) -- (\p1);
+    \draw[->,thick] (struct.west) -- (weights.east);
+    \draw[->,thick] (weights.west) -- (save.east);
+  \end{tikzpicture}
+  \caption{Our training pipeline when using binarization in pre-processing.}
+\end{figure}
 
 In both training and testing, we first apply image transformations (e.g. quantizing, binarization
 or equalization) to the dataset and then train or perform prediction with a particular model. The
 applied image transformation is always identical in training and testing. For example, a valid
 training pipeline would be choosing to apply 3-bit quantization and equalization to a training
 dataset, train an SPN structure using $k$-GD, perform discriminative gradient descent on the
-resulting structure to learn its weights, and finally save the model for testing. The equivalent
-testing pipeline for this training pipeline would be applying the same image transformation, in our
-case 3-bit quantization and equalization, and for each image find the $\argmax_{y\in Y} P(Y=y|X)$.
+resulting structure to learn its weights, and finally save the model for testing. Its then
+equivalent testing pipeline would be applying the same image transformation, in our case 3-bit
+quantization and equalization, and for each image find the $\argmax_{y\in Y} P(Y=y|X)$.
 
 Both Gens-Domingos and Dennis-Ventura algorithms generate a structure as deep as the number of
 training samples. The deeper the structure, the more expressive it is. We found that accuracy with
 models trained with 1000 samples had much better accuracies than with 500. However, a more complex
 network means inference will take longer. We attempted to keep inference at less than a second per
-prediction. This was done by restricting the training dataset to 500 images.
+prediction. A training set size of 500 was chosen as the generated SPNs had decent prediction time
+and accuracy, and did not take too long in training.
 
 We use a particular set of notations for our experiments. For image transformations, we denote by
 $Q_n$ as applying an $n$-bit quantization of the dataset. An $E$ means the dataset was equalized,
 and a $B$ means it was binarized. Any combination of image transformation is signalled with a $+$
 sign. A $\emptyset$ means there were no image transformations done to the dataset apart from
 grayscale conversion.
+\begin{figure}[h]
+  \centering
+  \begin{tikzpicture}
+    \node[inner sep=0pt, label=Raw] (raw) at (0, 0)
+      {\includegraphics{imgs/pipe_out_raw.png}};
+    \node[inner sep = 0pt, right = 2.0cm of raw, label=Gray] (gray)
+      {\includegraphics{imgs/pipe_out_gray.png}};
+    \node[inner sep = 0pt, right = 2.0cm of gray, label=Binarized] (bin)
+      {\includegraphics{imgs/pipe_out_bin.png}};
+    \node[inner sep = 0.75cm, rectangle, dashed, draw, thick, fit=(raw) (gray) (bin),
+      label=above:\textbf{Pre-processing}] (pp) {};
+    \node[cylinder, shape border rotate=90, draw, below = 2.0cm of raw,
+      label=below:LoadDisk, minimum width=2cm, minimum height = 1cm] (load) {};
+    \node[rectangle, rounded corners, draw, right = 2.0cm of load,
+      minimum size=2cm] (build) {BuildSPN};
+    \node[rectangle, rounded corners, draw, right = 2.0cm of build, right = 3.0cm of build,
+      minimum size=2cm] (infer) {Inference};
+    \node[inner sep = 0.5cm, rectangle, dotted, draw, thick, fit=(load) (build),
+      label=below:\textbf{SPN loading}] (create) {};
+    \node[below = 1.0cm of infer] (pred) {Predicted: RIGHT};
+    \draw[->,thick] (raw.east) -- (gray.west);
+    \draw[->,thick] (gray.east) -- (bin.west);
+    \draw[->,thick] let \p1 = (infer.east), \p2 = (pp.east) in
+      (\p2) -- ($ (\p2) + (0.5, 0) $) -- ($ (\x2, \y1) + (0.5, 0) $) -- (\p1);
+    \draw[->,thick] (load) -- (build);
+    \draw[->,thick] (create) -- (infer);
+    \draw[->,thick] (infer) -- (pred);
+  \end{tikzpicture}
+  \caption{Our inference pipeline when using binarization in pre-processing.}
+\end{figure}
 
 For learning algorithms, a GD means we are using $k$-means Gens-Domingos and DV Dennis-Ventura.
 This is then followed by the weight learning algorithm used. The letters g, d and s mean we either
@@ -179,31 +135,40 @@ In this section we show accuracy results in each setup. All values are in percen
     \multicolumn{1}{c}{\bfseries GD+g} & \multicolumn{1}{c}{\bfseries GD+d} &
     \multicolumn{1}{c}{\bfseries GD+s}\\
     \hline
-    $B$         & 76.0 & 76.6 & 76.6 & 80.2 & 76.6 & 78.8\\
-    $Q_2$       & 75.6 & 76.6 & 76.6 & 78.2 & 80.0 & 77.6\\
-    $Q_2+E$     & 75.8 & 76.6 & 76.6 & 79.4 & 78.6 & 78.0\\
-    $Q_3$       & 76.0 & 76.6 & 76.6 & 79.6 & 80.6 & 79.2\\
-    $Q_3+E$     & 75.2 & 76.6 & 76.6 & 80.2 & 80.2 & 80.2\\
-    $Q_4$       & 75.8 & 76.6 & 76.6 & 78.2 & 79.6 & 79.8\\
-    $Q_4+E$     & 75.6 & 76.6 & 76.6 & 78.4 & 78.4 & 82.0\\
-    $Q_5$       & 76.0 & 76.6 & 76.6 & 80.0 & 78.4 & 78.0\\
-    $Q_5+E$     & 75.6 & 76.6 & 76.6 & 79.8 & 81.2 & 78.8\\
-    $Q_6$       & 76.0 & 76.6 & 76.6 & 78.8 & 80.6 & 80.8\\
-    $Q_6+E$     & 75.6 & 76.6 & 76.6 & 79.2 & 80.6 & 77.6\\
-    $Q_7$       & 76.6 & 76.6 & 76.6 & 77.4 & 77.4 & 79.2\\
-    $Q_7+E$     & 76.6 & 76.6 & 76.6 & 80.6 & 81.0 & 79.6\\
-    $\emptyset$ & 75.6 & 76.6 & 76.6 & 77.6 & 81.6 & 80.4\\
-    $E$         & 75.6 & 76.6 & 76.6 & 78.2 & 80.6 & 79.0\\
+    $B$         & 78.8 & 78.8 & 78.8 & 82.8 & 83.8 & 85.0\\
+    $Q_2$       & 78.6 & 78.0 & 78.0 & 78.6 & 80.4 & 79.4\\
+    $Q_2+E$     & 76.6 & 76.6 & 76.8 & 79.6 & 82.8 & 81.8\\
+    $Q_3$       & 77.4 & 77.4 & 77.4 & 77.6 & 80.2 & 79.8\\
+    $Q_3+E$     & 70.4 & 76.6 & 76.6 & 79.2 & 81.2 & 77.4\\
+    $Q_4$       & 78.2 & 78.4 & 78.2 & 76.0 & 78.2 & 76.4\\
+    $Q_4+E$     & 76.6 & 76.6 & 76.8 & 76.0 & 74.6 & 80.6\\
+    $Q_5$       & 77.8 & 78.4 & 78.4 & 77.6 & 74.0 & 73.8\\
+    $Q_5+E$     & 76.6 & 76.6 & 76.6 & 72.0 & 72.8 & 72.0\\
+    $Q_6$       & 77.4 & 78.4 & 78.4 & 75.2 & 74.4 & 72.0\\
+    $Q_6+E$     & 76.0 & 76.4 & 76.4 & 73.0 & 75.0 & 73.6\\
+    $Q_7$       & 78.2 & 78.4 & 78.4 & 62.8 & 72.2 & 71.4\\
+    $Q_7+E$     & 76.2 & 76.4 & 76.4 & 70.6 & 71.4 & 71.6\\
+    $\emptyset$ & 78.0 & 78.4 & 78.4 & 62.4 & 62.4 & 62.4\\
+    $E$         & 76.4 & 76.4 & 76.4 & 60.4 & 60.0 & 61.2\\
   \end{tabular}
   \caption{Accuracy values for each possible model permutation.\label{tab:accuracy}}
 \end{table}
 
 \autoref{tab:accuracy} shows some interesting results. The first is that generative gradient
-descent on the Dennis-Ventura architecture had a small to no negative impact on the performance of
-the network.
+descent on the Dennis-Ventura architecture had a negative impact on the performance of
+the network. Discriminative learning on the other hand seemed to not impact on accuracy at all. Not
+only that, quantization seems to have no impact, with equalization always deteriorating accuracy.
 
 The Gens-Domingos architecture, on the other hand, achieved better results, but showed a more
-unpredictable behavior.
+unpredictable behavior. When resolution was low, as is the case of $B$, $Q_2$ and $Q_3$, the GD
+architecture seems to always outclass DV. In fact, our best results were, as expected, when we used
+binarization, as we're only tracking the most significant feature: lane bounds. In some cases
+generative learning improved accuracy, but in most cases it had a negative impact.  Discriminative
+learning, on the other hand, seemed to usually enhance the network's accuracy.
+
+Our main takeaway from these accuracy results is that the structure of an SPN is much more
+meaningful than its weights. Generative learning in our use case had a negative impact, and
+discriminative learning usually provides a small boost to accuracy.
 
 \section{Speed}
 
@@ -216,21 +181,21 @@ unpredictable behavior.
     \multicolumn{1}{c}{\bfseries GD+g} & \multicolumn{1}{c}{\bfseries GD+d} &
     \multicolumn{1}{c}{\bfseries GD+s}\\
     \hline
-    $B$         & 54m54s & 48m42s & 00m19s & 76m32s & 115m07s& 05m50s\\
-    $Q_2$       & 53m46s & 49m09s & 00m17s & 75m51s & 109m49s& 04m44s\\
-    $Q_2+E$     & 53m00s & 46m00s & 00m15s & 85m03s & 112m05s& 04m55s\\
-    $Q_3$       & 60m19s & 46m36s & 00m15s & 83m34s & 108m23s& 05m23s\\
-    $Q_3+E$     & 62m06s & 45m14s & 00m22s & 75m39s & 111m03s& 04m28s\\
-    $Q_4$       & 50m14s & 42m58s & 00m18s & 83m00s & 74m25s & 04m39s\\
-    $Q_4+E$     & 50m19s & 40m52s & 00m16s & 77m23s & 60m25s & 05m43s\\
-    $Q_5$       & 54m22s & 40m41s & 00m15s & 48m57s & 55m39s & 04m55s\\
-    $Q_5+E$     & 50m32s & 44m44s & 00m24s & 48m21s & 50m59s & 04m06s\\
-    $Q_6$       & 50m54s & 40m36  & 00m14s & 43m59s & 59m38s & 04m19s\\
-    $Q_6+E$     & 56m32s & 40m27s & 00m15s & 44m21s & 46m09s & 05m23s\\
-    $Q_7$       & 56m58s & 40m16s & 00m15s & 40m46s & 67m04s & 05m52s\\
-    $Q_7+E$     & 60m13s & 40m43s & 00m15s & 45m16s & 62m33s & 05m52s\\
-    $\emptyset$ & 62m14s & 41m07s & 00m15s & 39m45s & 67m04s & 06m45s\\
-    $E$         & 57m23s & 40m35s & 00m15s & 51m37s & 62m33s & 04m58s\\
+    $B$         & 22m36s & 34m23s & 01m03s & 85m58s & 200m53s& 01m50s \\
+    $Q_2$       & 22m07s & 34m59s & 00m23s & 52m57s & 125m17s& 01m28s \\
+    $Q_2+E$     & 22m01s & 35m05s & 00m24s & 98m51s & 232m20s& 09m36s \\
+    $Q_3$       & 22m15s & 32m42s & 00m25s & 34m24s & 96m18s & 04m56s \\
+    $Q_3+E$     & 22m25s & 32m35s & 00m25s & 44m47s & 102m03s& 13m01s \\
+    $Q_4$       & 22m16s & 31m56s & 00m25s & 31m25s & 41m46s & 08m15s \\
+    $Q_4+E$     & 22m23s & 31m49s & 00m31s & 34m21s & 45m42s & 11m35s \\
+    $Q_5$       & 22m24s & 35m06s & 00m29s & 23m10s & 23m18s & 07m24s \\
+    $Q_5+E$     & 22m25s & 36m44s & 00m29s & 20m13s & 29m38s & 08m36s \\
+    $Q_6$       & 22m20s & 36m34s & 00m27s & 49m22s & 50m35s & 21m37s \\
+    $Q_6+E$     & 22m12s & 37m13s & 00m27s & 54m53s & 43m30s & 21m17s \\
+    $Q_7$       & 22m13s & 33m14s & 00m30s & 78m05s & 72m03s & 43m44s \\
+    $Q_7+E$     & 22m22s & 37m40s & 00m29s & 95m30s & 79m48s & 65m19s \\
+    $\emptyset$ & 22m10s & 36m56s & 00m33s &166m53s & 107m44s& 90m22s \\
+    $E$         & 22m10s & 34m58s & 00m33s &174m55s & 116m41s& 186m49s\\
   \end{tabular}
   \caption{Average time in minutes for training each model.\label{tab:time-training}}
 \end{table}
@@ -244,21 +209,21 @@ unpredictable behavior.
     \multicolumn{1}{c}{\bfseries GD+g} & \multicolumn{1}{c}{\bfseries GD+d} &
     \multicolumn{1}{c}{\bfseries GD+s}\\
     \hline
-    $B$         & 0.58 & 0.64 & 0.79 & 0.44 & 0.48 & 0.47 \\
-    $Q_2$       & 0.56 & 0.65 & 0.63 & 0.43 & 0.45 & 0.42 \\
-    $Q_2+E$     & 0.62 & 0.63 & 0.61 & 0.49 & 0.45 & 0.33 \\
-    $Q_3$       & 0.65 & 0.58 & 0.59 & 0.50 & 0.43 & 0.40 \\
-    $Q_3+E$     & 0.57 & 0.56 & 0.69 & 0.42 & 0.45 & 0.34 \\
-    $Q_4$       & 0.56 & 0.57 & 0.65 & 0.58 & 0.67 & 0.31 \\
-    $Q_4+E$     & 0.57 & 0.55 & 0.61 & 0.60 & 0.62 & 0.37 \\
-    $Q_5$       & 0.56 & 0.61 & 0.66 & 0.51 & 0.43 & 0.34 \\
-    $Q_5+E$     & 0.57 & 0.56 & 0.62 & 0.48 & 0.39 & 0.33 \\
-    $Q_6$       & 0.65 & 0.56 & 0.62 & 0.63 & 0.55 & 0.37 \\
-    $Q_6+E$     & 0.57 & 0.56 & 0.60 & 0.65 & 0.35 & 0.34 \\
-    $Q_7$       & 0.56 & 0.56 & 0.59 & 0.44 & 0.53 & 0.40 \\
-    $Q_7+E$     & 0.56 & 0.56 & 0.58 & 0.46 & 0.58 & 0.42 \\
-    $\emptyset$ & 0.64 & 0.56 & 0.58 & 0.42 & 0.74 & 0.52 \\
-    $E$         & 0.62 & 0.55 & 0.59 & 0.58 & 0.42 & 0.37 \\
+    $B$         & 0.23 & 0.25 & 0.25 & 0.38 & 0.37 & 0.31 \\
+    $Q_2$       & 0.22 & 0.24 & 0.23 & 0.28 & 0.34 & 0.16 \\
+    $Q_2+E$     & 0.22 & 0.23 & 0.23 & 0.38 & 0.30 & 0.27 \\
+    $Q_3$       & 0.22 & 0.23 & 0.22 & 0.22 & 0.32 & 0.17 \\
+    $Q_3+E$     & 0.22 & 0.23 & 0.22 & 0.34 & 0.32 & 0.31 \\
+    $Q_4$       & 0.22 & 0.22 & 0.23 & 0.16 & 0.17 & 0.13 \\
+    $Q_4+E$     & 0.23 & 0.27 & 0.29 & 0.13 & 0.14 & 0.13 \\
+    $Q_5$       & 0.22 & 0.26 & 0.28 & 0.07 & 0.05 & 0.02 \\
+    $Q_5+E$     & 0.22 & 0.29 & 0.25 & 0.05 & 0.05 & 0.02 \\
+    $Q_6$       & 0.23 & 0.24 & 0.23 & 0.04 & 0.05 & 0.01 \\
+    $Q_6+E$     & 0.22 & 0.24 & 0.28 & 0.03 & 0.04 & 0.02 \\
+    $Q_7$       & 0.23 & 0.23 & 0.26 & 0.03 & 0.01 & 0.01 \\
+    $Q_7+E$     & 0.22 & 0.26 & 0.24 & 0.01 & 0.01 & 0.01 \\
+    $\emptyset$ & 0.22 & 0.26 & 0.23 & 0.02 & 0.01 & 0.01 \\
+    $E$         & 0.23 & 0.23 & 0.22 & 0.01 & 0.01 & 0.02 \\
   \end{tabular}
   \caption{Average time in seconds to predict a single image.\label{tab:time-inference}}
 \end{table}
