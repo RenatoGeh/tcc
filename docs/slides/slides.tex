@@ -179,6 +179,18 @@ Sum-Product Networks}
 \section{Self-Driving}
 
 \begin{frame}
+  \frametitle{Dataset}
+
+  Dataset used: \cite{self-driving}
+
+  \begin{figure}
+    \centering\includegraphics[height=0.5\textheight]{imgs/montage_raw.png}
+  \end{figure}
+
+  Lane tracking dataset with $80\times 45$ RGB images. Each labeled with either UP, LEFT or RIGHT.
+\end{frame}
+
+\begin{frame}
   \frametitle{Self-driving as image classification}
 
   Let $X=\{X_0,X_1,\ldots,X_{n-1}\}$ be an \textbf{image}. Every $X_i=x_i$ refers to the $i$-th
@@ -207,18 +219,6 @@ Sum-Product Networks}
   The entire scope of variables is $X\cup Y$.
 
   \vfill\centering\textbf{Objective:} $\argmax_{y\in Y} P(Y=y|X)$
-\end{frame}
-
-\begin{frame}
-  \frametitle{Dataset}
-
-  Dataset used: \cite{self-driving}
-
-  \begin{figure}
-    \centering\includegraphics[height=0.5\textheight]{imgs/montage_raw.png}
-  \end{figure}
-
-  Lane tracking dataset with $80\times 45$ RGB images. Each labeled with either UP, LEFT or RIGHT.
 \end{frame}
 
 \begin{frame}
@@ -386,6 +386,17 @@ Sum-Product Networks}
 
   \footnotesize\centering\textbf{\href{https://}{Mobile Robot Self-Driving Through Image Classification Using
   Discriminative Learning of Sum-Product Networks --- YouTube}}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Implementation}
+  \centering
+  \large\textbf{Inference and Learning:} \href{https://github.com/RenatoGeh/gospn}{GoSPN}
+  (\url{https://github.com/RenatoGeh/gospn})\\~\\
+
+  \textbf{Mobile robot implementation:} \href{https://github.com/RenatoGeh/godrive}{GoDrive}
+  (\url{https://github.com/RenatoGeh/godrive})
+
 \end{frame}
 
 \begin{frame}[standout]
