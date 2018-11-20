@@ -29,15 +29,7 @@ clustering step with $k=2$. The second uses DBSCAN, with parameters $\epsilon=4$
 of a point neighborhood, and $m=4$ the minimum number of points to describe a dense region. Both
 were set with a $p$-value of $0.01$ for the independence step. We refer to the $k$-means
 implementation as $k$-GD, and the DBSCAN variation as DBSCAN-GD.
-
-We found that when using DBSCAN-GD, the resulting structure was too complex, causing inference to
-take too long. For instance, when running inference on $k$-GD, average prediction took about $0.1$
-second.  When using DBSCAN, the average time of prediction was $12.33$ seconds.  Size-wise, the
-DBSCAN variation had a structure 18 times bigger. However, in terms of accuracy, DBSCAN-GD showed
-impressive results, with accuracies reaching $>$98\%. Despite these results, a model that takes too
-long for inference is not adequate for a self-driving application. For this reason, we show only
-comparisons with the $k$-GD model.
-\begin{figure}
+\begin{figure}[h]
   \centering
   \begin{tikzpicture}
     \node[inner sep=0pt, label=Raw] (raw) at (0, 0)
@@ -65,6 +57,16 @@ comparisons with the $k$-GD model.
   \end{tikzpicture}
   \caption{Our training pipeline when using binarization in pre-processing.\label{fig:train_pipe}}
 \end{figure}
+DBSCAN-GD achieved the best scores, but took the longest time for both training and testing. We did
+not test all possible iterations of pre-processing in this case, as DBSCAN-GD had too long training
+times (an average of 10 hours for training alone). We found that when using DBSCAN-GD, the
+resulting structure was too complex (about 32 times bigger than $k$-GD), causing inference to take
+too long. For instance, when running inference on $k$-GD, average prediction took about $0.1$
+second.  When using DBSCAN, the average time of prediction was $19.72$ seconds. However, in terms
+of accuracy, DBSCAN-GD showed impressive results, with all tests achieving a perfect score of 100\%
+accuracy. Despite these numbers, a model that takes too long for inference is not adequate for a
+self-driving application. For this reason, we discarded the DBSCAN-GD model and decided to only use
+the $k$-GD model.
 
 In both training and testing, we first apply image transformations (e.g. quantizing, binarization
 or equalization) to the dataset and then train or perform prediction with a particular model. The
@@ -82,7 +84,8 @@ training samples. The deeper the structure, the more expressive it is. We found 
 models trained with 1000 samples had much better accuracies than with 500. However, a more complex
 network means inference will take longer. We attempted to keep inference at less than a second per
 prediction. A training set size of 500 was chosen as the generated SPNs had decent prediction time
-and accuracy, and did not take too long in training.
+and accuracy, and did not take too long in training. The size of the testing dataset was also 500
+images.
 
 We use a particular set of notations for our experiments. For image transformations, we denote by
 $Q_n$ as applying an $n$-bit quantization of the dataset. An $E$ means the dataset was equalized,
@@ -226,8 +229,10 @@ probably due to better variable partitioning during the independence step, resul
 balanced and more expressive tree.
 
 \autoref{tab:time-inference} shows how much time it took, on average, to predict a single image.
-Again, the DV architecture had very regular times. The GD structure, on the other hand, showed how
-much deeper the SPN structures are with heavy quantization.
+Computation of the average time was done by timing all 500 predictions on the test dataset, and
+then dividing by the number of total predictions.  Again, the DV architecture had very regular
+times. The GD structure, on the other hand, showed how much deeper the SPN structures are with
+heavy quantization.
 
 \begin{table}[h]
   \centering
