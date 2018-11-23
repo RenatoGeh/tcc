@@ -13,17 +13,24 @@ that, with a fast and accurate model, it is possible to obtain reasonable result
 simple approach. SPNs were fast enough to be able to provide both accuracy and speed, even on such
 a limited computer as the Raspberry Pi.
 
-Having said that, we identified several flaws in this approach as documented by the previous
-chapter. First and foremost, the choice of which model to use (i.e. to find the fine balance
-between network complexity and inference speed) is still unquantifiable. At which point is a fast
-model accurate enough? Should self-driving be more focused on being accurate or fast?
+Having said that, we identified a few flaws in this approach as documented by the previous chapter.
+First and foremost, the choice of which model to use (i.e. to find the fine balance between network
+complexity and inference speed) is still unquantifiable. At which point is a fast model accurate
+enough? Should self-driving be more focused on being accurate or fast?
 
-Furthermore, although current deep models have proven to be able to extract very meaningful
-features and reach impressive accuracy levels, it is still not completely foolproof. Ambiguous
-markings such as the ones mentioned in~\autoref{chp:realworld} can easily fool any model, as they
-are perfectly valid classifications. These bring various dangers in both the physical and
-metaphysical sense in terms of ethics.
+Second, although current deep models have proven to be able to extract very meaningful features and
+reach impressive accuracy levels, it is still not completely foolproof. Ambiguous markings such as
+the ones mentioned in~\autoref{chp:realworld} can easily fool any model, as they are perfectly
+valid classifications. A possible solution to this would be to account for previous classifications
+through a temporal model, such as a markov chain or a recurrent neural network.
 
-Despite all this
+Finally, the choice of how to model the robot's control system can play a big part in how well the
+robot is going to perform on a real case scenario. We chose a very simple control system that only
+turned left, right or went straight with no degree of continuity between commands. Furthermore, our
+implementation had a fixed turn ratio, meaning sharp turns were a problem from the start.
+
+Despite all this, our attempt was reasonably successful at modelling self-driving on a low-budget
+mobile robot. The robot was able to correct itself before going off tracks, identified turns
+correctly, and in its best iteration was able to follow long lines smoothly.
 
 \section{Further work}
