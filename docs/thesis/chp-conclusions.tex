@@ -1,6 +1,29 @@
 %&tex
 
-\chapter{Conclusions and discussion}\label{chp:conclusions}
+\chapter{Conclusion and discussion}\label{chp:conclusions}
 
-In which we conclude our thesis, provide some discussion on the topics covered, and finally provide
-a brief overview on possible future work.
+In which we conclude our thesis, provide some discussion on the topics covered by pointing the
+advantages and the flaws in using image classification in self-driving, and finally give a brief
+overview on possible future work.
+
+\section{Discussion}
+
+In this thesis we argued the feasibility of lane following via image classification. We showed
+that, with a fast and accurate model, it is possible to obtain reasonable results with such a
+simple approach. SPNs were fast enough to be able to provide both accuracy and speed, even on such
+a limited computer as the Raspberry Pi.
+
+Having said that, we identified several flaws in this approach as documented by the previous
+chapter. First and foremost, the choice of which model to use (i.e. to find the fine balance
+between network complexity and inference speed) is still unquantifiable. At which point is a fast
+model accurate enough? Should self-driving be more focused on being accurate or fast?
+
+Furthermore, although current deep models have proven to be able to extract very meaningful
+features and reach impressive accuracy levels, it is still not completely foolproof. Ambiguous
+markings such as the ones mentioned in~\autoref{chp:realworld} can easily fool any model, as they
+are perfectly valid classifications. These bring various dangers in both the physical and
+metaphysical sense in terms of ethics.
+
+Despite all this
+
+\section{Further work}
