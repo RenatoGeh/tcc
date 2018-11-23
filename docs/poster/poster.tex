@@ -1,6 +1,6 @@
 \documentclass[final,hyperref={pdfpagelabels=false},notheorems]{beamer}
 
-\usepackage[orientation=portrait,size=a0,scale=1.3]{beamerposter}
+\usepackage[orientation=portrait,size=a1,scale=1.3]{beamerposter}
 
 \usetheme{Oxford}
 
@@ -26,8 +26,8 @@
 \usepackage{booktabs}
 \usepackage[backend=biber,url=true,doi=true,eprint=false,style=authoryear]{biblatex}
 
-\setlength{\paperwidth}{90cm}
-\setlength{\paperheight}{120cm}
+%\setlength{\paperwidth}{90cm}
+%\setlength{\paperheight}{120cm}
 
 \usecaptiontemplate{\small\structure{\insertcaptionname~\insertcaptionnumber: }\insertcaption}
 
@@ -104,13 +104,13 @@ of Sum-Product Networks}
 \begin{frame}[t]
 
 \begin{columns}[t]
-  \begin{column}{.015\textwidth}\end{column} % Empty spacer column
+  \begin{column}{.008\textwidth}\end{column} % Empty spacer column
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Column 1
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-  \begin{column}{.5225\textwidth}
+  \begin{column}{.5\textwidth}
 
     \vspace{\shrink}
     \begin{block}{Motivation and Overview}
@@ -149,7 +149,7 @@ of Sum-Product Networks}
       internal nodes until the root is reached. The value of the root $S(X,E)$ is the probability
       $P(X,E)$ as long as all its sum nodes have normalized weights, i.e. they all sum to one.
       \begin{figure}[h]
-        \centering\includegraphics[width=0.5\textwidth]{imgs/sample_spn.png}
+        \centering\includegraphics[width=0.4\textwidth]{imgs/sample_spn.png}
         \caption{An SPN with indicator variables as leaves (degenerated univariate distributions).}
       \end{figure}
       This computation is linear in the number of edges, making SPNs an interesting model for
@@ -164,7 +164,7 @@ of Sum-Product Networks}
       agent's (i.e. robot's) goal is to remain within the established ``road'' by labelling input
       images as commands for going UP, LEFT or RIGHT. Thus, our objective in this project was to
       build an image classifier capable of accurate predictions in real-time on a miniaturized
-      computer.\\~\\
+      computer.\pskip
 
       \begin{figure}
         \begin{subfigure}{0.3\linewidth}
@@ -192,9 +192,9 @@ of Sum-Product Networks}
 %% Column 2
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-  \begin{column}{.02\textwidth}\end{column} % Empty spacer column
+  \begin{column}{.018\textwidth}\end{column} % Empty spacer column
 
-  \begin{column}{.5225\textwidth}
+  \begin{column}{.5\textwidth}
 
     \vspace{\shrink}
     \setbeamertemplate{block begin}[notitle]
@@ -207,9 +207,10 @@ of Sum-Product Networks}
       translating them into motor power.
 
       \begin{figure}
-        \centering\includegraphics{imgs/robot.png}
+        \centering\includegraphics[height=10cm]{imgs/robot.png}
         \caption{Fully assembled robot.}
       \end{figure}
+      \vskip -1cm
     \end{block}
     \setbeamertemplate{block begin}[default]
 
@@ -217,7 +218,7 @@ of Sum-Product Networks}
       The \cite{self-driving} dataset was used for training and testing. It consists of $80\times
       45$ RGB images of road following. We chose to apply some pre-processing to the images, namely
       Otsu's binarization, quantization (i.e. resolution downscaling) and histogram
-      equalization.\\~\\
+      equalization.\pskip
       \begin{figure}
         \begin{subfigure}{0.3\linewidth}
           \centering\includegraphics[width=\textwidth]{imgs/binary_up.png}
@@ -234,13 +235,12 @@ of Sum-Product Networks}
           \captionsetup{justification=centering}
           \caption*{Equalization ($E$)}
         \end{subfigure}
-        \caption{Image transformations done before training and inference.}
-      \end{figure}
+      \end{figure}\pskip
       We trained the SPNs with two structure learning algorithms: \cite{gens-domingos}
       (\textbf{GD}), \cite{clustering} (\textbf{DV}); and performed generative (\textbf{g}) and
       discriminative (\textbf{d}) gradient descent weight learning on both architectures. We
       additionally generated the structures with no weight learning (\textbf{s}) as a form of
-      control.\\~\\
+      control.\pskip
       \begin{table}[h]
         \centering
         \begin{tabular}{l|c|c|c|c|c|c}
@@ -250,33 +250,35 @@ of Sum-Product Networks}
           \multicolumn{1}{c}{\bfseries GD+g} & \multicolumn{1}{c}{\bfseries GD+d} &
           \multicolumn{1}{c}{\bfseries GD+s}\\
           \hline
-          $B$         & (78.8, 0.23) & (78.8, 0.25) & (78.8, 0.25) & (82.8, 0.38) & (83.8, 0.37) & (85.0, 0.31)\\
-          $Q_2$       & (78.6, 0.22) & (78.0, 0.24) & (78.0, 0.23) & (78.6, 0.28) & (80.4, 0.34) & (79.4, 0.16)\\
-          $Q_2+E$     & (76.6, 0.22) & (76.6, 0.23) & (76.8, 0.23) & (79.6, 0.38) & (82.8, 0.30) & (81.8, 0.27)\\
-          $Q_4$       & (78.2, 0.22) & (78.4, 0.22) & (78.2, 0.23) & (76.0, 0.16) & (78.2, 0.17) & (76.4, 0.13)\\
-          $Q_4+E$     & (76.6, 0.23) & (76.6, 0.27) & (76.8, 0.29) & (76.0, 0.13) & (74.6, 0.14) & (80.6, 0.13)\\
-          $Q_6$       & (77.4, 0.23) & (78.4, 0.24) & (78.4, 0.23) & (75.2, 0.04) & (74.4, 0.05) & (72.0, 0.01)\\
-          $Q_6+E$     & (76.0, 0.22) & (76.4, 0.24) & (76.4, 0.28) & (73.0, 0.03) & (75.0, 0.04) & (73.6, 0.02)\\
-          $\emptyset$ & (78.0, 0.22) & (78.4, 0.26) & (78.4, 0.23) & (62.4, 0.02) & (62.4, 0.01) & (62.4, 0.01)\\
-          $E$         & (76.4, 0.23) & (76.4, 0.23) & (76.4, 0.22) & (60.4, 0.01) & (60.0, 0.01) & (61.2, 0.02)\\
+          $B$         & 78.8, 0.23 & 78.8, 0.25 & 78.8, 0.25 & 82.8, 0.38 & 83.8, 0.37 & 85.0, 0.31\\
+          $Q_4$       & 78.2, 0.22 & 78.4, 0.22 & 78.2, 0.23 & 76.0, 0.16 & 78.2, 0.17 & 76.4, 0.13\\
+          $Q_6$       & 77.4, 0.23 & 78.4, 0.24 & 78.4, 0.23 & 75.2, 0.04 & 74.4, 0.05 & 72.0, 0.01\\
+          $\emptyset$ & 78.0, 0.22 & 78.4, 0.26 & 78.4, 0.23 & 62.4, 0.02 & 62.4, 0.01 & 62.4, 0.01\\
+          $E$         & 76.4, 0.23 & 76.4, 0.23 & 76.4, 0.22 & 60.4, 0.01 & 60.0, 0.01 & 61.2, 0.02\\
         \end{tabular}
-        \caption{Accuracy values in percentage and inference time in seconds for each possible model
-        permutation.\label{tab:accuracy}}
+        \caption{Accuracy values in percentage and inference time in seconds.\label{tab:accuracy}}
       \end{table}
-      Table \ref{tab:accuracy} shows results for each model and the pre-process filter applied
-      beforehand. In this table we only show even quantizations.\\~\\
+      Table \ref{tab:accuracy} shows results for some models and the pre-process filter applied
+      beforehand. Inference speed was computed in a desktop computer. When run on the Raspberry Pi,
+      inference took about ten times longer.\pskip
 
-      We also applied the model to a real-world application: \url{https://youtu.be/}
+      We applied the model to a real-world scenario with three different tracks:\\
+      \begin{center}
+        \url{https://youtu.be/}
+      \end{center}
     \end{block}
 
     \begin{block}{Conclusions}
       Sum-product networks were able to somewhat accurately predict the labels. Because of fast
       inference, prediction error was smoothed out, as the model was capable of correcting itself
-      every hundred milliseconds. Network complexity also played a huge factor in prediction, as a
-      deeper, more complex model achieved better theoretical accuracy, but took longer to predict.
-      This tradeoff can become troublesome, as a self-driving vehicle must be able to predict and
-      correct itself at least as fast as a human. Overall, the model was able to navigate the track
-      reasonably well for a primitive form of control.
+      every hundred milliseconds. However, a fast but innacurate model became erratic and often
+      zig-zagged instead of going straight. Network complexity also played a huge factor in
+      prediction, as a deeper, more complex model achieved better theoretical accuracy, but took
+      longer to predict, accumulating error on long tracks.  This tradeoff between accuracy and
+      inference speed can become troublesome, as a self-driving vehicle must be able to predict and
+      correct itself at least as fast as a human. A balance between network complexity and
+      inference speed is crucial for developing a robust and reliable model.  Overall, the model
+      was able to navigate the track reasonably well for a simple form of control.
     \end{block}
 
     \begin{block}{References}
