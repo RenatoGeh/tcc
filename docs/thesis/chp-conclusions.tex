@@ -11,7 +11,7 @@ overview on possible future work.
 In this thesis we argued the feasibility of lane following via image classification. We showed
 that, with a fast and accurate model, it is possible to obtain reasonable results with such a
 simple approach. SPNs were fast enough to be able to provide both accuracy and speed, even on such
-a limited computer as the Raspberry Pi.
+a limited miniature computer as the Raspberry Pi.
 
 Having said that, we identified a few flaws in this approach as documented by the previous chapter.
 First and foremost, the choice of which model to use (i.e. to find the fine balance between network
@@ -22,15 +22,42 @@ Second, although current deep models have proven to be able to extract very mean
 reach impressive accuracy levels, it is still not completely foolproof. Ambiguous markings such as
 the ones mentioned in~\autoref{chp:realworld} can easily fool any model, as they are perfectly
 valid classifications. A possible solution to this would be to account for previous classifications
-through a temporal model, such as a markov chain or a recurrent neural network.
+through a temporal model, such as a markov chain like network or a recurrent neural network.
 
-Finally, the choice of how to model the robot's control system can play a big part in how well the
-robot is going to perform on a real case scenario. We chose a very simple control system that only
-turned left, right or went straight with no degree of continuity between commands. Furthermore, our
+Finally, the choice of how to model the control system can play a big part in how well the robot is
+going to perform on a real case scenario. We chose a very simple control system that only turned
+left, right or went straight with no degree of continuity between commands. Furthermore, our
 implementation had a fixed turn ratio, meaning sharp turns were a problem from the start.
 
 Despite all this, our attempt was reasonably successful at modelling self-driving on a low-budget
 mobile robot. The robot was able to correct itself before going off tracks, identified turns
-correctly, and in its best iteration was able to follow long lines smoothly.
+correctly, and in its best iteration was able to follow long lines smoothly. It is also worthy to
+mention that training was much faster and required fewer training samples than other deep models.
+Because of linear exact inference in SPNs, we were able to accurately quantify uncertainty very
+fast.
 
 \section{Further work}
+
+This section is dedicated to possible future work related to this thesis. We give brief suggestions
+on how to improve the training and inference model as well as the robot's control system.
+
+In our thesis, we only implemented the~\cite{gens-domingos} and~\cite{clustering} structure
+learning algorithms. There have been many other architectures that have achieved better results
+since. Future work on a comparison between these more recent state-of-the-art networks would be a
+very interesting path to take.
+
+For weight learning, we only applied hard generative and discriminative gradient descent. There
+have been many advances on weight learning, including~\cite{baum-welch} through the use of Extended
+Baum-Welch. Accuracy increased significantly though this new weight learning method, and we
+speculate whether this would provide a boost to accuracy.
+
+Nowadays, deep models make use of GPUs to accelerate both learning and inference. Our
+implementation made use of only the CPU. GPU parallelization in SPNs is still in its early infancy,
+but implementations such as~\cite{deep-learn-spn} have shown that a more connectionist approach
+similar to deep neural networks could potentially increase its performance whilst maintaining its
+probabilistic semantic.
+
+Our robot control system was based on a very simplistic approach that does not mirror a real-world
+implementation. A more complex controller could potentially enhance self-driving as a whole.
+However a too complex system could put too much load on the robot, decreasing its performance.
+
