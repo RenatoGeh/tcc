@@ -137,7 +137,7 @@ Sum-Product Networks}
 \begin{frame}
   \frametitle{Probability of evidence}
 
-  Single forward pass computes $S(X=\{X_1=0\})=0.31$. Linear on the number of edges
+  Single backward pass computes $S(X=\{X_1=0\})=0.31$. Linear on the number of edges
 
   \begin{figure}
     \centering\includegraphics[height=0.6\textheight]{imgs/sample_spn_prob.png}
@@ -147,7 +147,7 @@ Sum-Product Networks}
 \begin{frame}
   \frametitle{Maximum a posteriori probability}
 
-  Replace sums with max nodes. Forward pass followed by backward pass computes most probable
+  Replace sums with max nodes. Backward pass followed by forward pass computes most probable
   explanation, i.e. find $\argmax_{x\in X} P(X, E)$.
 
   \begin{figure}
@@ -336,15 +336,15 @@ Sum-Product Networks}
       $Q_2+E$     & 76.6 & 76.6 & 76.8 & 79.6 & 82.8 & 81.8\\
       $Q_3$       & 77.4 & 77.4 & 77.4 & 77.6 & 80.2 & 79.8\\
       $Q_3+E$     & 70.4 & 76.6 & 76.6 & 79.2 & 81.2 & 77.4\\
-      $Q_4$       & 78.2 & 78.4 & 78.2 & 76.0 & 78.2 & 76.4\\
+      $Q_4$       & 78.2 & 78.4 & 78.2 & 76.0 & \textbf{78.2} & 76.4\\
       $Q_4+E$     & 76.6 & 76.6 & 76.8 & 76.0 & 74.6 & 80.6\\
       $Q_5$       & 77.8 & 78.4 & 78.4 & 77.6 & 74.0 & 73.8\\
       $Q_5+E$     & 76.6 & 76.6 & 76.6 & 72.0 & 72.8 & 72.0\\
-      $Q_6$       & 77.4 & 78.4 & 78.4 & 75.2 & 74.4 & 72.0\\
+      $Q_6$       & 77.4 & 78.4 & 78.4 & 75.2 & \textbf{74.4} & 72.0\\
       $Q_6+E$     & 76.0 & 76.4 & 76.4 & 73.0 & 75.0 & 73.6\\
       $Q_7$       & 78.2 & 78.4 & 78.4 & 62.8 & 72.2 & 71.4\\
       $Q_7+E$     & 76.2 & 76.4 & 76.4 & 70.6 & 71.4 & 71.6\\
-      $\emptyset$ & 78.0 & 78.4 & 78.4 & 62.4 & 62.4 & 62.4\\
+      $\emptyset$ & 78.0 & 78.4 & 78.4 & 62.4 & \textbf{62.4} & 62.4\\
       $E$         & 76.4 & 76.4 & 76.4 & 60.4 & 60.0 & 61.2\\
     \end{tabular}
   \end{table}
@@ -367,31 +367,57 @@ Sum-Product Networks}
       $Q_2+E$     & 0.22 & 0.23 & 0.23 & 0.38 & 0.30 & 0.27 \\
       $Q_3$       & 0.22 & 0.23 & 0.22 & 0.22 & 0.32 & 0.17 \\
       $Q_3+E$     & 0.22 & 0.23 & 0.22 & 0.34 & 0.32 & 0.31 \\
-      $Q_4$       & 0.22 & 0.22 & 0.23 & 0.16 & 0.17 & 0.13 \\
+      $Q_4$       & 0.22 & 0.22 & 0.23 & 0.16 & \textbf{0.17} & 0.13 \\
       $Q_4+E$     & 0.23 & 0.27 & 0.29 & 0.13 & 0.14 & 0.13 \\
       $Q_5$       & 0.22 & 0.26 & 0.28 & 0.07 & 0.05 & 0.02 \\
       $Q_5+E$     & 0.22 & 0.29 & 0.25 & 0.05 & 0.05 & 0.02 \\
-      $Q_6$       & 0.23 & 0.24 & 0.23 & 0.04 & 0.05 & 0.01 \\
+      $Q_6$       & 0.23 & 0.24 & 0.23 & 0.04 & \textbf{0.05} & 0.01 \\
       $Q_6+E$     & 0.22 & 0.24 & 0.28 & 0.03 & 0.04 & 0.02 \\
       $Q_7$       & 0.23 & 0.23 & 0.26 & 0.03 & 0.01 & 0.01 \\
       $Q_7+E$     & 0.22 & 0.26 & 0.24 & 0.01 & 0.01 & 0.01 \\
-      $\emptyset$ & 0.22 & 0.26 & 0.23 & 0.02 & 0.01 & 0.01 \\
+      $\emptyset$ & 0.22 & 0.26 & 0.23 & 0.02 & \textbf{0.01} & 0.01 \\
       $E$         & 0.23 & 0.23 & 0.22 & 0.01 & 0.01 & 0.02 \\
     \end{tabular}
   \end{table}
 \end{frame}
 
 \begin{frame}
+  \frametitle{Chosen models}
+
+  \begin{description}
+    \item[Model 1:] $Q_4$, \textbf{GD+d}
+      \begin{description}
+        \item[Accuracy:] 78.2\%
+        \item[Desktop time:] 170ms
+        \item[Berry time:] 700ms
+      \end{description}
+    \item[Model 2:] $Q_6$, \textbf{GD+d}
+      \begin{description}
+        \item[Accuracy:] 74.4\%
+        \item[Desktop time:] 50ms
+        \item[Berry time:] 150ms
+      \end{description}
+    \item[Model 3:] $\emptyset$, \textbf{GD+d}
+      \begin{description}
+        \item[Accuracy:] 62.4\%
+        \item[Desktop time:] $<$ 10ms
+        \item[Berry time:] 75ms
+      \end{description}
+  \end{description}
+\end{frame}
+
+\begin{frame}
   \frametitle{``Real world'' scenario}
 
-  \footnotesize\centering\textbf{\href{https://}{Mobile Robot Self-Driving Through Image Classification Using
+  \footnotesize\centering\textbf{\href{https://youtu.be/vhpWQDX2cQU}{Mobile Robot Self-Driving Through Image Classification Using
   Discriminative Learning of Sum-Product Networks --- YouTube}}
+  (\url{https://youtu.be/vhpWQDX2cQU})
 \end{frame}
 
 \begin{frame}
   \frametitle{Implementation}
   \centering
-  \large\textbf{Inference and Learning:} \href{https://github.com/RenatoGeh/gospn}{GoSPN}
+  \large\textbf{Inference and learning:} \href{https://github.com/RenatoGeh/gospn}{GoSPN}
   (\url{https://github.com/RenatoGeh/gospn})\\~\\
 
   \textbf{Mobile robot implementation:} \href{https://github.com/RenatoGeh/godrive}{GoDrive}
