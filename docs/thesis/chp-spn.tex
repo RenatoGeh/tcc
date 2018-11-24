@@ -7,12 +7,19 @@ valuation) and how to find an approximation of the maximum a posteriori probabil
 
 \section{Background}
 
-The objective of probabilistic modelling is to compactly represent a probability distribution, be
-able to find a good approximation to the real function and be able to efficiently compute both
-the marginals and modes. Probabilistic graphical models (PGMs) attempt to solve this through the
-use of graphs, representing distributions as a normalized product of factors (\cite{pearl-1988}).
+Probabilistic modelling attempts to represent interactions between variables as a probability
+distribution. The objective of probabilistic models is to compactly represent a distribution, be
+able to find a good approximation to the real function, and efficiently compute both the marginals
+and modes. By quantifying uncertainty through data, we are able to predict events by looking at
+past observations. We model this through random variables (RVs), finding correlations and
+statistical independencies between variables in order to extract new information from the
+distribution that encompasses the entire scope of variables. Through Bayesian inference, a
+probabilistic model is able to infer uncertainties and update its belief accordingly.
+
+Probabilistic graphical models (PGMs) attempt to model this through the use of graphs, representing
+distributions as a normalized product of factors (\cite{pearl-1988})
 \begin{equation*}
-  P(X=x)=\frac{1}{Z}\prod_k \phi_k(x_{\{k\}})
+  P(X=x)=\frac{1}{Z}\prod_k \phi_k(x_{\{k\}}).
 \end{equation*}
 
 Where $x\in\mathcal{X}$ is a $d$-dimensional vector valuation of RVs $\mathbf{X}$ on sample space
@@ -236,8 +243,7 @@ top-down search to find the most probable instantiations.
 Next, we provide pseudocode for computing both soft and hard inference. We assume as input only
 valid, (weight) normalized SPNs. However, one could easily extend the included algorithms for
 unnormalized networks.
-
-\begin{algorithm}[H]
+\begin{algorithm}[h]
   \caption{\code{SoftInference}: Computes the probability of evidence in SPNs}
   \begin{algorithmic}[1]
     \Require A valid SPN $S$ with normalized weights and a valuation $X$
@@ -267,7 +273,7 @@ unnormalized networks.
   \end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}[H]
+\begin{algorithm}[h]
   \caption{\code{HardInference}: Computes an approximation of the MAP in SPNs}
   \begin{algorithmic}[1]
     \Require A valid SPN $S$ with normalized weights and a valuation $X$
@@ -298,9 +304,7 @@ unnormalized networks.
   \end{algorithmic}
 \end{algorithm}
 
-Finally, we show how to algorithmically compute the MPE given some evidence.
-
-\begin{algorithm}[H]
+\begin{algorithm}[h]
   \caption{\code{ArgMaxSPN}: Finds the MPE of a valuation on an SPN}
   \begin{algorithmic}[1]
     \Require A valid SPN $S$ with normalized weights and a valuation $X$

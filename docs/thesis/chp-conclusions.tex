@@ -13,16 +13,16 @@ that, with a fast and accurate model, it is possible to obtain reasonable result
 simple approach. SPNs were fast enough to be able to provide both accuracy and speed, even on such
 a limited miniature computer as the Raspberry Pi.
 
-Having said that, we identified a few flaws in this approach as documented by the previous chapter.
-First and foremost, the choice of which model to use (i.e. to find the fine balance between network
-complexity and inference speed) is still unquantifiable. At which point is a fast model accurate
-enough? Should self-driving be more focused on being accurate or fast?
+Having said that, we identified a few flaws in this approach, as documented by the previous
+chapter.  First and foremost, the choice of which model to use (i.e. to find the fine balance
+between network complexity and inference speed) is still unquantifiable. At which point is a fast
+model accurate enough? Should self-driving be more focused on being accurate or fast?
 
 Second, although current deep models have proven to be able to extract very meaningful features and
 reach impressive accuracy levels, it is still not completely foolproof. Ambiguous markings such as
-the ones mentioned in~\autoref{chp:realworld} can easily fool any model, as they are perfectly
+the ones mentioned in~\Cref{chp:realworld} can easily fool any model, as they are perfectly
 valid classifications. A possible solution to this would be to account for previous classifications
-through a temporal model, such as a markov chain like network or a recurrent neural network.
+through a temporal model, such as a markov-chain-like network or a recurrent neural network.
 
 Finally, the choice of how to model the control system can play a big part in how well the robot is
 going to perform on a real case scenario. We chose a very simple control system that only turned
@@ -33,8 +33,8 @@ Despite all this, our attempt was reasonably successful at modelling self-drivin
 mobile robot. The robot was able to correct itself before going off tracks, identified turns
 correctly, and in its best iteration was able to follow long lines smoothly. It is also worthy to
 mention that training was much faster and required fewer training samples than other deep models.
-Because of linear exact inference in SPNs, we were able to accurately quantify uncertainty very
-fast.
+We were also able to accurately quantify uncertainty very fast due to linear time exact inference
+in SPNs.
 
 \section{Further work}
 
@@ -55,7 +55,7 @@ Nowadays, deep models make use of GPUs to accelerate both learning and inference
 implementation made use of only the CPU. GPU parallelization in SPNs is still in its early infancy,
 but implementations such as~\cite{deep-learn-spn} have shown that a more connectionist approach
 similar to deep neural networks could potentially increase its performance whilst maintaining its
-probabilistic semantic.
+probabilistic semantics.
 
 Our robot control system was based on a very simplistic approach that does not mirror a real-world
 implementation. A more complex controller could potentially enhance self-driving as a whole.

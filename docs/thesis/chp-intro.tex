@@ -1,16 +1,6 @@
-\chapter{Introduction}\label{chp:introduction}
+%&tex
 
-% Too flairy?
-%To most humans, driving a car may seem like a trivial task. The main idea behind it, disregarding
-%the problem of finding a route to your destination, is simple: to stay in between lane markings and
-%not run over anything (or anyone). However, this simplicity doesn't translate well to machines. The
-%complexity and variability of input for lane markings depend not only on the location and
-%background of the pathway, but also the general conditions of the road itself. Coupled with the
-%necessity of real-time decision making on a high-speed heavy-weight vehicle, a wrong
-%prediction could prove fatal. However, there have been many promising results the past few years
-%on autonomous driving, mainly thanks to advances in computer vision and machine learning, and
-%although state-of-the-art models are extremely complex, they still rely on the same principle of
-%following a lane through visual cues.
+\chapter{Introduction}\label{chp:introduction}
 
 In this chapter we first describe the motivations and objectives of this thesis. Next, we describe
 the structure of this document.
@@ -26,7 +16,7 @@ be able to reliably mimic human behavior by correctly classifying whether to tur
 straight given an image captured in front of the car.
 
 Mobile robots are low cost machines capable of movement. These robots are usually small, and
-because of their size and cost often don't have the same performance capabilities as a desktop
+because of their size and cost often do not have the same performance capabilities as a desktop
 computer. However, these domain traits make mobile robot self-driving a very similar analogue to
 real-world autonomous cars. Processing power and memory constraints play a big role in this case,
 and translate well to embedded systems present in a self-driving car.
@@ -44,19 +34,19 @@ learning, but also different SPN architectures.
 
 \section{Thesis structure}
 
-This thesis is structured as follows. In~\autoref{chp:spn}, we first provide background on
+This thesis is structured as follows. In~\Cref{chp:spn}, we first provide background on
 sum-product networks, where we formally define an SPN, present key properties on their structure,
 explain how to compute exact inference and find an approximation of the maximum a posteriori
 probability (MAP).
 
-In~\autoref{chp:weights}, we show how to compute the partial derivatives with respect to a sub-SPN
+In~\Cref{chp:weights}, we show how to compute the partial derivatives with respect to a sub-SPN
 and to its weights, leading on how to perform gradient descent and then on learning the weights of
 the network through gradient descent both generatively and discriminatively.
 
 \Cref{chp:structure} is dedicated to algorithms for learning the structure of an SPN\@. We explain
 the two structural learning algorithms that were used in the experiments.
 
-For~\autoref{chp:modelling}, we first show how we model self-driving as an image classification
+For~\Cref{chp:modelling}, we first show how we model self-driving as an image classification
 problem. We then give a brief explanation on the dataset used for training and testing. We then
 formalize how we extract inference for self-driving.
 
@@ -64,13 +54,15 @@ formalize how we extract inference for self-driving.
 processing unit used for inference and the unit used for handling the motors. We also explain how
 communication between the two is done.
 
-In~\autoref{chp:benchmarks}, we first explain how image pre-processing was done. Accuracy results
-and timings on training and inference on different SPN architectures and weight learning methods
-are then presented.
+How we pre-processed images before learning and inference is explained in~\Cref{chp:preprocessing}.
+We describe each image transformation and how they affected performance.
+
+In~\Cref{chp:benchmarks}, we show accuracy results and timings on training and inference when using
+different SPN architectures and weight learning methods.
 
 We finally implement and show results of the self-driving robot on a real world application
-in~\autoref{chp:realworld}.
+in~\Cref{chp:realworld}.
 
-Finally, in~\autoref{chp:conclusions} we give our conclusions and provide some discussion of the
+Finally, in~\Cref{chp:conclusions} we give our conclusions and provide some discussion of the
 results.
 

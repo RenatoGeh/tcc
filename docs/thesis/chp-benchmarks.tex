@@ -11,6 +11,12 @@ We first show results on accuracy for each of the models and pre-processing tran
 We then show how fast each model is, i.e. how long it took for training and how much time it took
 for the model to predict a label.
 
+All our implementations are free, open-source and publicly available.
+GoDrive\footnote{https://github.com/RenatoGeh/godrive} implements all experiments covered
+in~\Cref{chp:benchmarks} and~\Cref{chp:realworld}.
+GoSPN\footnote{https://github.com/RenatoGeh/gospn} implements the learning and inference
+algorithms.
+
 \section{Setups}
 
 For our experiments, we tested two structure learning algorithms, the Dennis-Ventura and
@@ -20,7 +26,7 @@ weight learning to serve as reference. In this case, for the Gens-Domingos archi
 weights proportional to each cluster size, whereas in Dennis-Ventura we randomized weights.
 
 For the Dennis-Ventura algorithm, we discarded pre-clustering, opting to use the classification
-architecture mentioned in~\autoref{chp:structure}, as it resulted in much better accuracy. We also
+architecture mentioned in~\Cref{chp:structure}, as it resulted in much better accuracy. We also
 fixed the number of sums per region and gaussians per pixel to four, and the similarity threshold
 to $0.975$.
 
@@ -57,9 +63,10 @@ implementation as $k$-GD, and the DBSCAN variation as DBSCAN-GD.
   \end{tikzpicture}
   \caption{Our training pipeline when using binarization in pre-processing.\label{fig:train_pipe}}
 \end{figure}
+
 DBSCAN-GD achieved the best scores, but took the longest time for both training and testing. We did
-not test all possible iterations of pre-processing in this case, as DBSCAN-GD had too long training
-times (an average of 10 hours for training alone). We found that when using DBSCAN-GD, the
+not test all possible iterations of pre-processing in this case, as DBSCAN-GD took too long during
+training (an average of 10 hours for training alone). We found that when using DBSCAN-GD, the
 resulting structure was too complex (about 32 times bigger than $k$-GD), causing inference to take
 too long. For instance, when running inference on $k$-GD, average prediction took about $0.1$
 second.  When using DBSCAN, the average time of prediction was $19.72$ seconds. However, in terms
@@ -76,7 +83,7 @@ dataset, train an SPN structure using $k$-GD, perform discriminative gradient de
 resulting structure to learn its weights, and finally save the model for testing. Its then
 equivalent testing pipeline would be applying the same image transformation, in our case 3-bit
 quantization and equalization, and for each image find the $\argmax_{y\in Y} P(Y=y|X)$.
-\autoref{fig:train_pipe} shows a visualization of the training pipeline, whereas
+\autoref{fig:train_pipe} shows a visualization of the training pipeline for binarization, whereas
 \autoref{fig:infer_pipe} displays its equivalent inference pipeline.
 
 Both Gens-Domingos and Dennis-Ventura algorithms generate a structure as deep as the number of
@@ -87,11 +94,6 @@ prediction. A training set size of 500 was chosen as the generated SPNs had dece
 and accuracy, and did not take too long in training. The size of the testing dataset was also 500
 images.
 
-We use a particular set of notations for our experiments. For image transformations, we denote by
-$Q_n$ as applying an $n$-bit quantization of the dataset. An $E$ means the dataset was equalized,
-and a $B$ means it was binarized. Any combination of image transformation is signalled with a $+$
-sign. A $\emptyset$ means there were no image transformations done to the dataset apart from
-grayscale conversion.
 \begin{figure}[h]
   \centering
   \begin{tikzpicture}
@@ -123,14 +125,20 @@ grayscale conversion.
   \caption{Our inference pipeline when using binarization in pre-processing.\label{fig:infer_pipe}}
 \end{figure}
 
+We use a particular set of notations for our experiments. For image transformations, we denote by
+$Q_n$ as applying an $n$-bit quantization of the dataset. An $E$ means the dataset was equalized,
+and a $B$ means it was binarized. Any combination of image transformation is signalled with a $+$
+sign. A $\emptyset$ means there were no image transformations done to the dataset apart from
+grayscale conversion.
+
 For learning algorithms, a GD means we are using $k$-means Gens-Domingos and DV Dennis-Ventura.
 This is then followed by the weight learning algorithm used. The letters g, d and s mean we either
 applied generative gradient descent, discriminative gradient descent or no weight learning.
 
 Parameters for weight learning were fixed to learning rate $\eta=1.0$, L2 regularization constant
 $\lambda=0.001$, mini-batch size $b=50$ and number of epochs $N=15$. In all setups weight learning
-suffered heavily from gradient diffusion when using soft gradient descent, leading us to be forced
-to only use hard gradient descent for all test.
+suffered heavily from gradient diffusion when using soft gradient descent, forcing us to only use
+hard gradient descent for all tests.
 
 \section{Accuracy}
 
@@ -166,27 +174,32 @@ In this section we show accuracy results in each setup. All values are in percen
 
 \autoref{tab:accuracy} shows some interesting results. The first is that generative gradient
 descent on the Dennis-Ventura architecture had a negative impact on the performance of
-the network. Discriminative learning on the other hand seemed to not impact on accuracy at all. Not
-only that, quantization seems to have no impact, with equalization always deteriorating accuracy.
+the network. Discriminative learning on the other hand seemed to not impact accuracy at all. Not
+only that, quantization seems to have had no impact on the DV structure, with equalization always
+deteriorating accuracy.
 
 The Gens-Domingos architecture, on the other hand, achieved better results, but showed a more
 unpredictable behavior. When resolution was low, as is the case of $B$, $Q_2$ and $Q_3$, the GD
-architecture seems to always outclass DV. In fact, our best results were, as expected, when we used
-binarization, as we're only tracking the most significant feature: lane bounds. In some cases
-generative learning improved accuracy, but in most cases it had a negative impact.  Discriminative
-learning, on the other hand, seemed to usually enhance the network's accuracy.
+architecture seems to always outclass DV. In fact, our best results were, as expected, when
+binarization was used, as we are only tracking the most significant feature: lane bounds. In some
+cases generative learning improved accuracy, but in most it had a negative impact.  Discriminative
+learning, on the other hand, seemed to almost always provide a minor boost to the network's
+accuracy.
 
 Our main takeaway from these accuracy results is that the structure of an SPN is much more
 meaningful than its weights. Generative learning in our use case had a negative impact, and
-discriminative learning usually provides a small boost to accuracy.
+discriminative learning slightly improved accuracy.
 
 \section{Speed}
 
 In this section we try to quantify both training and inference of our models in each setup. We ran
 all tests on an Intel Core i7-4500U CPU @ 1.8GHz, a 2-core 4-threaded processor. For memory we had
-16GB RAM and 16GB swap space, though training didn't use more than 4GB and testing didn't exceed
+16GB RAM and 16GB swap space, though training did not use more than 4GB and testing did not exceed
 100MB.
 
+Training time for DV was very regular, as~\autoref{tab:time-training} shows. As expected,
+discriminative gradient descent took the longest time, as we require two passes through the network
+for each mini-batch.
 \begin{table}[h]
   \centering
   \begin{tabular}{l|c|c|c|c|c|c}
@@ -214,26 +227,6 @@ all tests on an Intel Core i7-4500U CPU @ 1.8GHz, a 2-core 4-threaded processor.
   \end{tabular}
   \caption{Average time in minutes and seconds for training each model.\label{tab:time-training}}
 \end{table}
-
-Training time for DV was very well behaved, as~\autoref{tab:time-training} shows. As expected,
-discriminative gradient descent took the most time, as we require two passes through the network
-for each mini-batch.
-
-Training time with gradient descent depends on the depth of the network. We found that the DV
-structure had very regular training times for only generating the network. Not only that,
-regardless of pre-processing the network had very similar network depth and size. This was in clear
-distinction with the Gens-Domingos structure. In fact, binarization generated the deepest network,
-whilst training the structure with no pre-processing resulted in the shallowest. Interestingly,
-on average, deeper networks took the least time to train and had the best accuracy results. This is
-probably due to better variable partitioning during the independence step, resulting in a better
-balanced and more expressive tree.
-
-\autoref{tab:time-inference} shows how much time it took, on average, to predict a single image.
-Computation of the average time was done by timing all 500 predictions on the test dataset, and
-then dividing by the number of total predictions.  Again, the DV architecture had very regular
-times. The GD structure, on the other hand, showed how much deeper the SPN structures are with
-heavy quantization.
-
 \begin{table}[h]
   \centering
   \begin{tabular}{l|c|c|c|c|c|c}
@@ -261,6 +254,20 @@ heavy quantization.
   \end{tabular}
   \caption{Average time in seconds to predict a single image.\label{tab:time-inference}}
 \end{table}
+Training time with gradient descent depends on the depth of the network. We found that the DV
+structure had very regular training times for only generating the network. Not only that,
+regardless of pre-processing the network had very similar network depth and size. This was in clear
+distinction with the Gens-Domingos structure. In fact, binarization generated the deepest network
+when applying the GD learning algorithm, whilst training the structure with no pre-processing
+resulted in the shallowest. Interestingly, on average, deeper networks took the least time to train
+and had the best accuracy results. This is probably due to better variable partitioning during the
+independence step, resulting in a more balanced and more expressive tree.
+
+\autoref{tab:time-inference} shows how much time it took, on average, to predict a single image.
+Computation of the average time was done by timing all 500 predictions on the test dataset, and
+then dividing by the number of total predictions.  Again, the DV architecture had very regular
+times. The GD structure, on the other hand, took the longest on deeper networks (where lower
+resolution quantization was used) and the shortest on shallower SPNs.
 
 Note that although values in~\autoref{tab:time-inference} look promising, they were extracted from
-a desktop computer. We quantify actual mobile robot inference speeds in~\autoref{chp-realworld}.
+a desktop computer. We quantify actual mobile robot inference speeds in~\Cref{chp:realworld}.

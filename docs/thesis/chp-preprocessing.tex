@@ -3,7 +3,7 @@
 \chapter{Pre-processing}\label{chp:preprocessing}
 
 Before training and inference, we apply different image transformations to the dataset. As
-mentioned in~\autoref{chp:modelling}, we use three main transformations: binarization, quantization
+mentioned in~\Cref{chp:modelling}, we use three main transformations: binarization, quantization
 and equalization. In all cases we first convert the original RGB colored dataset to grayscale.
 
 \section{Binarization}
@@ -36,7 +36,7 @@ clearer tracks. Images are labeled as left, up and right respectively
 
 \section{Quantization}
 
-The Gens-Domingos algorithm, as mentioned in~\autoref{chp:structure}, has two main steps: a
+The Gens-Domingos algorithm, as mentioned in~\Cref{chp:structure}, has two main steps: a
 clustering phase and an independency test part. Our independency test implementation uses the
 standard G-test statistical test based on contingency tables, where each frequency of the
 categories of each two variables are laid out on a matrix and their likelihood ratios are computed.
@@ -67,7 +67,7 @@ chi-squared tests are unreliable when dealing with low frequencies.
 Quantizing the dataset resulted in a significant improvement in accuracy to the model when training
 with a small set of images ($\leq$ 300). We found that when we increased the number of training
 images, accuracy depended less on quantization, but inference time increased, as the model grew in
-depth. We thus needed to find a balance between network complexity and accuracy.
+depth. We thus needed to find a balance between network complexity and inference speed.
 
 We faced two possible solutions to this problem. Either implement an exact independence test, such
 as the Fisher exact test (\cite{fisher-exact}), or perform histogram equalization on the dataset.
@@ -97,7 +97,7 @@ When coupling quantization and equalization, we slightly increased accuracy, rea
 $\approx$4\% accuracy difference.  Interestingly, these transformations proved to be harmful for
 the Dennis-Ventura architecture. In fact, the structure yielded better results without
 equalization, and quantization had little to no impact on accuracy. We attribute this phenomenom to
-the classification architecture we discussed in~\autoref{chp:structure}. Since each sub-SPN is
+the classification architecture we discussed in~\Cref{chp:structure}. Since each sub-SPN is
 essentially modelling each class as a separate, independent image model to the other classes, the
 more details in the image, the easier the model can distinguish from other label images.
 Furthermore, since the Dennis-Ventura algorithm does not need to run an independence test, it does

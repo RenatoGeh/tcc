@@ -49,7 +49,7 @@ to find
 
 Where we assume the existence of an underlying probability distribution that correctly models the
 classification problem. Ultimately, our goal is to find this distribution by ``learning'' from data
-through the learning algorithms described in~\autoref{chp:weights} and~\autoref{chp:structure}.
+through the learning algorithms described in~\Cref{chp:weights} and~\Cref{chp:structure}.
 
 Once learned, the SPN is able to find the MAP probabilities and states that correctly predict the
 most probable values of $Y$ given an image. Note how the LHS of~\autoref{eq:model-prob} can be
@@ -92,7 +92,7 @@ markings, the most important features of lane following, are still very much vis
 We can try to further reduce the complexity of the dataset at the same time preserving its most
 informational features by attempting to reduce the number of possible values of each pixel through
 image quantization. This transformation turned out to be very meaningful in terms of both training
-speed and accuracy, as we detail in~\autoref{chp:benchmarks}. However, noise is still a problem,
+speed and accuracy, as we detail in~\Cref{chp:benchmarks}. However, noise is still a problem,
 as~\autoref{fig:dataset_transformed} shows.
 
 \begin{figure}[h]
@@ -123,11 +123,11 @@ Otsu's binarization.
 One last transformation we tested our models on was histogram equalization. Equalization was done
 in order to reshape the pixel value histogram to an approximately uniform distribution. This was
 done in an attempt to increase the accuracy of the Gens-Domingos algorithm. As mentioned
-in~\autoref{chp:structure}, the Gens-Domingos schema attempts to find partitions of independent
+in~\Cref{chp:structure}, the Gens-Domingos schema attempts to find partitions of independent
 variables. We use an implementation of the G-test, which works best when there are sufficient
 samples for every variable category. The original dataset has a skewed histogram that contains
 almost no pixel values in the extreme ranges (either too white or too black). This transformation
-added a lot of noise to the dataset. In~\autoref{chp:benchmarks} we give more motivation on why we
+added a lot of noise to the dataset. In~\Cref{chp:benchmarks} we give more motivation on why we
 used equalization and its impact on accuracy.
 
 \begin{figure}[h]
@@ -151,12 +151,12 @@ architecture. This allows for a reliable probabilistic model for modelling our p
 
 We use two SPN architectures. We model the first using the Dennis-Ventura algorithm described
 in~\autoref{section:dv}. This model in particular uses the classification architecture also cited
-in~\autoref{chp:structure}. The second model uses the Gens-Domingos structural algorithm
+in~\Cref{chp:structure}. The second model uses the Gens-Domingos structural algorithm
 (\autoref{section:gd}).
 
 For weight learning, we found that \textit{soft} gradient descent suffered from gradient diffusion,
 resulting in no change on weight update. Consequently, we showcase only \textit{hard} gradient
-descent trained networks in~\autoref{chp:benchmarks}.
+descent trained networks in~\Cref{chp:benchmarks}.
 
 As we have previously mentioned, we wish to compute the MPE
 
@@ -167,7 +167,7 @@ As we have previously mentioned, we wish to compute the MPE
 Where $y|_{M(Y=y,X)}$ signals an MPN forward and backward pass to compute the most probable
 explanation of variable $Y$ given $X$ as evidence on the underlying SPN.
 
-Recalling~\autoref{chp:spn}, we can compute this probability in two different ways. Either
+Recalling~\Cref{chp:spn}, we can compute this probability in two different ways. Either
 by computing each $Y$ value by means of a forward pass on the SPN $S(Y=y,X)$, or through the
 approximate MAP $M(Y=y,X)$. These two options both carry disadvantages. On one hand, computing each
 $Y$ value through a forward pass on each possible valuation can cause inference to become very
@@ -179,7 +179,7 @@ We compromise with exact inference, but with an addendum. We take advantage of o
 multi-cored CPU by running exact inference in parallel. Since the Gens-Domingos and Dennis-Ventura
 architectures are very distinct structure-wise, we apply a different implementation for each.
 
-As mentioned in~\autoref{chp:structure}, the Dennis-Ventura structure we implemented follows a
+As mentioned in~\Cref{chp:structure}, the Dennis-Ventura structure we implemented follows a
 particular classification architecture that models each set of images of a certain label as a
 separate, independent sub-SPN. This allows for an easy parallel programming implementation, as each
 CPU core can be assigned to a single sub-SPN, and thus to a label. Each core will then be linked to

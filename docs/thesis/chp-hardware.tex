@@ -33,7 +33,7 @@ file is then sent through SSH to the Berry, read, loaded into memory, converting
 into a full SPN, and then used for inference.
 
 With its connected webcam, the Berry receives each image frame, applies some pre-processing to the
-image (which will be detailed in~\autoref{chp:benchmarks}), feeds it to the SPN as evidence,
+image (which will be detailed in~\Cref{chp:benchmarks}), feeds it to the SPN as evidence,
 computes the most probable classification label, and finally sends this to the external unit, i.e.
 the Brick, responsible for dealing with the robot's motion. This is all done concurrently, as we
 can dedicate three cores to classification, and the remaining unit to camera capture, image
