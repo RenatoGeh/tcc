@@ -7,6 +7,11 @@ respect to its nodes and weights so that we can find the gradient of the SPN wrt
 then describe how to perform generative stochastic gradient descent, and finally discriminative
 gradient descent.
 
+The results presented in this chapter follow the derivations from both~\cite{poon-domingos} for
+generative gradient descent, and~\cite{discriminative} for discriminative gradient descent. In
+both, the authors present only a brief sketch of proof for deriving the gradient. In this chapter,
+we explain these derivations in detail and in a step-by-step manner.
+
 \section{Derivatives}
 
 Let $S$ be an SPN\@. We are only interested in finding the derivative of internal nodes, as leaf

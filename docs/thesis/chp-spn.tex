@@ -34,9 +34,9 @@ Darwiche proposed in~\cite{diff-approach-darwiche} the notion of \textit{network
 
 A network polynomial is a function over the probabilities of each instantiation. Let $\Phi(x)$ be a
 probability distribution. The network polynomial of $\Phi(x)$ is the function
-$f=\sum_{x\in\mathcal{X}}\Phi(x)\Pi(x)$, where $\Pi(x)$ is the product of the IVs of each variable
-on instantiation $x$, where each indicator variable $[Y=y]$ has a value of zero if $Y\neq y$ in $x$
-and a value of one otherwise (i.e.\ if $Y=y$ in $x$ or $Y\not\in x$).
+$f=\sum_{x\in\mathcal{X}}\Phi(x)\Pi(x)$, where $\Pi(x)$ is the product of the indicator variables
+(IVs) of each variable on instantiation $x$, where each indicator variable $[Y=y]$ has a value of
+zero if $Y\neq y$ in $x$ and a value of one otherwise (i.e.\ if $Y=y$ in $x$ or $Y\not\in x$).
 
 As an example, take the bayesian network $\mathcal{N}=A\to B$ with binary variables. Let
 $\lambda_a$, $\lambda_{\ov{a}}$, $\lambda_b$ and $\lambda_{\ov{b}}$ be the indicator variables for
@@ -73,9 +73,9 @@ the network\@. The second, based on~\cite{gens-domingos}, is a stronger definiti
 we will use more throughout this thesis, as it lends itself better to continous data.
 
 Let $\mathbf{X}=\{X_1,X_2,\ldots,X_n\}$ be the set of all variables. We shall call this set the
-root scope. Let $G$ be a graph $G$. The sets of vertices and edges of $G$ will be denoted by $V(G)$
-and $E(G)$. We will call $\Ch(n)$ and $\Pa(n)$ the sets of children and parents of node $n\in
-V(G)$.
+root scope. Let $G$ be a directed acyclic graph. The sets of vertices and edges of $G$ will be
+denoted by $V(G)$ and $E(G)$. We will call $\Ch(n)$ and $\Pa(n)$ the sets of children and parents
+of node $n\in V(G)$.
 
 \begin{figure}[h]
   \centering\includegraphics[scale=0.6]{graphs/sample_spn.png}

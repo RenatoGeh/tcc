@@ -9,9 +9,10 @@ and equalization. In all cases we first convert the original RGB colored dataset
 \section{Binarization}
 
 The binarization process was done by first converting the original dataset to grayscale, followed
-by applying a gaussian blur filter with a $(1, 1)$ kernel and $(1, 1)$ standard deviation, and
-finally using Otsu's binarization. We chose this particular process since standard hard threshold
-binarization was unable to produce clear images of the track lines.
+by applying a gaussian blur with a unit filter kernel (that is, a $1\times 1$ window matrix that
+blurs a single pixel based on zero values from its neighbors) and standard deviation of one on both
+axes, and finally using Otsu's binarization (\cite{otsu}). We chose this particular process since
+standard hard threshold binarization was unable to produce clear images of the track lines.
 
 \begin{figure}[h]
   \centering
@@ -56,7 +57,7 @@ shallower the SPN when using the Gens-Domingos algorithm, which results in much 
   \includegraphics[scale=0.3]{imgs/hist_5.png}
   \includegraphics[scale=0.3]{imgs/hist_3.png}
   \caption{Histogram for dataset pixel values on 8-bit, 5-bit and 3-bit image
-    resolutions.\label{fig:hist-orig}}
+    quantizations.\label{fig:hist-orig}}
 \end{figure}
 
 A possible explanation for poor results with small training sets is the low number of pixel
@@ -90,7 +91,7 @@ to be applied on-the-fly during inference, we chose the standard equalization fo
   \includegraphics[scale=0.3]{imgs/hist_5_eq.png}
   \includegraphics[scale=0.3]{imgs/hist_3_eq.png}
   \caption{Histogram for equalized dataset with 8-bit, 5-bit and 3-bit image
-  resolutions.\label{fig:hist-eq}}
+  quantizations.\label{fig:hist-eq}}
 \end{figure}
 
 When coupling quantization and equalization, we slightly increased accuracy, reaching up to a
