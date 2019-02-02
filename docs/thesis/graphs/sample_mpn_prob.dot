@@ -1,12 +1,12 @@
 digraph G {
   graph [ranksep="0.50"];
   node [shape=circle];
-  root [label="max", shape=circle, xlabel=<<font color="blue">0.2</font>>, margin="0"];
+  root [label="max", shape=circle, xlabel=<<font color="blue">0.14</font>>, margin="0"];
   splines="false";
   subgraph L1 {
-    P1 [label=<&times;>, xlabel=<<font color="blue">0.4</font>>, margin="0"];
-    P2 [label=<&times;>, xlabel=<<font color="blue">0.4</font>>, margin="0"];
-    P3 [label=<&times;>, xlabel=<<font color="blue">0.1</font>>, margin="0"];
+    P1 [label=<&times;>, xlabel=<<font color="blue">0.28</font>>, margin="0"];
+    P2 [label=<&times;>, xlabel=<<font color="blue">0.32</font>>, margin="0"];
+    P3 [label=<&times;>, xlabel=<<font color="blue">0.08</font>>, margin="0"];
   };
   root -> P1 [label="0.5", color="darkolivegreen4", penwidth="1.5"];
   root -> P2 [label="0.2"];
